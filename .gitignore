@@ -16,7 +16,7 @@
  *.iws
  *.iml
  *.ipr
-/src/main/resources/application.properties
+/src/main/resources
 ### NetBeans ###
 # /nbproject/private/
 # /nbbuild/
