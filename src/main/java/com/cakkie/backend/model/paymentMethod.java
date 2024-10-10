@@ -17,7 +17,7 @@ public class paymentMethod {
     private int id;
     @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "isDeleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     private int isDeleted;
 
     @OneToMany(mappedBy = "paymentTypeId")

@@ -21,6 +21,6 @@ public class productDesInfo {
     private product proID;
     @Column(name = "desInfo", nullable = false)
     private String desInfo;
-    @Column(name = "isDeleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     private int isDeleted;
 }

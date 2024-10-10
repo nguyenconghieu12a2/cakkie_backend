@@ -21,13 +21,13 @@ public class product {
     private category categoryID;
     @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "description", nullable = true)
+    @Column(name = "description", nullable = true, columnDefinition = "TEXT")
     private String description;
-    @Column(name = "product_image", nullable = false)
+    @Column(name = "product_image", nullable = false, columnDefinition = "TEXT")
     private String productImage;
     @Column(name = "product_rating", nullable = true)
     private int productRating;
-    @Column(name = "isDeleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     private int isDeleted;
 
     @OneToMany(mappedBy = "proID")

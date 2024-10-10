@@ -23,9 +23,9 @@ public class userReview {
     private userSite userId;
     @Column(name = "rating", nullable = true)
     private int rating;
-    @Column(name = "feedback", nullable = true)
+    @Column(name = "feedback", nullable = true, columnDefinition = "TEXT")
     private String feedback;
-    @Column(name = "review_image", nullable = true)
+    @Column(name = "review_image", nullable = true, columnDefinition = "TEXT")
     private String reviewImage;
     @ManyToOne
     @JoinColumn(name = "status_id", nullable = false)
@@ -38,6 +38,6 @@ public class userReview {
     private Date validDate;
     @Column(name = "isHide", nullable = true)
     private int isHide;
-    @Column(name = "isDeleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     private int isDeleted;
 }

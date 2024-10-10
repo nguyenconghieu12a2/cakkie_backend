@@ -16,10 +16,10 @@ public class banners {
     private int id;
     @Column(name = "title", nullable = false)
     private String title;
-    @Column(name = "image", nullable = true)
+    @Column(name = "image", nullable = true, columnDefinition = "TEXT")
     private String image;
-    @Column(name = "link", nullable = true, length = 500)
+    @Column(name = "link", nullable = true,  columnDefinition = "NVARCHAR(MAX)")
     private String link;
-    @Column(name = "isDeleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     private int isDeleted;
 }

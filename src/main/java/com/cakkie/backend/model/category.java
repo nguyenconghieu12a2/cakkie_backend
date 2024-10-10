@@ -16,12 +16,12 @@ public class category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name = "cateName", nullable = false)
+    @Column(name = "cate_name", nullable = false, length = 255)
     private String cateName;
     @ManyToOne
     @JoinColumn(name = "parent_id", nullable = true)
     private category parentId;
-    @Column(name = "isDeleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     private int isDeleted;
 
     @OneToMany(mappedBy = "categoryId")

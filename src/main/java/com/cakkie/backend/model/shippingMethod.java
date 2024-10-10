@@ -20,7 +20,7 @@ public class shippingMethod {
     private String name;
     @Column(name = "price", nullable = false)
     private long price;
-    @Column(name = "isDeleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     private int isDeleted;
 
     @OneToMany(mappedBy = "shippingMethodId")

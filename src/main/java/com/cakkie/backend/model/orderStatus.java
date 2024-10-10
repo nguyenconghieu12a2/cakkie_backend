@@ -18,7 +18,7 @@ public class orderStatus {
     private int id;
     @Column(name = "status", nullable = false)
     private String status;
-    @Column(name = "isDeleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     private int isDeleted;
 
     @OneToMany(mappedBy = "orderStatusId")

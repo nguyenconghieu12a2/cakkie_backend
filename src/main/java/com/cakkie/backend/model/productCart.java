@@ -22,6 +22,6 @@ public class productCart {
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private product productId;
-    @Column(name = "isDeleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     private int isDeleted;
 }

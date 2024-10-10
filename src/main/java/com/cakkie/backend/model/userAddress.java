@@ -23,6 +23,6 @@ public class userAddress {
     private address addressId;
     @Column(name = "is_default", nullable = false)
     private int isDefault;
-    @Column(name = "isDeleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     private int isDeleted;
 }

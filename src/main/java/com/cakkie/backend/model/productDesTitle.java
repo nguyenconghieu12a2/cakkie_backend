@@ -18,7 +18,7 @@ public class productDesTitle {
     private int desTitleID;
     @Column(name = "desTitleName", nullable = false)
     private String desTitleName;
-    @Column(name = "isDeleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     private int isDeleted;
 
     @OneToMany(mappedBy = "desTitleID")

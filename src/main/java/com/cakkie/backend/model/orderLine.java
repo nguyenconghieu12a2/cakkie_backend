@@ -28,7 +28,7 @@ public class orderLine {
     private long price;
     @Column(name = "discount_price", nullable = true)
     private long discountPrice;
-    @Column(name = "note", nullable = true)
+    @Column(name = "note", nullable = true, columnDefinition = "TEXT")
     private String note;
 
     @OneToMany(mappedBy = "orderProductId")

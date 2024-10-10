@@ -20,6 +20,6 @@ public class discountCategory {
     @ManyToOne
     @JoinColumn(name = "discount_id", nullable = false)
     private discount discountId;
-    @Column(name = "isDeleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     private int isDeleted;
 }

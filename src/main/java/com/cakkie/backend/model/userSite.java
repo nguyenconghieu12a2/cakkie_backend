@@ -27,13 +27,13 @@ public class userSite {
     private String gender;
     @Column(name = "birthday", nullable = true)
     private Date birthday;
-    @Column(name = "image", nullable = true)
+    @Column(name = "image", nullable = true, columnDefinition = "TEXT")
     private String image;
     @Column(name = "email", nullable = false)
     private String email;
-    @Column(name = "phone", nullable = true)
+    @Column(name = "phone", nullable = true, length = 11)
     private String phone;
-    @Column(name = "password", nullable = true)
+    @Column(name = "password", nullable = true, length = 32)
     private String password;
     @ManyToOne
     @JoinColumn(name = "status")

@@ -29,7 +29,7 @@ public class coupons {
     private Date startDate;
     @Column(name = "end_date", nullable = false)
     private Date endDate;
-    @Column(name = "isDeleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     private int isDeleted;
 
     @OneToMany(mappedBy = "coupons")

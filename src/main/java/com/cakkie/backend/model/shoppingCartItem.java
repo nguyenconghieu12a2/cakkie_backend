@@ -22,6 +22,6 @@ public class shoppingCartItem {
     private productItem productItemId;
     @Column(name = "qty", nullable = false)
     private int qty;
-    @Column(name = "note", nullable = true)
+    @Column(name = "note", nullable = true, columnDefinition = "TEXT")
     private String note;
 }

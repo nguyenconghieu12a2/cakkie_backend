@@ -26,7 +26,7 @@ public class address {
 	@ManyToOne
 	@JoinColumn(name = "wards_code", nullable = false)
 	private wards wardsCode;
-	@Column(name = "isDeleted", nullable = false)
+	@Column(name = "is_deleted", nullable = false)
 	private int isDeleted;
 
 	@OneToMany(mappedBy = "addressId", cascade = CascadeType.ALL, orphanRemoval = true)

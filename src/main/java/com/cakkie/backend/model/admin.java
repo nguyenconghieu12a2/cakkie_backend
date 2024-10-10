@@ -26,6 +26,6 @@ public class admin {
     private String email;
     @Column(name = "password", nullable = false)
     private String password;
-    @Column(name = "isDeleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     private int isDeleted;
 }

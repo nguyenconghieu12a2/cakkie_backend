@@ -19,7 +19,7 @@ public class discount {
     private int id;
     @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "description", nullable = true)
+    @Column(name = "description", nullable = true, columnDefinition = "TEXT")
     private String description;
     @Column(name = "discount_rate", nullable = false)
     private double discountRate;
@@ -27,7 +27,7 @@ public class discount {
     private Date startDate;
     @Column(name = "end_date", nullable = false)
     private Date endDate;
-    @Column(name = "isDeleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     private int isDeleted;
 
     @OneToMany(mappedBy = "discountId")
