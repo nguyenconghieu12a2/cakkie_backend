@@ -2,14 +2,14 @@ package com.cakkie.backend.repository;
 
 import com.cakkie.backend.model.product;
 import com.cakkie.backend.model.productItem;
-import com.cakkie.backend.model.products;
+import com.cakkie.backend.dto.ProductDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface ProductRepository  extends JpaRepository<productItem, Long>{
+public interface ProductRepository  extends JpaRepository<product, Long>{
 //    @Query(value = "SELECT  p.name, p.description, c.cateName, p.price, p.product_image, p.product_rating, pi.size, pi.qty_in_stock, pdi.desInfo, pdt.desTitle " +
 //            "FROM product p " +
 //            "JOIN category c ON p.categoryID = c.id " +
@@ -25,6 +25,20 @@ public interface ProductRepository  extends JpaRepository<productItem, Long>{
             "            JOIN product_item pi ON p.id = pi.pro_id ", nativeQuery = true)
     List<Object[]> getAllProducts();
 
+//    @Query(value = "SELECT new com.cakkie.backend.dto.ProductDTO(" +
+//            "  pi.id, p.name, p.description, c.cateName, pi.price, p.productImage, pi.size, pi.qtyInStock, pdi.desInfo, pdt.desTitleName) " +
+//            "            FROM product p " +
+//            "            JOIN p.categoryID c " +
+//            "            JOIN p.productItemList pi " +
+//            "            JOIN p.productDesInfoList pdi" +
+//            "            JOIN pdi.desTitleID pdt")
+    @Query(value = "SELECT new com.cakkie.backend.dto.ProductDTO(" +
+            "p.id , p.name, p.description, pi.price)" +
+            "FROM product p " +
+            "JOIN p.productItemList pi ")
+    List<ProductDTO> getAllProduct();
+
+
     @Query(value = "SELECT  p.id, p.name, p.description, c.cate_name, pi.price, p.product_image, p.product_rating, pi.size, pi.qty_in_stock " +
             "            FROM product p " +
             "            JOIN category c ON p.categoryID = c.id " +
@@ -33,7 +47,7 @@ public interface ProductRepository  extends JpaRepository<productItem, Long>{
     List<Object[]> getProductById(@Param("id") int id);
 
     @Query(value = "SELECT p.id, pdi.desInfo, pdt.desTitleName " +
-            "FROM product p" +
+            "FROM product p " +
             "JOIN productDesInfo pdi ON p.id = pdi.proID " +
             "JOIN productDesTitle pdt ON pdi.desTitleID = pdt.desTitleID ", nativeQuery = true)
     List<Object[]> getProductDescriptionById(@Param("id") int id);

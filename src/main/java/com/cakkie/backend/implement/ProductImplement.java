@@ -1,5 +1,6 @@
 package com.cakkie.backend.implement;
 
+import com.cakkie.backend.dto.ProductDTO;
 import com.cakkie.backend.model.productItem;
 import com.cakkie.backend.model.products;
 import com.cakkie.backend.repository.ProductRepository;
@@ -17,6 +18,11 @@ public class ProductImplement implements ProductService {
     @Override
     public List<productItem> getAllProductItems() {
         return productRepository.getAllProductItems();
+    }
+
+    @Override
+    public List<ProductDTO> getAllProduct() {
+        return productRepository.getAllProduct();
     }
 
     @Override
@@ -40,7 +46,8 @@ public class ProductImplement implements ProductService {
 
     @Override
     public List<productItem> getProductsByProductId(int productId) {
-        return (List<productItem>) productRepository.getProductItemById(productId);
+//        return productRepository.getProductItemById(productId);
+        return  null;
     }
 
     @Override

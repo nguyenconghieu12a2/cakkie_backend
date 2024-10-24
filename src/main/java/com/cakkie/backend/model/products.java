@@ -13,11 +13,8 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "product")
+
 public class products {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private int productID;
     private int categoryID;
@@ -29,8 +26,6 @@ public class products {
     private int productRating;
     private String size;
     private long quantityStock;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "desId")
     private List<productsDescription> Descriptions;
     private String desInfo;
     private String desTitleName;

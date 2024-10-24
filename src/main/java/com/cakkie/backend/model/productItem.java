@@ -18,11 +18,9 @@ public class productItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-//    @ManyToOne
-//    @JoinColumn(name = "pro_id", nullable = false)
-//    @JsonBackReference
-    @Column(name = "pro_id", nullable = false)
-    private int proId;
+    @ManyToOne
+    @JoinColumn(name = "pro_id", nullable = false)
+    private product proId;
     @Column(name = "size", nullable = true, length = 10)
     private String size;
     @Column(name = "qty_in_stock", nullable = false)
@@ -34,11 +32,9 @@ public class productItem {
     @Column(name = "is_deleted", nullable = false)
     private int isDeleted;
 
-//    @OneToMany(mappedBy = "productItemId")
-//    @JsonManagedReference
-//    private List<shoppingCartItem> shoppingCartItemsList;
-//
-//    @OneToMany(mappedBy = "productItemId")
-//    @JsonManagedReference
-//    private List<orderLine> orderLineList;
+    @OneToMany(mappedBy = "productItemId")
+    private List<shoppingCartItem> shoppingCartItemsList;
+
+    @OneToMany(mappedBy = "productItemId")
+    private List<orderLine> orderLineList;
 }

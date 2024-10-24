@@ -1,6 +1,7 @@
 package com.cakkie.backend.controller;
 
 import com.cakkie.backend.api.TodoAPI;
+import com.cakkie.backend.dto.ProductDTO;
 import com.cakkie.backend.model.*;
 import com.cakkie.backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,10 @@ public class ProductController {
         return todoApi;
     }
 
+    @GetMapping("/Product/getAll")
+    public  List<ProductDTO> getAllProduct(){
+        return productService.getAllProduct();
+    }
     @GetMapping("/Product/All")
     public List<productItem> getAllProductItems() {
         return productService.getAllProductItems();
