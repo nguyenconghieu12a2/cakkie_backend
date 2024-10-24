@@ -1,5 +1,7 @@
 package com.cakkie.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,9 +18,11 @@ public class productItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @ManyToOne
-    @JoinColumn(name = "pro_id", nullable = false)
-    private product proId;
+//    @ManyToOne
+//    @JoinColumn(name = "pro_id", nullable = false)
+//    @JsonBackReference
+    @Column(name = "pro_id", nullable = false)
+    private int proId;
     @Column(name = "size", nullable = true, length = 10)
     private String size;
     @Column(name = "qty_in_stock", nullable = false)
@@ -30,9 +34,11 @@ public class productItem {
     @Column(name = "is_deleted", nullable = false)
     private int isDeleted;
 
-    @OneToMany(mappedBy = "productItemId")
-    private List<shoppingCartItem> shoppingCartItemsList;
-
-    @OneToMany(mappedBy = "productItemId")
-    private List<orderLine> orderLineList;
+//    @OneToMany(mappedBy = "productItemId")
+//    @JsonManagedReference
+//    private List<shoppingCartItem> shoppingCartItemsList;
+//
+//    @OneToMany(mappedBy = "productItemId")
+//    @JsonManagedReference
+//    private List<orderLine> orderLineList;
 }
