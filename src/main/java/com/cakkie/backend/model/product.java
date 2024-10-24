@@ -26,7 +26,7 @@ public class product {
     @Column(name = "product_image", nullable = false, columnDefinition = "TEXT")
     private String productImage;
     @Column(name = "product_rating", nullable = true)
-    private int productRating;
+    private Integer productRating;
     @Column(name = "is_deleted", nullable = false)
     private int isDeleted;
 
