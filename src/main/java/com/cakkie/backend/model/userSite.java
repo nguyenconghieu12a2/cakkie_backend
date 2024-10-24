@@ -1,17 +1,21 @@
 package com.cakkie.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 @Table(name = "user_site")
 public class userSite {
     @Id
@@ -21,7 +25,7 @@ public class userSite {
     private String firstname;
     @Column(name = "lastname", nullable = true)
     private String lastname;
-    @Column(name = "username", nullable = false)
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
     @Column(name = "gender", nullable = true)
     private String gender;
@@ -29,10 +33,11 @@ public class userSite {
     private Date birthday;
     @Column(name = "image", nullable = true, columnDefinition = "TEXT")
     private String image;
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
     @Column(name = "phone", nullable = true, length = 11)
     private String phone;
+    @JsonIgnore
     @Column(name = "password", nullable = true, length = 32)
     private String password;
     @ManyToOne
@@ -41,21 +46,27 @@ public class userSite {
     @Column(name = "account_create_date", nullable = false)
     private Date accountCreateDate;
 
-    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<userAddress> userAddresses;
 
-    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = false)
+    @JsonIgnore
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = false, fetch = FetchType.EAGER)
     private List<userPaymentMethod> userPaymentMethodList;
 
-    @OneToMany(mappedBy = "userId")
+    @JsonIgnore
+    @OneToMany(mappedBy = "userId", fetch = FetchType.EAGER)
     private List<shopOrder> shopOrderList;
 
-    @OneToMany(mappedBy = "userId")
+    @JsonIgnore
+    @OneToMany(mappedBy = "userId", fetch = FetchType.EAGER)
     private List<productCart> productCartList;
 
-    @OneToMany(mappedBy = "userId")
+    @JsonIgnore
+    @OneToMany(mappedBy = "userId", fetch = FetchType.EAGER)
     private List<shoppingCart> shoppingCartList;
 
-    @OneToMany(mappedBy = "userId")
+    @JsonIgnore
+    @OneToMany(mappedBy = "userId", fetch = FetchType.EAGER)
     private List<userReview> userReviewList;
 }
