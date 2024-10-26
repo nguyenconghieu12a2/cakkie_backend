@@ -1,5 +1,6 @@
 package com.cakkie.backend.repository;
 
+import com.cakkie.backend.model.coupons;
 import com.cakkie.backend.model.product;
 import com.cakkie.backend.model.productItem;
 import com.cakkie.backend.dto.ProductDTO;
@@ -39,18 +40,24 @@ public interface ProductRepository  extends JpaRepository<product, Long>{
     List<ProductDTO> getAllProduct();
 
 
-    @Query(value = "SELECT  p.id, p.name, p.description, c.cate_name, pi.price, p.product_image, p.product_rating, pi.size, pi.qty_in_stock " +
+    @Query(value = "SELECT  p.id, p.name, p.description, c.cate_name, pi.price, p.product_image, COALESCE(p.product_rating, 0), pi.size, pi.qty_in_stock " +
             "            FROM product p " +
             "            JOIN category c ON p.categoryID = c.id " +
             "            JOIN product_item pi ON p.id = pi.pro_id " +
             "            WHERE p.id = :id", nativeQuery = true)
     List<Object[]> getProductById(@Param("id") int id);
 
-    @Query(value = "SELECT p.id, pdi.desInfo, pdt.desTitleName " +
+    @Query(value = "SELECT p.id, pdt.desTitleID, pdi.desInfo, pdt.desTitleName " +
             "FROM product p " +
             "JOIN productDesInfo pdi ON p.id = pdi.proID " +
-            "JOIN productDesTitle pdt ON pdi.desTitleID = pdt.desTitleID ", nativeQuery = true)
+            "JOIN productDesTitle pdt ON pdi.desTitleID = pdt.desTitleID " +
+            "WHERE p.id = :id", nativeQuery = true)
     List<Object[]> getProductDescriptionById(@Param("id") int id);
+
+    @Query(value = "SELECT co.id, co.code, co.name, co.quantity ,co.priceDiscount, co.startDate, co.endDate " +
+            "FROM coupons co " +
+            "WHERE co.id = :id")
+    coupons getCouponById(@Param("id") int id);
     // Query to get a product item by size
     @Query(value = "SELECT p FROM productItem p WHERE p.size = :size")
     List<productItem> getProductItemsBySize(@Param("size") String size);

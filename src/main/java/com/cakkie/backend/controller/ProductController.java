@@ -15,7 +15,6 @@ import java.util.Map;
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 public class ProductController {
-    @Autowired
     private ProductService productService;
 
     @GetMapping("/Product")
@@ -34,6 +33,7 @@ public class ProductController {
     public List<productItem> getAllProductItems() {
         return productService.getAllProductItems();
     }
+
     @GetMapping("/Product/Products")
     public List<products> getAllProducts() {
         List<Object[]> results = productService.getAllProducts();
@@ -57,20 +57,17 @@ public class ProductController {
     }
 
     @GetMapping("/Product/{id}")
-    public List<products> getProducts(@PathVariable String id){
+    public ProductResponse getProducts(@PathVariable String id) {
         List<Object[]> results = productService.getProductById(Integer.parseInt(id));
         List<Object[]> resultsDes = productService.getProductDescriptionById(Integer.parseInt(id));
-
         // Use a Map to group products by product ID
-        Map<Integer, products> productMap = new HashMap<>();
+        List<products> productList = new ArrayList<products>();
 
         // Process product results
         for (Object[] result : results) {
-            int productId = (int) result[0]; // Assuming the product ID is in the first column
-            products product = productMap.get(productId);
+            int productId = (int) result[0];
+            products product = new products();
 
-            if (product == null) {
-                // Create a new product if it doesn't exist in the map
                 product = new products();
                 product.setProductID(productId);
                 product.setName((String) result[1]);
@@ -78,32 +75,41 @@ public class ProductController {
                 product.setCategoryName((String) result[3]);
                 product.setPrice((Long) result[4]);
                 product.setProductImage((String) result[5]);
-                // product.setProductRating((int) result[6]); // Uncomment if needed
+                product.setProductRating((int) result[6]);
                 product.setSize((String) result[7]);
                 product.setQuantityStock((long) result[8]);
 
-                // Initialize the description list
-                product.setDescriptions(new ArrayList<>()); // Assuming you add a setDescriptions method
-                productMap.put(productId, product);
-            }
+                product.setDescriptions(new ArrayList<>());
+                productList.add(product);
         }
+
+        List<productsDescription> descriptionList = new ArrayList<>();
 
         // Process description results and add to the corresponding product
         for (Object[] desc : resultsDes) {
-            int productId = (int) desc[0]; // Assuming the product ID is in the first column of the description results
-            products product = productMap.get(productId);
+            int productId = (int) desc[0];
 
-            if (product != null) {
                 productsDescription description = new productsDescription();
-                description.setDescription((String) desc[1]); // Assuming description is in the second column
-                description.setDescriptionTitle((String) desc[2]); // Assuming title is in the third column
+                description.setDesId((int) desc[1]);
+                description.setDescription((String) desc[2]);
+                description.setDescriptionTitle((String) desc[3]);
 
-                // Add the description to the product
-                product.getDescriptions().add(description);
-            }
+                // Also add it to the separate description list
+                descriptionList.add(description);
         }
 
-        // Convert the map values to a list
-        return new ArrayList<>(productMap.values());
+
+        // Create the response object
+        ProductResponse response = new ProductResponse();
+        response.setProductList(productList);
+        response.setDescriptionList(descriptionList);
+
+        // Return the response containing both the list of products and descriptions
+        return response;
+    }
+
+    @GetMapping("coupon/{id}")
+    public coupons getCoupons(@PathVariable String id) {
+        return productService.getCouponById(Integer.parseInt(id));
     }
 }
