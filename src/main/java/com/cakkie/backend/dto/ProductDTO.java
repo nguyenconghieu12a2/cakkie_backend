@@ -1,7 +1,6 @@
 package com.cakkie.backend.dto;
 
 public class ProductDTO {
-    private int id;
     private int productID;
     private int productItemId;
     private int categoryID;
@@ -14,8 +13,6 @@ public class ProductDTO {
     private String size;
     private long quantityStock;
     private int isDeleted;
-    private String desInfo;
-    private String desTitleName;
     public ProductDTO() {
     }
 
@@ -26,18 +23,14 @@ public class ProductDTO {
         this.price = price;
     }
 
-    public ProductDTO(int productID, String name, String description, String categoryName, long price, String productImage, String size, long quantityStock, String desInfo, String desTitleName) {
+    public ProductDTO(int productID, String name, String description, String categoryName, long price) {
         this.productID = productID;
         this.name = name;
         this.description = description;
-        this.price = price;
         this.categoryName = categoryName;
-        this.productImage = productImage;
-        this.size = size;
-        this.quantityStock = quantityStock;
-        this.desInfo = desInfo;
-        this.desTitleName = desTitleName;
+        this.price = price;
     }
+
 
     public ProductDTO(int productID, String name, String description, String categoryName, long price, String productImage, String size, long quantityStock) {
         this.productID = productID;
@@ -50,22 +43,8 @@ public class ProductDTO {
         this.quantityStock = quantityStock;
     }
 
-    public ProductDTO(int id, int productID, int categoryID, String name, String description, String categoryName, long price, String productImage, int productRating, String size, long quantityStock, int isDeleted) {
-        this.id = id;
-        this.productID = productID;
-        this.categoryID = categoryID;
-        this.name = name;
-        this.description = description;
-        this.categoryName = categoryName;
-        this.price = price;
-        this.productImage = productImage;
-        this.productRating = productRating;
-        this.size = size;
-        this.quantityStock = quantityStock;
-        this.isDeleted = isDeleted;
-    }
 
-    public ProductDTO( int productID, int productItemId, String name, String description, String categoryName, long price, String productImage, int productRating, String size, long quantityStock, int isDeleted) {
+    public ProductDTO( int productID, int productItemId, String name, String description, String categoryName, long price, String productImage, int productRating, String size, long quantityStock) {
         this.productID = productID;
         this.productItemId = productItemId;
         this.name = name;
@@ -76,7 +55,6 @@ public class ProductDTO {
         this.productRating = productRating;
         this.size = size;
         this.quantityStock = quantityStock;
-        this.isDeleted = isDeleted;
     }
 
     public int getProductItemId() {
@@ -87,25 +65,6 @@ public class ProductDTO {
         this.productItemId = productItemId;
     }
 
-    public String getDesInfo() {
-        return desInfo;
-    }
-
-    public String getDesTitleName() {
-        return desTitleName;
-    }
-
-    public void setDesInfo(String desInfo) {
-        this.desInfo = desInfo;
-    }
-
-    public void setDesTitleName(String desTitleName) {
-        this.desTitleName = desTitleName;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public void setProductID(int productID) {
         this.productID = productID;
@@ -149,10 +108,6 @@ public class ProductDTO {
 
     public void setIsDeleted(int isDeleted) {
         this.isDeleted = isDeleted;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public int getProductID() {

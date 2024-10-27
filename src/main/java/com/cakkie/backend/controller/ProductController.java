@@ -1,13 +1,11 @@
 package com.cakkie.backend.controller;
 
 import com.cakkie.backend.api.TodoAPI;
-import com.cakkie.backend.dto.AddressDTO;
-import com.cakkie.backend.dto.CouponDTO;
-import com.cakkie.backend.dto.ProductDTO;
-import com.cakkie.backend.dto.productCartDTO;
+import com.cakkie.backend.dto.*;
 import com.cakkie.backend.model.*;
 import com.cakkie.backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -17,7 +15,7 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
-public class ProductController {
+public class ProductController{
     @Autowired
     private ProductService productService;
 
@@ -123,7 +121,14 @@ public class ProductController {
     @GetMapping("address/{userId}")
     public List<AddressDTO> getAddressById(@PathVariable String userId) { return productService.getAddressById(Integer.parseInt(userId)); }
 
-    @GetMapping("productItem/{id}")
-    public ProductDTO getProductItemById(@PathVariable String id) {return productService.getProductItemById(Integer.parseInt(id));}
+    @GetMapping("productItem/{productId}")
+    public List<ProductDTO> getProductItemById(@PathVariable String productId) {return productService.getProductItemById(Integer.parseInt(productId));}
 
+    @GetMapping("order/{userId}")
+    public List<OrderDTO> getOrdersByUserId(@PathVariable String userId) {return productService.getOrdersByUserId(Integer.parseInt(userId));}
+
+    @PostMapping("addToCart/{productItemId}")
+    public productCart addToCart(@RequestBody productCart product) {
+        return productService.saveProduct(product);
+    }
 }

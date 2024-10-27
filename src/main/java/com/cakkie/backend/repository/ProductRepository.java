@@ -1,18 +1,17 @@
 package com.cakkie.backend.repository;
 
-import com.cakkie.backend.dto.AddressDTO;
-import com.cakkie.backend.dto.CouponDTO;
-import com.cakkie.backend.dto.productCartDTO;
+import com.cakkie.backend.dto.*;
 import com.cakkie.backend.model.*;
-import com.cakkie.backend.dto.ProductDTO;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import javax.swing.text.AbstractDocument;
 import java.util.List;
 
-public interface ProductRepository  extends JpaRepository<product, Long>{
+public interface ProductRepository  extends JpaRepository<ProductItemDTO, Long>{
     @Query(value = "SELECT * FROM product_item", nativeQuery = true)
     List<productItem> getAllProductItems();
 
@@ -58,12 +57,12 @@ public interface ProductRepository  extends JpaRepository<product, Long>{
     productCartDTO getProductCart(@Param("userId") int userId);
 
     @Query(value = "SELECT new com.cakkie.backend.dto.ProductDTO(" +
-            "p.id, pi.id, p.name, p.description,  pc.cateName, pi.price, pi.productImage, p.productRating, pi.size, pi.qtyInStock, pi.isDeleted)" +
+            "p.id , pi.id, p.name, p.description, pc.cateName, pi.price, p.productImage, COALESCE(p.productRating, 0), pi.size, pi.qtyInStock)" +
             "FROM product p " +
             "JOIN p.productItemList pi " +
             "JOIN p.categoryID pc " +
-            "WHERE pi.isDeleted = 1 AND pi.id = :proItemId")
-    ProductDTO getProductItemById(@Param("proItemId") int proItemId);
+            "WHERE pi.isDeleted = 1 AND pi.id = :productId")
+    List<ProductDTO> getProductItemById(@Param("productId") int productId);
 
     // Query to get product items that are not deleted
     @Query(value = "SELECT p FROM productItem p WHERE p.isDeleted = 0")
@@ -82,4 +81,23 @@ public interface ProductRepository  extends JpaRepository<product, Long>{
     // Query to get product items with a specific price range
     @Query(value = "SELECT p FROM productItem p WHERE p.price BETWEEN :minPrice AND :maxPrice")
     List<productItem> getProductItemsByPriceRange(@Param("minPrice") long minPrice, @Param("maxPrice") long maxPrice);
+
+    @Query(value = "SELECT new com.cakkie.backend.dto.OrderDTO(" +
+            "so.id, us.id, sm.name, adr.id, pmt.name, os.status, so.orderDate, so.arrivedDate, so.canceledDate)" +
+            "FROM shopOrder so " +
+            "JOIN so.shippingAddressId adr " +
+            "JOIN so.userId us " +
+            "JOIN so.shippingMethodId sm " +
+            "JOIN so.orderStatusId os " +
+            "JOIN so.paymentMethod pm " +
+            "JOIN pm.paymentTypeId pmt " +
+            "WHERE us.id = :id")
+    List<OrderDTO> getOrdersByUserId(@Param("id") int id);
+
+
+//    @Modifying
+//    @Transactional
+//    @Query("INSERT INTO Product (name, price) VALUES (:name, :price)")
+//    int insertProduct(@Param("name") String name, @Param("price") Double price);
+
 }

@@ -1,9 +1,6 @@
 package com.cakkie.backend.implement;
 
-import com.cakkie.backend.dto.AddressDTO;
-import com.cakkie.backend.dto.CouponDTO;
-import com.cakkie.backend.dto.ProductDTO;
-import com.cakkie.backend.dto.productCartDTO;
+import com.cakkie.backend.dto.*;
 import com.cakkie.backend.model.*;
 import com.cakkie.backend.repository.ProductRepository;
 import com.cakkie.backend.service.ProductService;
@@ -56,6 +53,21 @@ public class ProductImplement implements ProductService {
     }
 
     @Override
+    public List<ProductDTO> getProductItemById(int productId) {
+        return productRepository.getProductItemById(productId);
+    }
+
+    @Override
+    public List<OrderDTO> getOrdersByUserId(int userId) {
+        return productRepository.getOrdersByUserId(userId);
+    }
+
+    @Override
+    public ProductItemDTO updateProductItem(int productId, ProductItemDTO productItemDTO) {
+//        return productRepository.save(productId, productItemDTO);
+    }
+
+    @Override
     public List<productItem> getProductsByUserId(int userId) {
         return List.of();
     }
@@ -65,10 +77,7 @@ public class ProductImplement implements ProductService {
         return List.of();
     }
 
-    @Override
-    public ProductDTO getProductItemById(int productId) {
-        return productRepository.getProductItemById(productId);
-    }
+
 
     @Override
     public List<productItem> getActiveProducts() {
@@ -76,8 +85,8 @@ public class ProductImplement implements ProductService {
     }
 
     @Override
-    public productItem saveProduct(productItem entity) {
-        return null;
+    public productCart saveProduct(productCart entity) {
+        return productRepository.save(entity);
     }
 
     @Override
