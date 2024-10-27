@@ -1,7 +1,10 @@
 package com.cakkie.backend.controller;
 
 import com.cakkie.backend.api.TodoAPI;
+import com.cakkie.backend.dto.AddressDTO;
+import com.cakkie.backend.dto.CouponDTO;
 import com.cakkie.backend.dto.ProductDTO;
+import com.cakkie.backend.dto.productCartDTO;
 import com.cakkie.backend.model.*;
 import com.cakkie.backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import java.util.Map;
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 public class ProductController {
+    @Autowired
     private ProductService productService;
 
     @GetMapping("/Product")
@@ -109,7 +113,17 @@ public class ProductController {
     }
 
     @GetMapping("coupon/{id}")
-    public coupons getCoupons(@PathVariable String id) {
+    public CouponDTO getCoupons(@PathVariable String id) {
         return productService.getCouponById(Integer.parseInt(id));
     }
+
+    @GetMapping("cart/{userId}")
+    public productCartDTO getCart(@PathVariable String userId) { return productService.getProductCart(Integer.parseInt(userId)); }
+
+    @GetMapping("address/{userId}")
+    public List<AddressDTO> getAddressById(@PathVariable String userId) { return productService.getAddressById(Integer.parseInt(userId)); }
+
+    @GetMapping("productItem/{id}")
+    public ProductDTO getProductItemById(@PathVariable String id) {return productService.getProductItemById(Integer.parseInt(id));}
+
 }

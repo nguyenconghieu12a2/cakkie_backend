@@ -3,6 +3,7 @@ package com.cakkie.backend.dto;
 public class ProductDTO {
     private int id;
     private int productID;
+    private int productItemId;
     private int categoryID;
     private String name;
     private String description;
@@ -62,6 +63,28 @@ public class ProductDTO {
         this.size = size;
         this.quantityStock = quantityStock;
         this.isDeleted = isDeleted;
+    }
+
+    public ProductDTO( int productID, int productItemId, String name, String description, String categoryName, long price, String productImage, int productRating, String size, long quantityStock, int isDeleted) {
+        this.productID = productID;
+        this.productItemId = productItemId;
+        this.name = name;
+        this.description = description;
+        this.categoryName = categoryName;
+        this.price = price;
+        this.productImage = productImage;
+        this.productRating = productRating;
+        this.size = size;
+        this.quantityStock = quantityStock;
+        this.isDeleted = isDeleted;
+    }
+
+    public int getProductItemId() {
+        return productItemId;
+    }
+
+    public void setProductItemId(int productItemId) {
+        this.productItemId = productItemId;
     }
 
     public String getDesInfo() {
@@ -175,6 +198,7 @@ public class ProductDTO {
     public int getIsDeleted() {
         return isDeleted;
     }
+
 
 
 }
