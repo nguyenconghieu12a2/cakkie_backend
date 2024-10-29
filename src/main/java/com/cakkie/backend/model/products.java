@@ -27,6 +27,7 @@ public class products {
     private String size;
     private long quantityStock;
     private List<productsDescription> Descriptions;
+    private double discount;
     private String desInfo;
     private String desTitleName;
     private int isDeleted;

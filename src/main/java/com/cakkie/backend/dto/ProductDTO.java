@@ -12,8 +12,31 @@ public class ProductDTO {
     private int productRating;
     private String size;
     private long quantityStock;
+    private double discount;
     private int isDeleted;
     public ProductDTO() {
+    }
+
+    public ProductDTO(int productID, int productItemId, String name, String description, String categoryName, long price, String productImage, int productRating, String size, long quantityStock, double discount) {
+        this.productID = productID;
+        this.productItemId = productItemId;
+        this.name = name;
+        this.description = description;
+        this.categoryName = categoryName;
+        this.price = price;
+        this.productImage = productImage;
+        this.productRating = productRating;
+        this.size = size;
+        this.quantityStock = quantityStock;
+        this.discount = discount;
+    }
+
+    public double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(double discount) {
+        this.discount = discount;
     }
 
     public ProductDTO(int productID, String name, String description, long price) {

@@ -5,13 +5,10 @@ import com.cakkie.backend.dto.*;
 import com.cakkie.backend.model.*;
 import com.cakkie.backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -62,6 +59,7 @@ public class ProductController{
     public ProductResponse getProducts(@PathVariable String id) {
         List<Object[]> results = productService.getProductById(Integer.parseInt(id));
         List<Object[]> resultsDes = productService.getProductDescriptionById(Integer.parseInt(id));
+
         // Use a Map to group products by product ID
         List<products> productList = new ArrayList<products>();
 
@@ -80,7 +78,7 @@ public class ProductController{
                 product.setProductRating((int) result[6]);
                 product.setSize((String) result[7]);
                 product.setQuantityStock((long) result[8]);
-
+                product.setDiscount((double) result[9]);
                 product.setDescriptions(new ArrayList<>());
                 productList.add(product);
         }
@@ -116,7 +114,7 @@ public class ProductController{
     }
 
     @GetMapping("cart/{userId}")
-    public productCartDTO getCart(@PathVariable String userId) { return productService.getProductCart(Integer.parseInt(userId)); }
+    public List<productCartDTO> getCart(@PathVariable String userId) { return productService.getProductCart(Integer.parseInt(userId)); }
 
     @GetMapping("address/{userId}")
     public List<AddressDTO> getAddressById(@PathVariable String userId) { return productService.getAddressById(Integer.parseInt(userId)); }
@@ -127,8 +125,5 @@ public class ProductController{
     @GetMapping("order/{userId}")
     public List<OrderDTO> getOrdersByUserId(@PathVariable String userId) {return productService.getOrdersByUserId(Integer.parseInt(userId));}
 
-    @PostMapping("addToCart/{productItemId}")
-    public productCart addToCart(@RequestBody productCart product) {
-        return productService.saveProduct(product);
-    }
+
 }

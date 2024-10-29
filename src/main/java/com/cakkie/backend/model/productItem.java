@@ -19,7 +19,7 @@ public class productItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @ManyToOne
-    @JoinColumn(name = "pro_id", nullable = false)
+    @JoinColumn(name = "pro_id", nullable = true)
     private product proId;
     @Column(name = "size", nullable = true, length = 10)
     private String size;

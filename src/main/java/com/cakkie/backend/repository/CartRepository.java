@@ -1,26 +1,26 @@
 package com.cakkie.backend.repository;
 
+import com.cakkie.backend.dto.CartDTO;
 import com.cakkie.backend.model.productCart;
+import com.cakkie.backend.model.shoppingCart;
+import com.cakkie.backend.model.shoppingCartItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-public interface CartRepository {
-    // Query to get all records
-    @Query(value = "SELECT e FROM productCart e")
-    List<productCart> getAllRecords();
 
-    // Query to get records by userId
-    @Query(value = "SELECT e FROM productCart e WHERE e.userId.id = :userId")
-    List<productCart> getRecordsByUserId(@Param("userId") int userId);
+@Repository
+public interface CartRepository extends JpaRepository<shoppingCartItem, Integer> {
 
-    // Query to get records by productId
-    @Query(value = "SELECT e FROM productCart e WHERE e.productId.id = :productId")
-    List<productCart> getRecordsByProductId(@Param("productId") int productId);
+//    @Query(value = "SELECT pi.id " +
+//            "FROM productItem pi " +
+//            "JOIN pi.shoppingCartItemsList pc " +
+//            "WHERE pi.id = :id")
+//    shoppingCartItem getproductCartById(@Param("id") Integer id);
 
-    // Query to get records that are not deleted
-    @Query(value = "SELECT e FROM productCart e WHERE e.isDeleted = 0")
-    List<productCart> getActiveRecords();
+    @Query("SELECT pc FROM shoppingCartItem pc WHERE pc.id = :id")
+    shoppingCartItem getProductCartById(@Param("id") Integer id);
 }

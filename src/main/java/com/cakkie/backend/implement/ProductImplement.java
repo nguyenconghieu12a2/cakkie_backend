@@ -32,6 +32,11 @@ public class ProductImplement implements ProductService {
         return productRepository.getProductById(id);
     }
 
+//    @Override
+//    public List<ProductDTO> getProductsById(int id) {
+//        return productRepository.getProductsById(id);
+//    }
+
     @Override
     public List<Object[]> getProductDescriptionById(int id) {
         return productRepository.getProductDescriptionById(id);
@@ -43,7 +48,7 @@ public class ProductImplement implements ProductService {
     }
 
     @Override
-    public productCartDTO getProductCart(int userId) {
+    public List<productCartDTO> getProductCart(int userId) {
         return productRepository.getProductCart(userId);
     }
 
@@ -62,40 +67,4 @@ public class ProductImplement implements ProductService {
         return productRepository.getOrdersByUserId(userId);
     }
 
-    @Override
-    public ProductItemDTO updateProductItem(int productId, ProductItemDTO productItemDTO) {
-//        return productRepository.save(productId, productItemDTO);
-    }
-
-    @Override
-    public List<productItem> getProductsByUserId(int userId) {
-        return List.of();
-    }
-
-    @Override
-    public List<productItem> getProductsByProductId(int productId) {
-        return List.of();
-    }
-
-
-
-    @Override
-    public List<productItem> getActiveProducts() {
-        return List.of();
-    }
-
-    @Override
-    public productCart saveProduct(productCart entity) {
-        return productRepository.save(entity);
-    }
-
-    @Override
-    public productItem updateProduct(productItem entity) {
-        return null;
-    }
-
-    @Override
-    public void deleteProduct(int id) {
-
-    }
 }

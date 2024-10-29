@@ -11,8 +11,8 @@ import jakarta.persistence.ManyToOne;
 public class productCartDTO {
     private int id;
     private int userId;
-    private shoppingCart cartId;
-    private productItem productItemId;
+    private int cartId;
+    private int productItemId;
     private int qty;
     private String note;
     private int isDeleted;
@@ -20,7 +20,7 @@ public class productCartDTO {
     public productCartDTO() {
     }
 
-    public productCartDTO(int id, int userId, shoppingCart cartId, productItem productItemId, int qty, String note) {
+    public productCartDTO(int id, int userId, int cartId, int productItemId, int qty, String note) {
         this.id = id;
         this.userId = userId;
         this.cartId = cartId;
@@ -29,7 +29,7 @@ public class productCartDTO {
         this.note = note;
     }
 
-    public productCartDTO(int id, int userId, shoppingCart cartId, productItem productItemId, int qty, String note, int isDeleted) {
+    public productCartDTO(int id, int userId, int cartId, int productItemId, int qty, String note, int isDeleted) {
         this.id = id;
         this.userId = userId;
         this.cartId = cartId;
@@ -47,11 +47,11 @@ public class productCartDTO {
         this.isDeleted = isDeleted;
     }
 
-    public shoppingCart getCartId() {
+    public int getCartId() {
         return cartId;
     }
 
-    public void setCartId(shoppingCart cartId) {
+    public void setCartId(int cartId) {
         this.cartId = cartId;
     }
 
@@ -71,11 +71,11 @@ public class productCartDTO {
         this.userId = userId;
     }
 
-    public productItem getProductItemId() {
+    public int getProductItemId() {
         return productItemId;
     }
 
-    public void setProductItemId(productItem productItemId) {
+    public void setProductItemId(int productItemId) {
         this.productItemId = productItemId;
     }
 
