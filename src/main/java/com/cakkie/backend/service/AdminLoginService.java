@@ -60,6 +60,15 @@ public class AdminLoginService {
         return null;
     }
 
+    public Optional<admin> findByUsernameIgnoreCase(String username) {
+        return adminLoginRepo.findByUsernameIgnoreCase(username);
+    }
+
+//    public Optional<admin> findByImageIgnoreCase(String image) {
+//        return adminLoginRepo.findByImageIgnoreCase(image);
+//    }
+
+
     public admin saveAdmin(admin user) {
         return adminLoginRepo.save(user);
     }

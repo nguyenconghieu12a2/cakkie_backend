@@ -10,4 +10,6 @@ public interface AdminLoginRepo extends JpaRepository<admin, Integer> {
 
     Optional<admin> findByEmailIgnoreCase(String email);
 
+//    Optional<admin> findByImageIgnoreCase(String image);
+
 }
