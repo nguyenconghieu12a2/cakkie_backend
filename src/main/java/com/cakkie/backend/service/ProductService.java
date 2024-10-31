@@ -18,4 +18,5 @@ public interface ProductService {
       List<AddressDTO> getAddressById(int id);
       List<ProductDTO> getProductItemById(int productId);
       List<OrderDTO> getOrdersByUserId(int userId);
+      List<OrderItemDTO> getOrderItemsByOrderId(int orderId);
 }

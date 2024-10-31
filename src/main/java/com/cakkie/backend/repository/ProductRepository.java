@@ -110,4 +110,11 @@ public interface ProductRepository  extends JpaRepository<product, Long>{
             "WHERE us.id = :id")
     List<OrderDTO> getOrdersByUserId(@Param("id") int id);
 
+    @Query(value = "SELECT new com.cakkie.backend.dto.OrderItemDTO(" +
+            "ol.id, pi.id, so.id, ol.qty, ol.price, ol.discountPrice, ol.note)" +
+            "FROM orderLine ol " +
+            "JOIN ol.productItemId pi " +
+            "JOIN ol.orderId so " +
+            "WHERE so.id = :orderId")
+    List<OrderItemDTO> getOrderItemsByOrderId(int orderId);
 }

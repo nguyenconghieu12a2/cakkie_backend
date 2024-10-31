@@ -13,6 +13,7 @@ public class OrderDTO {
     private Date arrivedDate;
     private Date canceledDate;
 
+
     public OrderDTO(int orderId, int userId, String shippingMethod, int shippingAddress, String paymentMethod, String orderStatus, Date orderDate, Date arrivedDate, Date canceledDate) {
         this.orderId = orderId;
         this.userId = userId;

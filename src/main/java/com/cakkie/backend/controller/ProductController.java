@@ -125,5 +125,7 @@ public class ProductController{
     @GetMapping("order/{userId}")
     public List<OrderDTO> getOrdersByUserId(@PathVariable String userId) {return productService.getOrdersByUserId(Integer.parseInt(userId));}
 
+    @GetMapping("orderItem/{productId}")
+    public List<OrderItemDTO> getOrderItemsByOrderId(@PathVariable String orderId) {return productService.getOrderItemsByOrderId(Integer.parseInt(orderId));}
 
 }

@@ -67,4 +67,9 @@ public class ProductImplement implements ProductService {
         return productRepository.getOrdersByUserId(userId);
     }
 
+    @Override
+    public List<OrderItemDTO> getOrderItemsByOrderId(int orderId) {
+        return productRepository.getOrderItemsByOrderId(orderId);
+    }
+
 }
