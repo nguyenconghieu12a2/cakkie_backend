@@ -1,6 +1,6 @@
 package com.cakkie.backend.service;
 
-import com.cakkie.backend.DTO.CouponDTO;
+import com.cakkie.backend.dto.CouponDTO;
 import com.cakkie.backend.exception.CouponNotFound;
 import com.cakkie.backend.model.coupons;
 import com.cakkie.backend.repository.CouponRepository;
@@ -34,16 +34,16 @@ public class CouponImplement implements CouponService {
     }
 
     @Override
-    public coupons updateCoupon(coupons coupon, int id) {
-        return couponRepository.findById(id).map(existingCoupon -> {
-            existingCoupon.setCode(coupon.getCode());
-            existingCoupon.setName(coupon.getName());
-            existingCoupon.setQuantity(coupon.getQuantity());
-            existingCoupon.setPriceDiscount(coupon.getPriceDiscount());
-            existingCoupon.setStartDate(coupon.getStartDate());
-            existingCoupon.setEndDate(coupon.getEndDate());
-            return couponRepository.save(existingCoupon);
-        }).orElseThrow(() -> new CouponNotFound("Sorry, this coupon could not be found"));
+    public coupons updateCoupon(int id, coupons coupon) {
+        coupons existCoupons = couponRepository.findById(id)
+                .orElseThrow(() -> new CouponNotFound("Sorry, no coupons found with id: " + id));
+        existCoupons.setCode(coupon.getCode());
+        existCoupons.setName(coupon.getName());
+        existCoupons.setQuantity(coupon.getQuantity());
+        existCoupons.setPriceDiscount(coupon.getPriceDiscount());
+        existCoupons.setStartDate(coupon.getStartDate());
+        existCoupons.setEndDate(coupon.getEndDate());
+        return couponRepository.save(existCoupons);
     }
 
     @Override

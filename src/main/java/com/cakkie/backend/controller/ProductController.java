@@ -1,6 +1,6 @@
 package com.cakkie.backend.controller;
 
-import com.cakkie.backend.DTO.ProductDTO;
+import com.cakkie.backend.dto.ProductDTO;
 import com.cakkie.backend.model.product;
 import com.cakkie.backend.service.ProductService;
 import lombok.RequiredArgsConstructor;

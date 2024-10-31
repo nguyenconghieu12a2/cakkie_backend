@@ -1,6 +1,6 @@
 package com.cakkie.backend.controller;
 
-import com.cakkie.backend.DTO.CouponDTO;
+import com.cakkie.backend.dto.CouponDTO;
 import com.cakkie.backend.model.coupons;
 import com.cakkie.backend.service.CouponService;
 import lombok.RequiredArgsConstructor;
@@ -49,10 +49,9 @@ public class CouponController {
     }
 
     @PutMapping("/api/coupons/update/{id}")
-    public ResponseEntity<CouponDTO> updateCoupon(@RequestBody coupons coupon, @PathVariable int id) {
-        coupons updatedCoupon = couponService.updateCoupon(coupon, id);
-        CouponDTO couponDTO = convertToDTO(updatedCoupon);
-        return new ResponseEntity<>(couponDTO, HttpStatus.OK);
+    public ResponseEntity<CouponDTO> updateCoupon(@PathVariable int id, @RequestBody coupons coupon) {
+        coupons updatedCoupon = couponService.updateCoupon(id, coupon);
+        return new ResponseEntity<>(convertToDTO(updatedCoupon), HttpStatus.OK);
     }
 
     @DeleteMapping("/api/coupons/delete/{id}")

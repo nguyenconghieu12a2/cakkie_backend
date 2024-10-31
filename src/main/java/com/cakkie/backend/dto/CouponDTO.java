@@ -1,4 +1,4 @@
-package com.cakkie.backend.DTO;
+package com.cakkie.backend.dto;
 
 import java.util.Date;
 

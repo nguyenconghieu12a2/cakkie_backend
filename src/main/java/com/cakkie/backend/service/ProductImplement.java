@@ -1,6 +1,6 @@
 package com.cakkie.backend.service;
 
-import com.cakkie.backend.DTO.ProductDTO;
+import com.cakkie.backend.dto.ProductDTO;
 import com.cakkie.backend.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
