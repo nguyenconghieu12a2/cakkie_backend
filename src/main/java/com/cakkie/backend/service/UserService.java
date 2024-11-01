@@ -1,5 +1,6 @@
 package com.cakkie.backend.service;
 
+import com.cakkie.backend.api.model.EditBody;
 import com.cakkie.backend.api.model.LoginBody;
 import com.cakkie.backend.api.model.RegistrationBody;
 import com.cakkie.backend.exception.UserAlreadyExistException;
@@ -7,24 +8,36 @@ import com.cakkie.backend.model.userSite;
 import com.cakkie.backend.model.userStatus;
 import com.cakkie.backend.repository.UserSiteRepository;
 import com.cakkie.backend.repository.UserStatusRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class UserService {
     private final JwtService jwtService;
     private UserSiteRepository userSiteRepository;
     private UserStatusRepository userStatusRepository;
+    private final JavaMailSender emailSender;
 
-    public UserService(UserSiteRepository userSiteRepository, JwtService jwtService, UserStatusRepository userStatusRepository) {
+    private final Map<String, String> otpCache = new ConcurrentHashMap<>();
+
+    @Value("${frontend.base-url}")
+    private String frontendBaseUrl;
+
+    public UserService(UserSiteRepository userSiteRepository, JwtService jwtService, UserStatusRepository userStatusRepository, JavaMailSender emailSender) {
         this.userSiteRepository = userSiteRepository;
         this.jwtService = jwtService;
         this.userStatusRepository = userStatusRepository;
+        this.emailSender = emailSender;
     }
 
     public String getMd5(String input)
@@ -72,9 +85,9 @@ public class UserService {
         userSite.setUsername(registrationBody.getUsername());
         userSite.setGender(registrationBody.getGender());
         if(registrationBody.getGender().equals("male")) {
-            userSite.setImage("/images/male.jpg");
+            userSite.setImage("male.jpg");
         } else if (registrationBody.getGender().equals("female")) {
-            userSite.setImage("/images/female.jpg");
+            userSite.setImage("female.jpg");
         }
         userSite.setBirthday(registrationBody.getBirthday());
         userSite.setEmail(registrationBody.getEmail());
@@ -90,16 +103,165 @@ public class UserService {
 
     public String loginUser(LoginBody loginBody) {
         Optional<userSite> opUser = userSiteRepository.findByEmailIgnoreCase(loginBody.getEmail());
-        if(opUser.isPresent()) {
+        if (opUser.isPresent()) {
             userSite user = opUser.get();
-            if(user.getPassword().equals(getMd5(loginBody.getPassword()))) {
-                return jwtService.generateJwt(user);
+
+            // Check if the password matches
+            if (!user.getPassword().equals(getMd5(loginBody.getPassword()))) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Incorrect password.");
             }
+
+            // Check if user status is active (status == 1)
+            if (user.getStatusId().getId() == 2) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Your account has been banned from this shop!");
+            }
+
+            if (user.getStatusId().getId() == 2) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Your account has been removed from this shop!");
+            }
+
+            // If all checks pass, generate and return JWT
+            return jwtService.generateJwt(user);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Email not found.");
         }
-        return null;
     }
 
     public userSite saveUser(userSite user) {
         return userSiteRepository.save(user);
+    }
+
+    public userSite updateUser(EditBody updatedInfo) {
+        Optional<userSite> opUser = userSiteRepository.findByEmailIgnoreCase(updatedInfo.getEmail());
+        if (opUser.isPresent()) {
+            userSite user = opUser.get();
+
+            // Update fields only if they are provided in updatedInfo
+            if (updatedInfo.getFirstname() != null) {
+                user.setFirstname(updatedInfo.getFirstname());
+            }
+            if (updatedInfo.getLastname() != null) {
+                user.setLastname(updatedInfo.getLastname());
+            }
+            if (updatedInfo.getUsername() != null) {
+                // Check if username is different before setting
+                if (!user.getUsername().equalsIgnoreCase(updatedInfo.getUsername())) {
+                    user.setUsername(updatedInfo.getUsername());
+                }
+            }
+            if (updatedInfo.getGender() != null) {
+                user.setGender(updatedInfo.getGender());
+                // Set the default image based on gender
+                if (updatedInfo.getGender().equalsIgnoreCase("male")) {
+                    user.setImage("male.jpg");
+                } else if (updatedInfo.getGender().equalsIgnoreCase("female")) {
+                    user.setImage("female.jpg");
+                }
+            }
+            if (updatedInfo.getBirthday() != null) {
+                user.setBirthday(updatedInfo.getBirthday());
+            }
+
+            if(updatedInfo.getPhone() != null) {
+                user.setPhone(updatedInfo.getPhone());
+            }
+
+            // Save the updated user and return the saved entity
+            return userSiteRepository.save(user);
+        }
+
+        // Return null or handle the case where the user was not found
+        return null;
+    }
+
+    public boolean changePassword(String email, String currentPassword, String newPassword) {
+        // Find the user by email
+        Optional<userSite> opUser = userSiteRepository.findByEmailIgnoreCase(email);
+
+        if (opUser.isPresent()) {
+            userSite user = opUser.get();
+
+            // Verify the current password
+            if (user.getPassword().equals(getMd5(currentPassword))) {
+                // Update the password with the new hashed password
+                user.setPassword(getMd5(newPassword));
+                userSiteRepository.save(user);
+                return true; // Password change successful
+            }
+        }
+
+        return false; // Password change unsuccessful
+    }
+
+    private String generateOtp() {
+        Random random = new Random();
+        int otp = 100000 + random.nextInt(900000); // Generate a 6-digit OTP
+        return String.valueOf(otp);
+    }
+
+    public void sendPasswordResetEmail(String email) {
+        Optional<userSite> opUser = userSiteRepository.findByEmailIgnoreCase(email);
+        if (opUser.isPresent()) {
+            // Generate OTP
+            String otp = generateOtp();
+
+            // Store OTP in cache
+            otpCache.put(email, otp);
+
+            // Send OTP email
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(email);
+            message.setSubject("Password Reset OTP");
+            message.setText("Your OTP for password reset is: " + otp);
+
+            emailSender.send(message);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Email not found.");
+        }
+    }
+
+    public boolean verifyOtp(String email, String otp) {
+        return otp.equals(otpCache.get(email));
+    }
+
+    public void clearOtp(String email) {
+        otpCache.remove(email);
+    }
+
+    public String verifyOtpAndGenerateResetLink(String email, String otp) {
+        // Check if OTP matches the one in the cache
+        if (otp.equals(otpCache.get(email))) {
+            // Generate a unique token for the reset link
+            String resetToken = UUID.randomUUID().toString();
+
+            // Store this token in the cache temporarily (or in a database)
+            otpCache.put(email + "_resetToken", resetToken);
+
+            // Return the reset link with the email and token as query parameters
+            return frontendBaseUrl + "/reset-password?email=" + email + "&token=" + resetToken;
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid OTP.");
+        }
+    }
+
+    public boolean validateResetToken(String email, String token) {
+        // Validate that the reset token matches the one stored in the cache
+        String cachedToken = otpCache.get(email + "_resetToken");
+        return token.equals(cachedToken);
+    }
+
+    public void updatePassword(String email, String newPassword) {
+        Optional<userSite> userOptional = userSiteRepository.findByEmailIgnoreCase(email);
+        if (userOptional.isPresent()) {
+            userSite user = userOptional.get();
+            user.setPassword(getMd5(newPassword)); // Hash the new password before saving
+            userSiteRepository.save(user);
+
+            // Optionally, clear the reset token and OTP from cache
+            otpCache.remove(email);
+            otpCache.remove(email + "_resetToken");
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+        }
     }
 }
