@@ -15,11 +15,13 @@ import java.util.List;
 @Repository
 public interface CartRepository extends JpaRepository<shoppingCartItem, Integer> {
 
-//    @Query(value = "SELECT pi.id " +
-//            "FROM productItem pi " +
-//            "JOIN pi.shoppingCartItemsList pc " +
-//            "WHERE pi.id = :id")
-//    shoppingCartItem getproductCartById(@Param("id") Integer id);
+    @Query(value = "SELECT pi.shoppingCartItemsList " +
+            "FROM productItem pi " +
+            "JOIN pi.shoppingCartItemsList pc " +
+            "JOIN pc.cartId spc " +
+            "WHERE pi.id = :productId AND spc.id = :cartId")
+    shoppingCartItem findCartItem(@Param("cartId") Integer cartId, @Param("productId") Integer productId);
+
 
     @Query("SELECT pc FROM shoppingCartItem pc WHERE pc.id = :id")
     shoppingCartItem getProductCartById(@Param("id") Integer id);

@@ -18,6 +18,7 @@ public class products {
     private int id;
     private int productID;
     private int categoryID;
+    private int productItemId;
     private String name;
     private String description;
     private String categoryName;

@@ -22,18 +22,22 @@ public interface ProductRepository  extends JpaRepository<product, Long>{
     List<Object[]> getAllProducts();
 
     @Query(value = "SELECT new com.cakkie.backend.dto.ProductDTO(" +
-            "p.id , p.name, p.description, pi.price)" +
+            "p.id , pi.id, p.name, p.description, c.cateName, pi.price, p.productImage, COALESCE(p.productRating, 0), pi.size, pi.qtyInStock, COALESCE(d.discountRate,0))" +
             "FROM product p " +
-            "JOIN p.productItemList pi ")
+            "JOIN p.productItemList pi " +
+            "LEFT JOIN p.categoryID c " +
+            "LEFT JOIN c.discountCategoryList dc " +
+            "LEFT JOIN dc.discountId d " +
+            "WHERE p.isDeleted = 1")
     List<ProductDTO> getAllProduct();
 
 
-    @Query(value = "SELECT  p.id, p.name, p.description, c.cate_name, pi.price, p.product_image, COALESCE(p.product_rating, 0), pi.size, pi.qty_in_stock, d.discount_rate" +
-            "            FROM product p " +
-            "            JOIN category c ON p.categoryID = c.id " +
-            "            JOIN product_item pi ON p.id = pi.pro_id " +
-            "            JOIN discount_category dc ON c.id = dc.category_id " +
-            "            JOIN discount d ON dc.discount_id = d.id " +
+    @Query(value = "SELECT  p.id, p.name, p.description, c.cate_name, pi.price, p.product_image, COALESCE(p.product_rating, 0), pi.size, pi.qty_in_stock,COALESCE(d.discount_rate,0),  pi.id " +
+            "                       FROM product p " +
+            "                       JOIN product_item pi ON p.id = pi.pro_id " +
+            "                       LEFT JOIN category c ON p.categoryID = c.id " +
+            "                        LEFT JOIN discount_category dc ON c.id = dc.category_id " +
+            "                        LEFT JOIN dbo.discount d on d.id = dc.discount_id " +
             "            WHERE p.id = :id", nativeQuery = true)
     List<Object[]> getProductById(@Param("id") int id);
 
@@ -54,6 +58,13 @@ public interface ProductRepository  extends JpaRepository<product, Long>{
             "WHERE p.id = :id", nativeQuery = true)
     List<Object[]> getProductDescriptionById(@Param("id") int id);
 
+    @Query(value = "SELECT p.id, pdt.desTitleID, pdi.desInfo, pdt.desTitleName " +
+            "FROM product p " +
+            "JOIN productDesInfo pdi ON p.id = pdi.proID " +
+            "JOIN productDesTitle pdt ON pdi.desTitleID = pdt.desTitleID " +
+            "WHERE p.id = :id", nativeQuery = true)
+    List<DescriptionDTO> getProductDescriptionsById(@Param("id") int id);
+
     @Query(value = "SELECT new com.cakkie.backend.dto.CouponDTO( " +
             "co.id, co.code, co.name, co.quantity ,co.priceDiscount, co.startDate, co.endDate) " +
             "FROM coupons co " +
@@ -71,12 +82,12 @@ public interface ProductRepository  extends JpaRepository<product, Long>{
 
 
     @Query(value = "SELECT new com.cakkie.backend.dto.ProductDTO(" +
-            "p.id , pi.id, p.name, p.description, pc.cateName, pi.price, p.productImage, COALESCE(p.productRating, 0), pi.size, pi.qtyInStock, d.discountRate)" +
+            "p.id , pi.id, p.name, p.description, pc.cateName, pi.price, p.productImage, COALESCE(p.productRating, 0), pi.size, pi.qtyInStock, COALESCE(d.discountRate,0))" +
             "FROM product p " +
             "JOIN p.productItemList pi " +
-            "JOIN p.categoryID pc " +
-            "JOIN pc.discountCategoryList dcl " +
-            "JOIN dcl.discountId d " +
+            "LEFT JOIN p.categoryID pc " +
+            "LEFT JOIN pc.discountCategoryList dcl " +
+            "LEFT JOIN dcl.discountId d " +
             "WHERE pi.isDeleted = 1 AND pi.id = :productId")
     List<ProductDTO> getProductItemById(@Param("productId") int productId);
 

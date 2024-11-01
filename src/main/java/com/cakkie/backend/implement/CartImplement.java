@@ -29,6 +29,22 @@ public class CartImplement implements CartService {
     private ShoppingCartRepository shoppingCartRepository;
 
     @Override
+    public shoppingCartItem updateCartItem(shoppingCartItem cartItem) {
+        shoppingCartItem existingCartItem = cartRepository.findById(cartItem.getId())
+                .orElseThrow(() -> new RuntimeException("Cart item not found with ID: " + cartItem.getId()));
+
+        existingCartItem.setQty(cartItem.getQty());
+
+        return cartRepository.save(existingCartItem);
+    }
+
+
+    @Override
+    public shoppingCartItem findCartItem(int cartId, int productId) {
+        return cartRepository.findCartItem(cartId, productId);
+    }
+
+    @Override
     public shoppingCartItem addProductCart(CartDTO productCart) {
         // Fetch the ProductItem entity using the productItemId
         productItem productItem = productItemRepository.findById(productCart.getProductItemId())

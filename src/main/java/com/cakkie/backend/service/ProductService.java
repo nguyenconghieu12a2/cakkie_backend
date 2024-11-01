@@ -11,6 +11,7 @@ public interface ProductService {
       List<Object[]> getAllProducts();
       List<productItem> getAllProductItems();
       List<Object[]> getProductById(int id);
+      List<DescriptionDTO> getProductDescriptionsById(int id);
 //      List<ProductDTO> getProductsById(int id);
       List<Object[]> getProductDescriptionById(int id);
       CouponDTO getCouponById(int id);

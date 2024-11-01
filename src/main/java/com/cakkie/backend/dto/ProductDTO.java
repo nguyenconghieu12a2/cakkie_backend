@@ -17,6 +17,8 @@ public class ProductDTO {
     public ProductDTO() {
     }
 
+
+
     public ProductDTO(int productID, int productItemId, String name, String description, String categoryName, long price, String productImage, int productRating, String size, long quantityStock, double discount) {
         this.productID = productID;
         this.productItemId = productItemId;
@@ -39,11 +41,12 @@ public class ProductDTO {
         this.discount = discount;
     }
 
-    public ProductDTO(int productID, String name, String description, long price) {
+    public ProductDTO(int productID, String name, String description, long price, String productImage) {
         this.productID = productID;
         this.name = name;
         this.description = description;
         this.price = price;
+        this.productImage = productImage;
     }
 
     public ProductDTO(int productID, String name, String description, String categoryName, long price) {

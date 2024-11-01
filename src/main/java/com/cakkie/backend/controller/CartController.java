@@ -22,10 +22,18 @@ public class CartController {
 
     @PostMapping(path="addToCart", consumes = {"application/json"})
     public ResponseEntity<shoppingCartItem> addToCart(@RequestBody CartDTO productCartDTO) {
-        shoppingCartItem savedItem = cartService.addProductCart(productCartDTO);
-        return ResponseEntity.ok(savedItem);
-    }
+        shoppingCartItem existingItem = cartService.findCartItem(productCartDTO.getCartId(), productCartDTO.getProductItemId());
 
+        if (existingItem != null) {
+            int newQuantity = existingItem.getQty() + productCartDTO.getQuantity();
+            existingItem.setQty(newQuantity);
+            shoppingCartItem savedItem = cartService.updateCartItem(existingItem);
+            return ResponseEntity.ok(savedItem);
+        } else {
+            shoppingCartItem savedItem = cartService.addProductCart(productCartDTO);
+            return ResponseEntity.ok(savedItem);
+        }
+    }
     @PostMapping(path = "deleteCartItem", consumes = {"application/json"})
     public void deleteCartItem(@RequestBody CartDTO productCartDTO) {
          cartService.deleteProductCart(productCartDTO.getCartId());

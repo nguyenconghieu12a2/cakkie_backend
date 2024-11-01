@@ -28,32 +28,32 @@ public class ProductController{
     public  List<ProductDTO> getAllProduct(){
         return productService.getAllProduct();
     }
-    @GetMapping("/Product/All")
-    public List<productItem> getAllProductItems() {
-        return productService.getAllProductItems();
-    }
-
-    @GetMapping("/Product/Products")
-    public List<products> getAllProducts() {
-        List<Object[]> results = productService.getAllProducts();
-        List<products> products = new ArrayList<>();
-        for (Object[] result : results) {
-            products product = new products();
-            product.setProductID((int) result[0]);
-            product.setName((String) result[1]);
-            product.setDescription((String) result[2]);
-            product.setCategoryName((String) result[3]);
-            product.setPrice((Long) result[4]);
-            product.setProductImage((String) result[5]);
-//            product.setProductRating((int) result[6]);
-            product.setSize((String) result[7]);
-            product.setQuantityStock((long) result[8]);
-            product.setDesInfo((String) result[9]);
-            product.setDesTitleName((String) result[10]);
-            products.add(product);
-        }
-        return products;
-    }
+//    @GetMapping("/Product/All")
+//    public List<productItem> getAllProductItems() {
+//        return productService.getAllProductItems();
+//    }
+//
+//    @GetMapping("/Product/Products")
+//    public List<products> getAllProducts() {
+//        List<Object[]> results = productService.getAllProducts();
+//        List<products> products = new ArrayList<>();
+//        for (Object[] result : results) {
+//            products product = new products();
+//            product.setProductID((int) result[0]);
+//            product.setName((String) result[1]);
+//            product.setDescription((String) result[2]);
+//            product.setCategoryName((String) result[3]);
+//            product.setPrice((Long) result[4]);
+//            product.setProductImage((String) result[5]);
+////            product.setProductRating((int) result[6]);
+//            product.setSize((String) result[7]);
+//            product.setQuantityStock((long) result[8]);
+//            product.setDesInfo((String) result[9]);
+//            product.setDesTitleName((String) result[10]);
+//            products.add(product);
+//        }
+//        return products;
+//    }
 
     @GetMapping("/Product/{id}")
     public ProductResponse getProducts(@PathVariable String id) {
@@ -79,6 +79,7 @@ public class ProductController{
                 product.setSize((String) result[7]);
                 product.setQuantityStock((long) result[8]);
                 product.setDiscount((double) result[9]);
+                product.setProductItemId((int) result[10]);
                 product.setDescriptions(new ArrayList<>());
                 productList.add(product);
         }
@@ -127,5 +128,6 @@ public class ProductController{
 
     @GetMapping("orderItem/{productId}")
     public List<OrderItemDTO> getOrderItemsByOrderId(@PathVariable String orderId) {return productService.getOrderItemsByOrderId(Integer.parseInt(orderId));}
+
 
 }

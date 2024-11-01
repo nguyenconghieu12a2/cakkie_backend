@@ -32,6 +32,11 @@ public class ProductImplement implements ProductService {
         return productRepository.getProductById(id);
     }
 
+    @Override
+    public List<DescriptionDTO> getProductDescriptionsById(int id) {
+        return productRepository.getProductDescriptionsById(id);
+    }
+
 //    @Override
 //    public List<ProductDTO> getProductsById(int id) {
 //        return productRepository.getProductsById(id);
