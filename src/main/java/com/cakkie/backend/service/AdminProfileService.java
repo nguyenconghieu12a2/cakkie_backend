@@ -37,10 +37,25 @@ public class AdminProfileService {
         }
         // Save the file to the directory
         String originalFilename = imageFile.getOriginalFilename();
-        Path path = Paths.get(IMG_URLL + originalFilename);
-        Files.write(path, imageFile.getBytes());
+        String baseName = originalFilename != null ? originalFilename.replaceAll("\\.[^.]+$", "") : "image";
+        String extension = originalFilename != null && originalFilename.contains(".")
+                ? originalFilename.substring(originalFilename.lastIndexOf("."))
+                : "";
 
-        return originalFilename;
+        // Initialize the file path with the original name
+        Path path = Paths.get(IMG_URLL + originalFilename);
+        int counter = 1;
+
+        // Check if the file with this name already exists, and modify the name if necessary
+        while (Files.exists(path)) {
+            String newFilename = baseName + "(" + counter + ")" + extension;
+            path = Paths.get(IMG_URLL + newFilename);
+            counter++;
+        }
+
+        // Save the file with the final available name
+        Files.write(path, imageFile.getBytes());
+        return path.getFileName().toString();
     }
 
     public AdminProfileDTO updateAdminProfile(int id, String firstName, String lastName, String username, String email, MultipartFile imageFile) throws IOException {
