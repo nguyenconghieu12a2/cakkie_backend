@@ -10,17 +10,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "productDesInfo")
-public class productDesInfo {
+public class productDesInfoTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int desInfoID;
     @ManyToOne
     @JoinColumn(name = "desTitleID", nullable = false)
-    private productDesTitle desTitleID;
+    private productDesTitleTable desTitleId;
     @ManyToOne
     @JoinColumn(name = "proID", nullable = false)
     private product proID;
-    @Column(name = "desInfo", nullable = false)
+    @Column(name = "des_info", nullable = false)
     private String desInfo;
     @Column(name = "is_deleted", nullable = false)
     private int isDeleted;

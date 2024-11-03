@@ -12,15 +12,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "productDesTitle")
-public class productDesTitle {
+public class productDesTitleTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int desTitleID;
     @Column(name = "desTitleName", nullable = false)
-    private String desTitleName;
+    private String desTitlename;
     @Column(name = "is_deleted", nullable = false)
     private int isDeleted;
 
-    @OneToMany(mappedBy = "desTitleID")
-    private List<productDesInfo> productDesInfoList;
+    @OneToMany(mappedBy = "desTitleId")
+    private List<productDesInfoTable> productDesInfoList;
 }

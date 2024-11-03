@@ -1,22 +1,25 @@
 package com.cakkie.backend.controller;
 
 
+import com.cakkie.backend.dto.product.ProductDTO;
 import com.cakkie.backend.service.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/product")
+@CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("/api")
+@RequiredArgsConstructor
 public class ProductController {
-//    @Autowired
-//    private ProductService productServices;
-//
-//    @PostMapping("/getAllProduct")
-//    public ResponseEntity<?> getAllProduct() {
-//        return new ResponseEntity<>(productServices.getAllProduct(), HttpStatus.OK);
-//    }
+    private final ProductService productServices;
+
+    @GetMapping("/getAllProduct")
+    public ResponseEntity<List<ProductDTO>> getAllProduct() {
+        List<ProductDTO> products = productServices.getAllProducts();
+        return ResponseEntity.ok(products);
+    }
 }

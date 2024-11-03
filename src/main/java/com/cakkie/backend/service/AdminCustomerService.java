@@ -8,15 +8,11 @@ import com.cakkie.backend.repository.CustomerRepo;
 import com.cakkie.backend.exception.CustomerNotFoundException;
 import com.cakkie.backend.dto.CustomerDTO;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class CustomerService {
+public class AdminCustomerService {
     private final CustomerRepo customerRepo;
 
     public List<CustomerDTO> getAllCustomers(){

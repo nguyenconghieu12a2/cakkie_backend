@@ -31,7 +31,7 @@ public class product {
     private int isDeleted;
 
     @OneToMany(mappedBy = "proID")
-    private List<productDesInfo> productDesInfoList;
+    private List<productDesInfoTable> productDesInfoList;
 
     @OneToMany(mappedBy = "proId")
     private List<productItem> productItemList;
