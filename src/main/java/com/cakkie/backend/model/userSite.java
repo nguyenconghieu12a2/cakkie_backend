@@ -49,6 +49,9 @@ public class userSite {
     @Column(name = "password", nullable = true, length = 32)
     private String password;
 
+    @Column(name = "banned_reason", nullable = true, columnDefinition = "TEXT")
+    private String bannedReason;
+
     @ManyToOne
     @JoinColumn(name = "status")
     private userStatus statusId;

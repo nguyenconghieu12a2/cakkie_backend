@@ -1,27 +1,18 @@
-package com.cakkie.backend.api.controller;
+package com.cakkie.backend.controller;
 
-import com.cakkie.backend.api.model.LoginBody;
-import com.cakkie.backend.api.model.LoginResponse;
-import com.cakkie.backend.api.model.RegistrationBody;
+import com.cakkie.backend.dto.LoginBody;
+import com.cakkie.backend.dto.LoginResponse;
+import com.cakkie.backend.dto.RegistrationBody;
 import com.cakkie.backend.exception.UserAlreadyExistException;
-import com.cakkie.backend.model.userSite;
 import com.cakkie.backend.service.UserService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 
 @RestController

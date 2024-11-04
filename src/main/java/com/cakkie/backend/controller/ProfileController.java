@@ -1,7 +1,7 @@
-package com.cakkie.backend.api.controller;
+package com.cakkie.backend.controller;
 
-import com.cakkie.backend.api.model.ChangePasswordBody;
-import com.cakkie.backend.api.model.EditBody;
+import com.cakkie.backend.dto.ChangePasswordBody;
+import com.cakkie.backend.dto.EditBody;
 import com.cakkie.backend.model.userSite;
 import com.cakkie.backend.service.UserService;
 import jakarta.validation.Valid;

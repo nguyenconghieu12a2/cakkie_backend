@@ -1,7 +1,7 @@
 package com.cakkie.backend.service;
 
-import com.cakkie.backend.api.model.AddressBody;
-import com.cakkie.backend.api.model.AddressResponse;
+import com.cakkie.backend.dto.AddressBody;
+import com.cakkie.backend.dto.AddressResponse;
 import com.cakkie.backend.model.*;
 import com.cakkie.backend.repository.*;
 import org.springframework.stereotype.Service;

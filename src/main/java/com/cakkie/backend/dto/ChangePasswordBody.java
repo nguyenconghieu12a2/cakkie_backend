@@ -1,4 +1,4 @@
-package com.cakkie.backend.api.model;
+package com.cakkie.backend.dto;
 
 public class ChangePasswordBody {
     private String email;

@@ -1,8 +1,8 @@
 package com.cakkie.backend.service;
 
-import com.cakkie.backend.api.model.EditBody;
-import com.cakkie.backend.api.model.LoginBody;
-import com.cakkie.backend.api.model.RegistrationBody;
+import com.cakkie.backend.dto.EditBody;
+import com.cakkie.backend.dto.LoginBody;
+import com.cakkie.backend.dto.RegistrationBody;
 import com.cakkie.backend.exception.UserAlreadyExistException;
 import com.cakkie.backend.model.userSite;
 import com.cakkie.backend.model.userStatus;
@@ -218,14 +218,6 @@ public class UserService {
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Email not found.");
         }
-    }
-
-    public boolean verifyOtp(String email, String otp) {
-        return otp.equals(otpCache.get(email));
-    }
-
-    public void clearOtp(String email) {
-        otpCache.remove(email);
     }
 
     public String verifyOtpAndGenerateResetLink(String email, String otp) {

@@ -1,9 +1,9 @@
-package com.cakkie.backend.api.controller;
+package com.cakkie.backend.controller;
 
-import com.cakkie.backend.api.model.AddressBody;
-import com.cakkie.backend.api.model.AddressResponse;
-import com.cakkie.backend.api.model.DistrictBody;
-import com.cakkie.backend.api.model.WardBody;
+import com.cakkie.backend.dto.AddressBody;
+import com.cakkie.backend.dto.AddressResponse;
+import com.cakkie.backend.dto.DistrictBody;
+import com.cakkie.backend.dto.WardBody;
 import com.cakkie.backend.model.districts;
 import com.cakkie.backend.model.provinces;
 import com.cakkie.backend.model.userAddress;
