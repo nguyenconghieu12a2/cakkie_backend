@@ -71,6 +71,23 @@ public interface ProductRepository  extends JpaRepository<product, Long>{
             "WHERE co.id = :id")
     CouponDTO getCouponById(@Param("id") int id);
 
+    @Query(value = "SELECT new com.cakkie.backend.dto.CouponDTO( " +
+            "co.id, co.code, co.name, co.quantity ,co.priceDiscount, co.startDate, co.endDate) " +
+            "FROM coupons co ")
+    List<CouponDTO> getCoupons();
+
+    @Query(value = "SELECT new com.cakkie.backend.dto.PaymentMethodDTO( " +
+            "pm.id, pm.name) " +
+            "FROM paymentMethod pm ")
+    List<PaymentMethodDTO> getPaymentMethods();
+
+    @Query(value = "SELECT new com.cakkie.backend.dto.ShippingMethodDTO(" +
+            "sm.id, sm.name, sm.price)" +
+            "FROM shippingMethod sm " +
+            "WHERE sm.isDeleted = 1")
+    List<ShippingMethodDTO> getShippingMethod();
+
+
     @Query (value = "SELECT new com.cakkie.backend.dto.productCartDTO(" +
             "pci.id, ui.id, pc.id, pi.id, pci.qty, pci.note)" +
             "FROM shoppingCartItem pci " +

@@ -77,4 +77,19 @@ public class ProductImplement implements ProductService {
         return productRepository.getOrderItemsByOrderId(orderId);
     }
 
+    @Override
+    public List<CouponDTO> getCoupons() {
+        return productRepository.getCoupons();
+    }
+
+    @Override
+    public List<ShippingMethodDTO> getShippingMethod() {
+        return productRepository.getShippingMethod();
+    }
+
+    @Override
+    public List<PaymentMethodDTO> getPaymentMethods() {
+        return productRepository.getPaymentMethods();
+    }
+
 }

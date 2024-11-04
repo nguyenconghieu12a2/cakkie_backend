@@ -2,6 +2,7 @@ package com.cakkie.backend.service;
 
 import com.cakkie.backend.dto.*;
 import com.cakkie.backend.model.productItem;
+import com.cakkie.backend.model.shippingMethod;
 
 import java.util.List;
 
@@ -20,4 +21,7 @@ public interface ProductService {
       List<ProductDTO> getProductItemById(int productId);
       List<OrderDTO> getOrdersByUserId(int userId);
       List<OrderItemDTO> getOrderItemsByOrderId(int orderId);
+      List<CouponDTO> getCoupons();
+      List<ShippingMethodDTO> getShippingMethod();
+      List<PaymentMethodDTO> getPaymentMethods();
 }

@@ -114,6 +114,21 @@ public class ProductController{
         return productService.getCouponById(Integer.parseInt(id));
     }
 
+    @GetMapping("coupon/")
+    public List<CouponDTO> getCouponsAll() {
+        return productService.getCoupons();
+    }
+
+    @GetMapping("shippingMethod/")
+    public List<ShippingMethodDTO> getShippingMethodAll() {
+        return productService.getShippingMethod();
+    }
+
+    @GetMapping("getPaymentMethods/")
+    public List<PaymentMethodDTO> getPaymentMethods() {
+        return productService.getPaymentMethods();
+    }
+
     @GetMapping("cart/{userId}")
     public List<productCartDTO> getCart(@PathVariable String userId) { return productService.getProductCart(Integer.parseInt(userId)); }
 
