@@ -1,5 +1,10 @@
 package com.cakkie.backend.service;
 
-public interface OrderService {
+import com.cakkie.backend.dto.OrderDTO;
+import com.cakkie.backend.model.shopOrder;
 
+import java.util.List;
+
+public interface OrderService {
+    shopOrder createOrder(OrderDTO order);
 }

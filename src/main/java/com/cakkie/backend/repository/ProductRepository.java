@@ -127,7 +127,7 @@ public interface ProductRepository  extends JpaRepository<product, Long>{
     List<productItem> getProductItemsByPriceRange(@Param("minPrice") long minPrice, @Param("maxPrice") long maxPrice);
 
     @Query(value = "SELECT new com.cakkie.backend.dto.OrderDTO(" +
-            "so.id, us.id, sm.name, adr.id, pmt.name, os.status, so.orderDate, so.arrivedDate, so.canceledDate)" +
+            "so.id, us.id, sm.name, adr.id, pmt.name, os.id, so.orderDate, so.arrivedDate, so.canceledDate)" +
             "FROM shopOrder so " +
             "JOIN so.shippingAddressId adr " +
             "JOIN so.userId us " +
