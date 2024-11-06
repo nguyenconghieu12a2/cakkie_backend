@@ -23,6 +23,8 @@ public class OrderImplement implements OrderService {
     private OrderStatusRepository orderStatusRepository;
 
     @Autowired
+    private orderLineRepository orderLineRepository;
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -33,6 +35,9 @@ public class OrderImplement implements OrderService {
 
     @Autowired
     private ShippingMethodRepository shippingMethodRepository;
+    @Autowired
+    private ProductItemRepository productItemRepository;
+
     public shopOrder createOrder(OrderDTO orderDTO) {
         orderStatus status = orderStatusRepository.findById(2)
                 .orElseThrow(() -> new RuntimeException("Cart item not found with ID: " + 1));
@@ -45,7 +50,6 @@ public class OrderImplement implements OrderService {
         shippingMethod shippingMethod = shippingMethodRepository.findById(1)
                 .orElseThrow(() -> new RuntimeException("Cart item not found with ID: " + 1));
         shopOrder order = new shopOrder();
-        // ... set other fields from orderDto, including order_status_id = 1
         order.setUserId(user);
 
         order.setShippingMethodId(shippingMethod);
@@ -59,18 +63,20 @@ public class OrderImplement implements OrderService {
         // Save the order first to get the generated ID
         order = orderRepository.save(order);
 
-        // Create and save order lines
-//        shopOrder finalOrder = order;
-//        List<orderLine> orderLines = orderDTO.getProductItemIds().stream()
-//                .map(productId -> {
-//                    orderLine orderLine = new orderLine();
-//                    orderLine.setOrderId(finalOrder);
-//                    orderLine.setProductItemId(productId);
-//                    // ... set other fields for order line
-//                    return orderLine;
-//                })
-//                .collect(Collectors.toList());
-//        orderLineRepository.saveAll(orderLines);
+        shopOrder finalOrder = order;
+        List<orderLine> orderLines = orderDTO.getOrderLineList().stream()
+                .map(productId -> {
+                    orderLine orderLine = new orderLine();
+                    orderLine.setOrderId(finalOrder);
+                    orderLine.setProductItemId(productItemRepository.findById(productId.getProductItemId()).orElseThrow(() -> new RuntimeException("Product item not found with ID: " + productId.getProductItemId())));
+                    orderLine.setPrice(productId.getPrice());
+                    orderLine.setQty(productId.getQty());
+                    orderLine.setDiscountPrice(productId.getDiscountPrice());
+
+                    return orderLine;
+                })
+                .collect(Collectors.toList());
+        orderLineRepository.saveAll(orderLines);
 
         return order;
     }

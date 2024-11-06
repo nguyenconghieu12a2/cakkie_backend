@@ -1,10 +1,12 @@
 package com.cakkie.backend.dto;
 
+import com.cakkie.backend.model.orderLine;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,7 +22,7 @@ public class OrderDTO {
     private Date orderDate;
     private Date arrivedDate;
     private Date canceledDate;
-
+    private List<OrderItemDTO> orderLineList;
 
 
     public OrderDTO(int orderId, int userId, String shippingMethod, int shippingAddress, String paymentMethod, int orderStatus, Date orderDate, Date arrivedDate, Date canceledDate) {

@@ -15,7 +15,7 @@ public class OrderItemDTO {
     private int productItemId;
     private int qty;
     private long price;
-    private long discount_price;
+    private long discountPrice;
     private String note;
 
 
