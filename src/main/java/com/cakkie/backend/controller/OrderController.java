@@ -26,7 +26,7 @@ public class OrderController {
 
     @GetMapping("/api/order/{id}")
     public ResponseEntity<OrderDTO> getOrderById(@PathVariable int id) {
-        OrderDTO orderDTO = orderService.getOrdersById(id);
-        return ResponseEntity.ok(orderDTO);
+        OrderDTO order = orderService.getOrderById(id);
+        return new ResponseEntity<>(order, HttpStatus.OK);
     }
 }

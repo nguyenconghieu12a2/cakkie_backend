@@ -13,12 +13,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryImplement implements CategoryService {
 
-    private final CategoryRepository categoryRepository; // Use constructor injection
+    private final CategoryRepository categoryRepository;
 
     //Level 1
     @Override
     public List<CategoryDTO> getAllCategories() {
-        return categoryRepository.getAllMainCategory(); // Ensure this method exists in your repository
+        return categoryRepository.getAllMainCategory();
     }
 
     @Override
@@ -51,6 +51,14 @@ public class CategoryImplement implements CategoryService {
                 .orElseThrow(() -> new CategoryNotFound("Category not found with ID: " + id));
     }
 
+    @Override
+    public category updateSubCategory(int id, category category) {
+        category existSubCate = categoryRepository.findById(id)
+                .orElseThrow(() -> new CategoryNotFound("Category not found with ID: " + id));
+        existSubCate.setCateName(category.getCateName());
+        return categoryRepository.save(existSubCate);
+    }
+
     //Level 3
     @Override
     public List<CategoryDTO> getSubSubCategoriesByParentId(Integer parentId) {
@@ -58,13 +66,15 @@ public class CategoryImplement implements CategoryService {
     }
 
     @Override
-    public category addSubSubCategory(category category) {
-        return categoryRepository.save(category);
-    }
-
-    @Override
     public category findSubCategoryById(Integer id) {
         return categoryRepository.findById(id)
                 .orElseThrow(() -> new CategoryNotFound("Category not found with ID: " + id));
     }
+
+    @Override
+    public category addSubSubCategory(category category) {
+        return categoryRepository.save(category);
+    }
+
+
 }

@@ -10,8 +10,12 @@ import java.util.List;
 @Service
 @Getter
 public class OrderDTO {
+    private int shopId;
     private int id;
     private String fullName;
+    private int totalProduct;
+    private long totalPrice;
+    private long totalDiscount;
     private long price;
     private long discountPrice;
     private String status;
@@ -23,24 +27,26 @@ public class OrderDTO {
     private Date shippedDate;
     private Date arrivalDate;
     private String paymentMethod;
-    private List<String> address;
+    private String address;
+    private List<String> productName;
 
     public OrderDTO() {
     }
 
-    public OrderDTO(int id, String fullName, long price, long discountPrice, String status, String note) {
-        this.id = id;
+    public OrderDTO(int shopId, String fullName, int totalProduct, long totalPrice, long totalDiscount, String status, String note) {
+        this.shopId = shopId;
         this.fullName = fullName;
-        this.price = price;
-        this.discountPrice = discountPrice;
+        this.totalProduct = totalProduct;
+        this.totalPrice  = totalPrice;
+        this.totalDiscount = totalDiscount;
         this.status = status;
         this.note = note;
     }
 
-    public OrderDTO(int id, String fullName, String proName, String shipMethod, Date approvedDate, Date orderDate, Date shippedDate, Date arrivalDate, String paymentMethod, List<String> address) {
+    public OrderDTO(int id, String fullName, List<String> productName, String shipMethod, Date approvedDate, Date orderDate, Date shippedDate, Date arrivalDate, String paymentMethod, String address) {
         this.id = id;
         this.fullName = fullName;
-        this.proName = proName;
+        this.productName = productName;
         this.shipMethod = shipMethod;
         this.approvedDate = approvedDate;
         this.orderDate = orderDate;

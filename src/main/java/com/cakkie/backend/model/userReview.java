@@ -36,7 +36,7 @@ public class userReview {
     private Date approvedDate;
     @Column(name = "valid_date", nullable = true)
     private Date validDate;
-    @Column(name = "isHide", nullable = true)
+    @Column(name = "is_hide", nullable = true)
     private int isHide;
     @Column(name = "is_deleted", nullable = false)
     private int isDeleted;

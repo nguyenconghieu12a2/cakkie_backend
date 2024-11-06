@@ -1,40 +1,38 @@
 package com.cakkie.backend.controller;
 
+
 import com.cakkie.backend.dto.ProductDTO;
+import com.cakkie.backend.model.category;
 import com.cakkie.backend.model.product;
+import com.cakkie.backend.model.productItem;
 import com.cakkie.backend.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("/api")
 @RequiredArgsConstructor
-@CrossOrigin(value = "http://localhost:3000")
 public class ProductController {
+    private final ProductService productServices;
 
-    private final ProductService productService;
-
-    private ProductDTO coverToDto(product product) {
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setId(product.getId());
-        productDTO.setCateName(product.getCategoryID().getCateName());
-        productDTO.setName(product.getName());
-        productDTO.setProductImage(product.getProductImage());
-        productDTO.setQtyInStock(product.getProductItemList().getFirst().getQtyInStock());
-        productDTO.setPrice(product.getProductItemList().getFirst().getPrice());
-        productDTO.setSize(product.getProductItemList().getFirst().getSize());
-        productDTO.setProductItemImage(product.getProductItemList().getFirst().getProductImage());
-        productDTO.setIsDeleted(product.getIsDeleted());
-        return productDTO;
+    @GetMapping("/product")
+    public ResponseEntity<List<ProductDTO>> getAllProduct() {
+        List<ProductDTO> products = productServices.getAllProducts();
+        return ResponseEntity.ok(products);
     }
 
-    @GetMapping("/api/product")
-    public ResponseEntity<List<ProductDTO>> getAllProducts() {
-        List<ProductDTO> product = productService.getAllProducts();
+    @GetMapping("/product/{id}")
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable int id) {
+        ProductDTO product = productServices.getProductById(id);
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
+
+
 }

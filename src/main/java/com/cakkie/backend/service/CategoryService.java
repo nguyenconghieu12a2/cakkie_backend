@@ -15,6 +15,7 @@ public interface CategoryService {
     List<CategoryDTO> getSubCategoriesByParentId(Integer parentId);
     category addSubCategory(category category);
     category findCategoryById(Integer id);
+    category updateSubCategory(int id, category category);
 
     // Level 3
     List<CategoryDTO> getSubSubCategoriesByParentId(Integer parentId);

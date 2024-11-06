@@ -59,13 +59,13 @@ public class CategoryController {
     }
 
     //Level2
-    @GetMapping("/api/category/{parentId}")
+    @GetMapping("/api/sub-category/{parentId}")
     public ResponseEntity<List<CategoryDTO>> getSubCategories(@PathVariable Integer parentId) {
         List<CategoryDTO> subCategories = categoryService.getSubCategoriesByParentId(parentId);
         return new ResponseEntity<>(subCategories, HttpStatus.OK);
     }
 
-    @PostMapping("api/category/{parentId}")
+    @PostMapping("api/sub-category/{parentId}")
     public ResponseEntity<CategoryDTO> createSubCategory(@PathVariable Integer parentId, @RequestBody category subCategory) {
         category parentCategory = categoryService.findCategoryById(parentId);
         subCategory.setParentId(parentCategory);
@@ -76,8 +76,8 @@ public class CategoryController {
     //Level 3
     @GetMapping("/api/category/sub-category/{parentId}")
     public ResponseEntity<List<CategoryDTO>> getSubCategoriesByParentId(@PathVariable Integer parentId) {
-        List<CategoryDTO> subCategories = categoryService.getSubSubCategoriesByParentId(parentId);
-        return new ResponseEntity<>(subCategories, HttpStatus.OK);    
+        List<CategoryDTO> subSubCategories = categoryService.getSubSubCategoriesByParentId(parentId);
+        return new ResponseEntity<>(subSubCategories, HttpStatus.OK);
     }
     
     @PostMapping("/api/category/sub-category/{parentId}")
