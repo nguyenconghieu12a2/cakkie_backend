@@ -30,6 +30,19 @@ public class CouponController {
         return dto;
     }
 
+    private coupons convertToEntity(CouponDTO dto) {
+        coupons coupon = new coupons();
+        coupon.setId(dto.getId());
+        coupon.setCode(dto.getCode());
+        coupon.setName(dto.getName());
+        coupon.setQuantity(dto.getQuantity());
+        coupon.setPriceDiscount(dto.getPriceDiscount());
+        coupon.setStartDate(dto.getStartDate());
+        coupon.setEndDate(dto.getEndDate());
+        coupon.setIsDeleted(dto.getIsDeleted());
+        return coupon;
+    }
+
     @GetMapping("/api/coupons")
     public ResponseEntity<List<CouponDTO>> getAllCoupons() {
         List<CouponDTO> coupons = couponService.getAllCoupons();
@@ -49,8 +62,9 @@ public class CouponController {
     }
 
     @PutMapping("/api/coupons/update/{id}")
-    public ResponseEntity<CouponDTO> updateCoupon(@PathVariable int id, @RequestBody coupons coupon) {
-        coupons updatedCoupon = couponService.updateCoupon(id, coupon);
+    public ResponseEntity<CouponDTO> updateCoupon(@PathVariable int id, @RequestBody CouponDTO couponDTO) {
+        coupons updateCouponEntity = convertToEntity(couponDTO);
+        coupons updatedCoupon = couponService.updateCoupon(id, updateCouponEntity);
         return new ResponseEntity<>(convertToDTO(updatedCoupon), HttpStatus.OK);
     }
 

@@ -3,8 +3,13 @@ package com.cakkie.backend.service;
 import com.cakkie.backend.dto.ProductDTO;
 import com.cakkie.backend.dto.ProductInfoDTO;
 import com.cakkie.backend.dto.ProductItemDTO;
+import com.cakkie.backend.exception.CategoryNotFound;
 import com.cakkie.backend.exception.ProductNotFound;
+import com.cakkie.backend.model.category;
+import com.cakkie.backend.model.product;
+import com.cakkie.backend.model.productItem;
 import com.cakkie.backend.repository.CategoryRepository;
+import com.cakkie.backend.repository.ProductItemRepository;
 import com.cakkie.backend.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,21 +26,39 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ProductService {
 
-    private static final String IMG_URL = "D:/CAKKE_PROJECT/cakkie_frontend/public/images/";
+    private static final String IMG_URLL = "D:/CAKKE_PROJECT/cakkie_frontend/public/images/";
 
     private final ProductRepository productRepo;
     private final CategoryRepository categoryRepo;
+    private final ProductItemRepository productItemRepo;
 
-    private String saveImg(MultipartFile file) throws IOException {
-        File dir = new File(IMG_URL);
-        if (!dir.exists()) {
-            dir.mkdirs();
+    private String saveImage(MultipartFile imageFile) throws IOException {
+        if (imageFile == null || imageFile.isEmpty()) {
+            return ""; // Return an empty string if no image is provided
         }
 
-        String fileName = file.getOriginalFilename();
-        Path path = Paths.get(IMG_URL + fileName);
-        Files.write(path, file.getBytes());
-        return fileName;
+        File directory = new File(IMG_URLL);
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+        String originalFilename = imageFile.getOriginalFilename();
+        String baseName = originalFilename != null ? originalFilename.replaceAll("\\.[^.]+$", "") : "image";
+        String extension = originalFilename != null && originalFilename.contains(".")
+                ? originalFilename.substring(originalFilename.lastIndexOf("."))
+                : "";
+
+        Path path = Paths.get(IMG_URLL + originalFilename);
+        int counter = 1;
+
+        // Check if the file with this name already exists, and modify the name if necessary
+        while (Files.exists(path)) {
+            String newFilename = baseName + "(" + counter + ")" + extension;
+            path = Paths.get(IMG_URLL + newFilename);
+            counter++;
+        }
+
+        Files.write(path, imageFile.getBytes());
+        return path.getFileName().toString();
     }
 
     public List<ProductDTO> getAllProducts() {
@@ -93,20 +116,20 @@ public class ProductService {
 
         Object[] row = productData.get(0);
         ProductDTO product = new ProductDTO(
-                (Integer) row[0], // productId (p.id)
-                "",  // productName (p.description)
-                0,                // cateId - Set appropriate value if available
-                "",               // cateName (pdt.desTitleName) - Set if needed
-                (String) row[1],  // description (pdi.desInfo)
-                "",               // productImage - Set if available
-                0,                // productRating - Set if available
-                new ArrayList<>(), // productItems - not needed as per original design
-                new ArrayList<>(), // productInfo - to be populated
-                0,                // discountId - Set if applicable
-                "",               // discountName - Set if available
-                0,                // discountRate - Set if available
-                "",               // startDate - Set if applicable
-                ""                // endDate - Set if applicable
+                (Integer) row[0],
+                "",
+                0,
+                "",
+                (String) row[1],
+                "",
+                0,
+                new ArrayList<>(),
+                new ArrayList<>(),
+                0,
+                "",
+                0,
+                "",
+                ""
         );
 
         // Use a Set for unique titles
@@ -128,6 +151,41 @@ public class ProductService {
         return product;
     }
 
+    public product addProduct(int categoryId, String name, String description, MultipartFile productImage, int productRating, int isDelete, String size, long qtyInStock, long price) throws IOException {
+        String imgPath = (productImage != null) ? saveImage(productImage) : null;
 
+        // Create a new product and set properties
+        product newProduct = new product();
+        category cate = categoryRepo.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid category"));
 
+        newProduct.setCategoryID(cate);
+        newProduct.setName(name);
+        newProduct.setDescription(description);
+        newProduct.setProductImage(imgPath);
+        newProduct.setProductRating(productRating);
+        newProduct.setIsDeleted(isDelete);
+
+        product savedProduct = productRepo.save(newProduct);
+
+        // Ensure productItemList is initialized
+        if (savedProduct.getProductItemList() == null) {
+            savedProduct.setProductItemList(new ArrayList<>());
+        }
+
+        // Create and save productItem
+        productItem newProductItem = new productItem();
+        newProductItem.setProId(savedProduct);
+        newProductItem.setSize(size);
+        newProductItem.setQtyInStock(qtyInStock);
+        newProductItem.setPrice(price);
+        newProductItem.setProductImage(imgPath);
+        productItemRepo.save(newProductItem);
+
+        // Add the item to the product's item list
+        savedProduct.getProductItemList().add(newProductItem);
+        productRepo.save(savedProduct);
+
+        return savedProduct;
+    }
 }

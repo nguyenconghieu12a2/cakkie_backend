@@ -41,8 +41,10 @@ public class CategoryImplement implements CategoryService {
     }
 
     @Override
-    public category addSubCategory(category category) {
-        return categoryRepository.save(category);
+    public category addSubCategory(Integer parentId, category subCategory) {
+        category parentCategory = findCategoryById(parentId);
+        subCategory.setParentId(parentCategory);
+        return categoryRepository.save(subCategory);
     }
 
     @Override
@@ -72,9 +74,10 @@ public class CategoryImplement implements CategoryService {
     }
 
     @Override
-    public category addSubSubCategory(category category) {
-        return categoryRepository.save(category);
+    public category addSubSubCategory(Integer parentId, category subSubCategory) {
+        category parentCate = findSubCategoryById(parentId);
+        subSubCategory.setParentId(parentCate);
+        return categoryRepository.save(subSubCategory);
     }
-
 
 }

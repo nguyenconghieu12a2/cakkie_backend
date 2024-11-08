@@ -13,12 +13,12 @@ public interface CategoryService {
 
     // Level2
     List<CategoryDTO> getSubCategoriesByParentId(Integer parentId);
-    category addSubCategory(category category);
+    category addSubCategory(Integer parentId, category category);
     category findCategoryById(Integer id);
     category updateSubCategory(int id, category category);
 
     // Level 3
     List<CategoryDTO> getSubSubCategoriesByParentId(Integer parentId);
-    category addSubSubCategory(category category);
+    category addSubSubCategory(Integer parentId, category category);
     category findSubCategoryById(Integer id);
 }

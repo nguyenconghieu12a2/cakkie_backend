@@ -59,32 +59,42 @@ public class CategoryController {
     }
 
     //Level2
-    @GetMapping("/api/sub-category/{parentId}")
+    @GetMapping("/api/category/{parentId}/sub-category")
     public ResponseEntity<List<CategoryDTO>> getSubCategories(@PathVariable Integer parentId) {
         List<CategoryDTO> subCategories = categoryService.getSubCategoriesByParentId(parentId);
         return new ResponseEntity<>(subCategories, HttpStatus.OK);
     }
 
-    @PostMapping("api/sub-category/{parentId}")
-    public ResponseEntity<CategoryDTO> createSubCategory(@PathVariable Integer parentId, @RequestBody category subCategory) {
-        category parentCategory = categoryService.findCategoryById(parentId);
-        subCategory.setParentId(parentCategory);
-        category savedCategory = categoryService.addSubCategory(subCategory);
+    @PostMapping("/api/category/{parentId}/sub-category")
+    public ResponseEntity<CategoryDTO> createSubCategory(@PathVariable Integer parentId, @RequestBody CategoryDTO subCategoryDTO) {
+        category parentCategory = categoryService.findCategoryById(parentId); // Find the parent category
+
+        category subCategory = new category();
+        subCategory.setCateName(subCategoryDTO.getCateName());
+        subCategory.setIsDeleted(subCategoryDTO.getIsDeleted());
+        subCategory.setParentId(parentCategory); // Set the parent category
+
+        category savedCategory = categoryService.addSubCategory(parentId, subCategory);
         return new ResponseEntity<>(convertToDTO(savedCategory), HttpStatus.CREATED);
     }
 
     //Level 3
-    @GetMapping("/api/category/sub-category/{parentId}")
+    @GetMapping("/api/category/sub-category/{parentId}/sub-sub-category")
     public ResponseEntity<List<CategoryDTO>> getSubCategoriesByParentId(@PathVariable Integer parentId) {
         List<CategoryDTO> subSubCategories = categoryService.getSubSubCategoriesByParentId(parentId);
         return new ResponseEntity<>(subSubCategories, HttpStatus.OK);
     }
     
-    @PostMapping("/api/category/sub-category/{parentId}")
-    public ResponseEntity<CategoryDTO> createSubCategoryByParentId(@PathVariable Integer parentId, @RequestBody category subSubCategory) {
-        category parentCategory = categoryService.findSubCategoryById(parentId);
-        subSubCategory.setParentId(parentCategory);
-        category savedCategory = categoryService.addSubSubCategory(subSubCategory);
+    @PostMapping("/api/category/sub-category/{parentId}/sub-sub-category")
+    public ResponseEntity<CategoryDTO> createSubSubCategory(@PathVariable Integer parentId, @RequestBody CategoryDTO subSubCategoryDTO) {
+        category parentSubCategory = categoryService.findCategoryById(parentId);
+
+        category subSubCategory = new category();
+        subSubCategory.setCateName(subSubCategoryDTO.getCateName());
+        subSubCategory.setIsDeleted(subSubCategoryDTO.getIsDeleted());
+        subSubCategory.setParentId(parentSubCategory);
+
+        category savedCategory = categoryService.addSubSubCategory(parentId, subSubCategory);
         return new ResponseEntity<>(convertToDTO(savedCategory), HttpStatus.CREATED);
     }
 }

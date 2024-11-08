@@ -3,11 +3,13 @@
     import com.cakkie.backend.model.product;
     import com.cakkie.backend.model.productItem;
     import org.springframework.data.jpa.repository.JpaRepository;
+    import org.springframework.data.jpa.repository.Modifying;
     import org.springframework.data.jpa.repository.Query;
+    import org.springframework.transaction.annotation.Transactional;
 
     import java.util.List;
 
-    public interface ProductRepository extends JpaRepository<productItem, Integer> {
+    public interface ProductRepository extends JpaRepository<product, Integer> {
         @Query(value = "select \n" +
                 "p.id, p.name, c.id, c.cate_name, p.description,p.product_image,p.product_rating,\n" +
                 "[pi].id, [pi].size,[pi].qty_in_stock, [pi].price,\n" +
@@ -32,6 +34,5 @@
                 "where p.id = ?1 AND p.is_deleted = 1\n" +
                 "order by p.id, [pi].id", nativeQuery = true)
         List<Object[]> getProductsById(int id);
-
 
     }

@@ -1,8 +1,12 @@
 package com.cakkie.backend.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Date;
 
-
+@Getter
+@Setter
 public class CouponDTO {
     private int id;
     private String code;
@@ -23,70 +27,6 @@ public class CouponDTO {
         this.priceDiscount = priceDiscount;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.isDeleted = isDeleted;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public long getPriceDiscount() {
-        return priceDiscount;
-    }
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public int getIsDeleted() {
-        return isDeleted;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public void setPriceDiscount(long priceDiscount) {
-        this.priceDiscount = priceDiscount;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
-
-    public void setIsDeleted(int isDeleted) {
         this.isDeleted = isDeleted;
     }
 }
