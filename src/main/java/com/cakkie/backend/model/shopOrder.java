@@ -47,8 +47,8 @@ public class shopOrder {
     private Date arrivedDate;
     @Column(name = "canceled_date", nullable = true)
     private Date canceledDate;
-    @Column(name = "canceled_reason", nullable = true)
-    private Date canceledReason;
+    @Column(name = "canceled_reason", nullable = true, columnDefinition = "TEXT")
+    private String canceledReason;
 
     @OneToMany(mappedBy = "orderId")
     private List<orderLine> orderLinesList;

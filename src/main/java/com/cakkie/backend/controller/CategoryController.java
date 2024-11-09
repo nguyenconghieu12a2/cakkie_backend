@@ -1,6 +1,7 @@
 package com.cakkie.backend.controller;
 
 import com.cakkie.backend.dto.CategoryDTO;
+import com.cakkie.backend.exception.CategoryNotFound;
 import com.cakkie.backend.model.category; // Ensure capitalization
 import com.cakkie.backend.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -78,6 +79,27 @@ public class CategoryController {
         return new ResponseEntity<>(convertToDTO(savedCategory), HttpStatus.CREATED);
     }
 
+    //Delete Level2
+    @GetMapping("/api/view-deleted/sub-category")
+    public ResponseEntity<List<CategoryDTO>> getDeletedSubCategories() {
+        List<CategoryDTO> deletedSubCate = categoryService.getAllDeletedSubCategories();
+        return new ResponseEntity<>(deletedSubCate, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/api/category/{id}/sub-category")
+    public ResponseEntity<String> deleteSubCategory(@PathVariable Integer id) {
+        try {
+            categoryService.deleteSubCategory(id);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Cannot delete subcategory because it has associated products.");
+        } catch (CategoryNotFound e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subcategory not found with ID: " + id);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while deleting the subcategory.");
+        }
+    }
+
     //Level 3
     @GetMapping("/api/category/sub-category/{parentId}/sub-sub-category")
     public ResponseEntity<List<CategoryDTO>> getSubCategoriesByParentId(@PathVariable Integer parentId) {
@@ -96,5 +118,43 @@ public class CategoryController {
 
         category savedCategory = categoryService.addSubSubCategory(parentId, subSubCategory);
         return new ResponseEntity<>(convertToDTO(savedCategory), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/api/sub-sub-category")
+    public ResponseEntity<List<CategoryDTO>> getAllSubSubCategories() {
+        List<CategoryDTO> subSubCate = categoryService.getAllSubSubCategory();
+        return new ResponseEntity<>(subSubCate, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/sub-sub-category/{id}")
+    public ResponseEntity<String> deleteSubSubCategory(@PathVariable Integer id) {
+        try {
+            categoryService.deleteSubSubCategory(id);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Cannot delete subcategory because it has associated products.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while deleting the subcategory.");
+        }
+    }
+
+    //View Deleted
+    //Level 3
+    @GetMapping("/api/view-deleted/sub-sub-category")
+    public ResponseEntity<List<CategoryDTO>> getDeletedSubSubCategories() {
+        List<CategoryDTO> deletedSubSubCate = categoryService.getAllDeletedSubSubCategories();
+        return new ResponseEntity<>(deletedSubSubCate, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/api/recover/sub-sub-category/{id}")
+    public ResponseEntity<String> recoverSubSubCategory(@PathVariable Integer id) {
+        try {
+            categoryService.recoverSubSubCategory(id);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Cannot delete subcategory because it has associated products.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while deleting the subcategory.");
+        }
     }
 }

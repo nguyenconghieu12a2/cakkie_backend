@@ -32,5 +32,4 @@ public class category {
 
     @OneToMany(mappedBy = "categoryID")
     private List<product> productList;
-
 }

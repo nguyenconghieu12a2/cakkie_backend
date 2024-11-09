@@ -24,4 +24,5 @@ public class ProductDTO {
     private int discountRate;
     private String startDate;
     private String endDate;
+    private int isDelete;
 }
