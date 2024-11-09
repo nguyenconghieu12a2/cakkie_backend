@@ -1,5 +1,6 @@
 package com.cakkie.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,6 +33,7 @@ public class coupons {
     @Column(name = "is_deleted", nullable = false)
     private int isDeleted;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "coupons")
     private List<shopOrder> shopOrdersList;
 }
