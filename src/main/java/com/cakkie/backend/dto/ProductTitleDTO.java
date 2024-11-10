@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductInfoDTO {
+public class ProductTitleDTO {
     private int desTitleID;
-    private String desInfo;
+    private String desTitleName;
     private int isDelete;
 }

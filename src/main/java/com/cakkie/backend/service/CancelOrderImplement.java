@@ -34,4 +34,27 @@ public class CancelOrderImplement implements CancelOrderService{
         }
         return new ArrayList<>(cancelMap.values());
     }
+
+
+    public List<CancelOrderDTO> getDetailCancelOrderByUserId(int userId) {
+        List<Object[]> cancelData = cancelOrderRepository.getDetailCancelOrderByUserId(userId);
+        List<CancelOrderDTO> detailedCancelOrders = new ArrayList<>();
+
+        for (Object[] row : cancelData) {
+            CancelOrderDTO detail = new CancelOrderDTO();
+
+            detail.setId((Integer) row[0]); // Order ID
+            detail.setFullName((String) row[1]); // Customer Name
+            detail.setTotalProduct(((Number) row[2]).intValue()); // Total Product
+            detail.setOrderTotal(((Number) row[3]).longValue()); // Order Total
+            detail.setDiscountTotal(((Number) row[4]).longValue()); // Total Discount Price
+            detail.setOrderStatus((String) row[5]); // Order Status
+
+            detailedCancelOrders.add(detail);
+        }
+
+        return detailedCancelOrders;
+    }
+
+
 }

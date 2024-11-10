@@ -64,9 +64,15 @@ public class ProductService {
         List<Object[]> results = productRepo.getAllProducts();
         Map<Integer, ProductDTO> productsMap = new HashMap<>();
 
+        // Debug: Print query result size
+        System.out.println("Total result rows: " + results.size());
+
         for (Object[] row : results) {
-            if (row.length < 18) {
-                continue; // Skip this row if it does not contain all required fields
+            System.out.println("Processing row: " + Arrays.toString(row)); // Debug
+
+            if (row.length < 11) {
+                System.out.println("Skipping row with insufficient columns: " + Arrays.toString(row)); // Debug
+                continue;
             }
 
             int productId = (Integer) row[0];
@@ -80,18 +86,10 @@ public class ProductService {
             String productSize = (String) row[8];
             int quantity = ((Number) row[9]).intValue();
             long price = ((Number) row[10]).longValue();
-            String productTitle = (String) row[11];
-            String productInfo = (String) row[12];
-            int discountId = ((Number) row[13]).intValue();
-            String discountName = (String) row[14];
-            int discountRate = ((Number) row[15]).intValue();
-            String startDate = (String) row[16];
-            String endDate = (String) row[17];
 
             ProductDTO productDTO = productsMap.getOrDefault(productId, new ProductDTO(
                     productId, productName, categoryId, categoryName, description, productImage,
-                    productRating, new ArrayList<>(), new ArrayList<>(),
-                    discountId, discountName, discountRate, startDate, endDate, 1
+                    productRating, new ArrayList<>(), new ArrayList<>()
             ));
 
             ProductItemDTO productItemDTO = new ProductItemDTO(productItemId, productSize, quantity, price);
@@ -99,16 +97,15 @@ public class ProductService {
                 productDTO.getProductItem().add(productItemDTO);
             }
 
-            ProductInfoDTO productInfoDTO = new ProductInfoDTO(productTitle, productInfo);
-            if (!productDTO.getProductInfo().stream().anyMatch(info -> info.getTitle().equals(productTitle))) {
-                productDTO.getProductInfo().add(productInfoDTO);
-            }
-
             productsMap.put(productId, productDTO);
         }
 
+        // Debug: Print the final products map size
+        System.out.println("Total products in map: " + productsMap.size());
+
         return new ArrayList<>(productsMap.values());
     }
+
 
     public ProductDTO getProductById(int id) {
         List<Object[]> productData = productRepo.getProductsById(id);
@@ -127,132 +124,22 @@ public class ProductService {
                 "",
                 0,
                 new ArrayList<>(),
-                new ArrayList<>(),
-                0,
-                "",
-                0,
-                "",
-                "",
-                0
+                new ArrayList<>()
         );
 
         Set<String> titlesSet = new HashSet<>();
 
         for (Object[] rows : productData) {
-            String productTitle = (String) rows[2];
-            String productInfo = (String) rows[3];
-            if (titlesSet.add(productTitle)) {
-                ProductInfoDTO productInfoDTO = new ProductInfoDTO(productTitle, productInfo);
+            int desTitleId = ((Number) rows[2]).intValue();
+            String productInfo = (String) rows[4];
+            if (titlesSet.add(productInfo)) {
+                ProductInfoDTO productInfoDTO = new ProductInfoDTO(desTitleId, productInfo, 1);
                 product.getProductInfo().add(productInfoDTO);
             }
         }
 
         return product;
     }
-
-    //Add Product
-//    public product addProduct(int subSubCategoryId, String name, String description, MultipartFile productImage, int productRating, int isDelete, String size, long qtyInStock, long price) throws IOException {
-//        String imgPath = (productImage != null) ? saveImage(productImage) : null;
-//
-//        category subSubCategory = categoryRepo.findById(subSubCategoryId)
-//                .orElseThrow(() -> new IllegalArgumentException("Invalid sub-sub-category"));
-//
-//        product newProduct = new product();
-//        newProduct.setCategoryID(subSubCategory);
-//        newProduct.setName(name);
-//        newProduct.setDescription(description);
-//        newProduct.setProductImage(imgPath);
-//        newProduct.setProductRating(productRating);
-//        newProduct.setIsDeleted(isDelete);
-//
-//        product savedProduct = productRepo.save(newProduct);
-//
-//        if (savedProduct.getProductItemList() == null) {
-//            savedProduct.setProductItemList(new ArrayList<>());
-//        }
-//
-//        Optional<productItem> existingProductItemOpt = productItemRepo.findByProIdAndSize(savedProduct, size);
-//        if (existingProductItemOpt.isPresent()) {
-//            productItem existingProductItem = existingProductItemOpt.get();
-//            existingProductItem.setQtyInStock(existingProductItem.getQtyInStock() + qtyInStock);
-//            existingProductItem.setPrice(price);
-//            existingProductItem.setProductImage(imgPath);
-//            productItemRepo.save(existingProductItem);
-//        } else {
-//            productItem newProductItem = new productItem();
-//            newProductItem.setProId(savedProduct);
-//            newProductItem.setSize(size);
-//            newProductItem.setQtyInStock(qtyInStock);
-//            newProductItem.setPrice(price);
-//            newProductItem.setProductImage(imgPath);
-//            productItemRepo.save(newProductItem);
-//
-//            savedProduct.getProductItemList().add(newProductItem);
-//        }
-//        productRepo.save(savedProduct);
-//
-//        return savedProduct;
-//    }
-//
-//    public product addProduct(int subSubCategoryId, String name, String description, MultipartFile productImage, int productRating, int isDelete, String size, long qtyInStock, long price) throws IOException {
-//        String imgPath = (productImage != null) ? saveImage(productImage) : null;
-//
-//        category subSubCategory = categoryRepo.findById(subSubCategoryId)
-//                .orElseThrow(() -> new IllegalArgumentException("Invalid sub-sub-category"));
-//
-//        product newProduct = new product();
-//        newProduct.setCategoryID(subSubCategory);
-//        newProduct.setName(name);
-//        newProduct.setDescription(description);
-//        newProduct.setProductImage(imgPath);
-//        newProduct.setProductRating(productRating);
-//        newProduct.setIsDeleted(isDelete);
-//
-//        product savedProduct = productRepo.save(newProduct);
-//
-//        if (savedProduct.getProductItemList() == null) {
-//            savedProduct.setProductItemList(new ArrayList<>());
-//        }
-//
-//        Optional<productItem> existingProductItemOpt = productItemRepo.findByProIdAndSize(savedProduct, size);
-//        if (existingProductItemOpt.isPresent()) {
-//            productItem existingProductItem = existingProductItemOpt.get();
-//            existingProductItem.setQtyInStock(existingProductItem.getQtyInStock() + qtyInStock);
-//            existingProductItem.setPrice(price);
-//            existingProductItem.setProductImage(imgPath);
-//            productItemRepo.save(existingProductItem);
-//        } else {
-//            productItem newProductItem = new productItem();
-//            newProductItem.setProId(savedProduct);
-//            newProductItem.setSize(size);
-//            newProductItem.setQtyInStock(qtyInStock);
-//            newProductItem.setPrice(price);
-//            newProductItem.setProductImage(imgPath);
-//            productItemRepo.save(newProductItem);
-//
-//            savedProduct.getProductItemList().add(newProductItem);
-//        }
-//        productRepo.save(savedProduct);
-//
-//        return savedProduct;
-//    }
-//
-//    public productDesInfo addDescriptionToProduct(int productId, int desTitleId, String descriptionInfo, int isDeleted) {
-//        product product = productRepo.findById(productId)
-//                .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
-//
-//        productDesTitle desTitle = productDesTitleRepo.findById(desTitleId)
-//                .orElseThrow(() -> new IllegalArgumentException("Title with ID " + desTitleId + " not found"));
-//
-//        productDesInfo newDescriptionInfo = new productDesInfo();
-//        newDescriptionInfo.setProID(product);
-//        newDescriptionInfo.setDesTitleId(desTitle);
-//        newDescriptionInfo.setDesInfo(descriptionInfo);
-//        newDescriptionInfo.setIsDeleted(isDeleted);
-//
-//        return productDesInfoRepo.save(newDescriptionInfo);
-//    }
-
 
     public product addProduct(
             int categoryId,
@@ -265,11 +152,11 @@ public class ProductService {
             long qtyInStock,
             long price
     ) throws IOException {
-        // Validate the category
+        // Validate and retrieve category
         category category = categoryRepo.findById(categoryId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid category ID: " + categoryId));
 
-        // Save image and validate it
+        // Save product image
         String imgPath = (productImage != null && !productImage.isEmpty()) ? saveImage(productImage) : null;
         if (imgPath == null) {
             throw new IllegalArgumentException("Product image is required.");
@@ -286,44 +173,95 @@ public class ProductService {
 
         product savedProduct = productRepo.save(newProduct);
 
-        // Add or update product item
-        Optional<productItem> existingProductItemOpt = productItemRepo.findByProIdAndSize(savedProduct, size);
+        // Add product item
+        productItem newProductItem = new productItem();
+        newProductItem.setProId(savedProduct);
+        newProductItem.setSize(size);
+        newProductItem.setQtyInStock(qtyInStock);
+        newProductItem.setPrice(price);
+        productItemRepo.save(newProductItem);
+
+        return savedProduct;
+    }
+
+
+    public productDesInfo addDescriptionToProduct(int productId, int desTitleID, String desInfo, int isDeleted) {
+        // Debug: Log productId and desTitleID
+        System.out.println("Adding description to product. Product ID: " + productId + ", Title ID: " + desTitleID);
+
+        // Find the product by its ID
+        product product = productRepo.findById(productId)
+                .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
+
+        // Debug: Log if product is found
+        System.out.println("Product found: " + product);
+
+        // Find the description title by its ID
+        productDesTitle desTitle = productDesTitleRepo.findById(desTitleID)
+                .orElseThrow(() -> new IllegalArgumentException("Title with ID " + desTitleID + " not found"));
+
+        // Debug: Log if title is found
+        System.out.println("Title found: " + desTitle);
+
+        // Create a new productDesInfo and set its properties
+        productDesInfo newDescriptionInfo = new productDesInfo();
+        newDescriptionInfo.setProID(product);  // Associate with product
+        newDescriptionInfo.setDesTitleId(desTitle);  // Associate with title
+        newDescriptionInfo.setDesInfo(desInfo);  // Set the description info
+        newDescriptionInfo.setIsDeleted(isDeleted);  // Set delete status
+
+        // Save and return the new description info
+        return productDesInfoRepo.save(newDescriptionInfo);
+    }
+
+
+    //Update Product
+    public product updateProduct(
+            int productId,
+            int categoryId,
+            String name,
+            String description,
+            MultipartFile productImage,
+            int productRating,
+            int isDelete,
+            String size,
+            long qtyInStock,
+            long price
+    ) throws IOException {
+        product existingProduct = productRepo.findById(productId)
+                .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
+
+        category category = categoryRepo.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid category ID: " + categoryId));
+        existingProduct.setCategoryID(category);
+
+        existingProduct.setName(name);
+        existingProduct.setDescription(description);
+        existingProduct.setProductRating(productRating);
+        existingProduct.setIsDeleted(isDelete);
+
+        if (productImage != null && !productImage.isEmpty()) {
+            String imgPath = saveImage(productImage);
+            existingProduct.setProductImage(imgPath);
+        }
+
+        Optional<productItem> existingProductItemOpt = productItemRepo.findByProIdAndSize(existingProduct, size);
         if (existingProductItemOpt.isPresent()) {
             productItem existingProductItem = existingProductItemOpt.get();
-            existingProductItem.setQtyInStock(existingProductItem.getQtyInStock() + qtyInStock);
+            existingProductItem.setQtyInStock(qtyInStock);
             existingProductItem.setPrice(price);
             productItemRepo.save(existingProductItem);
         } else {
             productItem newProductItem = new productItem();
-            newProductItem.setProId(savedProduct);
+            newProductItem.setProId(existingProduct);
             newProductItem.setSize(size);
             newProductItem.setQtyInStock(qtyInStock);
             newProductItem.setPrice(price);
             productItemRepo.save(newProductItem);
         }
-        return savedProduct;
+
+        return productRepo.save(existingProduct);
     }
-
-    public productDesInfo addDescriptionToProduct(int productId, int desTitleID, String desInfo, int isDeleted) {
-        // Fetch and validate the product
-        product product = productRepo.findById(productId)
-                .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
-
-        // Fetch and validate the description title
-        productDesTitle desTitle = productDesTitleRepo.findById(desTitleID)
-                .orElseThrow(() -> new IllegalArgumentException("Title with ID " + desTitleID + " not found"));
-
-        // Create and save the new description information
-        productDesInfo newDescriptionInfo = new productDesInfo();
-        newDescriptionInfo.setProID(product);
-        newDescriptionInfo.setDesTitleId(desTitle);
-        newDescriptionInfo.setDesInfo(desInfo);
-        newDescriptionInfo.setIsDeleted(isDeleted);
-
-        return productDesInfoRepo.save(newDescriptionInfo);
-    }
-
-
 
 
     public List<String> getAllSize() {
@@ -335,10 +273,6 @@ public class ProductService {
         Map<Integer, ProductDTO> productsMap = new HashMap<>();
 
         for (Object[] row : results) {
-            if (row.length < 18) {
-                continue;
-            }
-
             int productId = (Integer) row[0];
             String productName = (String) row[1];
             int categoryId = ((Number) row[2]).intValue();
@@ -350,34 +284,35 @@ public class ProductService {
             String productSize = (String) row[8];
             int quantity = ((Number) row[9]).intValue();
             long price = ((Number) row[10]).longValue();
-            String productTitle = (String) row[11];
-            String productInfo = (String) row[12];
-            int discountId = ((Number) row[13]).intValue();
-            String discountName = (String) row[14];
-            int discountRate = ((Number) row[15]).intValue();
-            String startDate = (String) row[16];
-            String endDate = (String) row[17];
 
-            ProductDTO productDTO = productsMap.getOrDefault(productId, new ProductDTO(
+            ProductDTO productDTO = productsMap.computeIfAbsent(productId, k -> new ProductDTO(
                     productId, productName, categoryId, categoryName, description, productImage,
-                    productRating, new ArrayList<>(), new ArrayList<>(),
-                    discountId, discountName, discountRate, startDate, endDate, 0
+                    productRating, new ArrayList<>(), new ArrayList<>()
             ));
 
             ProductItemDTO productItemDTO = new ProductItemDTO(productItemId, productSize, quantity, price);
-            if (!productDTO.getProductItem().stream().anyMatch(item -> item.getId() == productItemId)) {
+            if (productDTO.getProductItem().stream().noneMatch(item -> item.getId() == productItemId)) {
                 productDTO.getProductItem().add(productItemDTO);
             }
 
-            ProductInfoDTO productInfoDTO = new ProductInfoDTO(productTitle, productInfo);
-            if (!productDTO.getProductInfo().stream().anyMatch(info -> info.getTitle().equals(productTitle))) {
-                productDTO.getProductInfo().add(productInfoDTO);
+            int desTitleId = ((Number) row[11]).intValue();
+            String desTitle = (String) row[12];
+            String info = (String) row[13];
+            int isDelete = ((Number) row[14]).intValue();
+            if (productDTO.getProductInfo().stream().noneMatch(infoDTO -> infoDTO.getDesTitleID() == desTitleId)) {
+                productDTO.getProductInfo().add(new ProductInfoDTO(desTitleId,desTitle, info, isDelete));
             }
-
-            productsMap.put(productId, productDTO);
         }
 
         return new ArrayList<>(productsMap.values());
+    }
+
+
+    public product deleteProduct(int productId) {
+        product existingProduct = productRepo.findById(productId)
+                .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
+        existingProduct.setIsDeleted(0);
+        return productRepo.save(existingProduct);
     }
 
 }

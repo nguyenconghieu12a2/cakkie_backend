@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -22,5 +23,11 @@ public class CancelOrderController {
     public ResponseEntity<List<CancelOrderDTO>> cancelOrder() {
         List<CancelOrderDTO> cancelOrder = cancelOrderService.getAllCanceledOrder();
         return new ResponseEntity<>(cancelOrder, HttpStatus.OK);
+    }
+
+    @GetMapping("/api/cancel-order/detail/{userId}")
+    public ResponseEntity<List<CancelOrderDTO>> detailCancelOrderByUserId(@PathVariable int userId) {
+        List<CancelOrderDTO> detailCancelOrders = cancelOrderService.getDetailCancelOrderByUserId(userId);
+        return new ResponseEntity<>(detailCancelOrders, HttpStatus.OK);
     }
 }

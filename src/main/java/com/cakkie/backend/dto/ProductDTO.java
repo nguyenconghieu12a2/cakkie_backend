@@ -19,10 +19,4 @@ public class ProductDTO {
     private int productRating;
     private List<ProductItemDTO> productItem;
     private List<ProductInfoDTO> productInfo;
-    private int discountId;
-    private String discountName;
-    private int discountRate;
-    private String startDate;
-    private String endDate;
-    private int isDelete;
 }

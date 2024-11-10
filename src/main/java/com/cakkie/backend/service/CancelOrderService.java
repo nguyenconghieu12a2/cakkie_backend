@@ -5,4 +5,5 @@ import java.util.List;
 
 public interface CancelOrderService {
     List<CancelOrderDTO> getAllCanceledOrder();
+    List<CancelOrderDTO> getDetailCancelOrderByUserId(int userId);
 }
