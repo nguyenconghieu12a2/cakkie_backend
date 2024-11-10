@@ -1,22 +1,23 @@
 package com.cakkie.backend.service;
 
+import com.cakkie.backend.dto.adminCustomer.*;
 import com.cakkie.backend.model.userSite;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.cakkie.backend.repository.CustomerRepo;
+import com.cakkie.backend.repository.AdminCustomerRepo;
 import com.cakkie.backend.exception.CustomerNotFoundException;
-import com.cakkie.backend.dto.CustomerDTO;
 
+import java.text.NumberFormat;
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class AdminCustomerService {
-    private final CustomerRepo customerRepo;
+    private final AdminCustomerRepo adminCustomerRepo;
 
     public List<CustomerDTO> getAllCustomers(){
-        List<Object[]> customerData = customerRepo.getAllCustomer();
+        List<Object[]> customerData = adminCustomerRepo.getAllCustomer();
 
         Map<Integer, CustomerDTO> customerMap = new HashMap<>();
 
@@ -47,7 +48,7 @@ public class AdminCustomerService {
     }
 
     public List<CustomerDTO> getAllBannedCustomers(){
-        List<Object[]> customerData = customerRepo.getAllBannedCustomer();
+        List<Object[]> customerData = adminCustomerRepo.getAllBannedCustomer();
 
         Map<Integer, CustomerDTO> customerMap = new HashMap<>();
 
@@ -78,7 +79,7 @@ public class AdminCustomerService {
     }
 
     public List<CustomerDTO> getAllDeletedCustomers(){
-        List<Object[]> customerData = customerRepo.getAllDeletedCustomer();
+        List<Object[]> customerData = adminCustomerRepo.getAllDeletedCustomer();
 
         Map<Integer, CustomerDTO> customerMap = new HashMap<>();
 
@@ -109,16 +110,16 @@ public class AdminCustomerService {
     }
 
     public userSite updateCustomerById(userSite customer, int id) {
-        return customerRepo.findById(id).map(cm -> {
+        return adminCustomerRepo.findById(id).map(cm -> {
             cm.setFirstname(customer.getFirstname());
             cm.setLastname(customer.getLastname());
             cm.setBirthday(customer.getBirthday());
-            return customerRepo.save(cm);
+            return adminCustomerRepo.save(cm);
         }).orElseThrow(() -> new CustomerNotFoundException("Sorry, this customer could not be found!"));
     }
 
     public CustomerDTO getCustomerById(int id){
-        List<Object[]> customerData = customerRepo.getCustomerById(id);
+        List<Object[]> customerData = adminCustomerRepo.getCustomerById(id);
 
         if(customerData.isEmpty()){
             throw new CustomerNotFoundException("Sorry, customer not found with the id: " + id);
@@ -147,8 +148,8 @@ public class AdminCustomerService {
         return customer;
     }
 
-    public CustomerDTO getBannedCustomerById(int id){
-        List<Object[]> customerData = customerRepo.getBannedCustomerById(id);
+    public CustomerBannedDTO getBannedCustomerById(int id){
+        List<Object[]> customerData = adminCustomerRepo.getBannedCustomerById(id);
 
         if(customerData.isEmpty()){
             throw new CustomerNotFoundException("Sorry, customer not found with the id: " + id);
@@ -156,7 +157,7 @@ public class AdminCustomerService {
 
         Object[] row = customerData.get(0);
 
-        CustomerDTO customer = new CustomerDTO(
+        CustomerBannedDTO customer = new CustomerBannedDTO(
                 (Integer) row[0], //id
                 (String) row[1], //firstname
                 (String) row[2], //lastname
@@ -167,7 +168,8 @@ public class AdminCustomerService {
                 (String) row[7], //phone
                 (String) row[8], //account create date
                 new ArrayList<>(), //address
-                (String) row[10] //status
+                (String) row[10], //status
+                (String) row[11] //banned reason
         );
 
         for (Object[] rows : customerData) {
@@ -179,13 +181,13 @@ public class AdminCustomerService {
 
     @Transactional
     public void updateCustomerInfo(int id, CustomerDTO customerDTO){
-        if(!customerRepo.existsById(id)){
+        if(!adminCustomerRepo.existsById(id)){
             throw new CustomerNotFoundException("Customer not found with id: " + id);
         }
 //
 //        String formattedBirthday = convertToDate(customerDTO.getBirthday());
 
-        customerRepo.updateCustomerInfo(
+        adminCustomerRepo.updateCustomerInfo(
                 id,
                 customerDTO.getFirstname(),
                 customerDTO.getLastname());
@@ -203,18 +205,114 @@ public class AdminCustomerService {
 
     @Transactional
     public void deleteCustomer(int id) {
-        if(!customerRepo.existsById(id)) {
-            throw new CustomerNotFoundException("Sorry, Banner not found!");
+        if(!adminCustomerRepo.existsById(id)) {
+            throw new CustomerNotFoundException("Sorry, Customer not found!");
         }
-        customerRepo.deleteCustomerById(id);
+        adminCustomerRepo.deleteCustomerById(id);
     }
 
     @Transactional
     public void recoverCustomer(int id) {
-        if(!customerRepo.existsById(id)) {
-            throw new CustomerNotFoundException("Sorry, Banner not found!");
+        if(!adminCustomerRepo.existsById(id)) {
+            throw new CustomerNotFoundException("Sorry, Customer not found!");
         }
-        customerRepo.recoverCustomerById(id);
+        adminCustomerRepo.recoverCustomerById(id);
+    }
+
+    @Transactional
+    public void bannedCustomer(int id, BannedCustomerReasonDTO bannedReason) {
+        if(!adminCustomerRepo.existsById(id)) {
+            throw new CustomerNotFoundException("Sorry, Customer not found!");
+        }
+        adminCustomerRepo.bannedCustomerById(id, bannedReason.getReason());
+    }
+
+    public List<Map<String, Object>> getCustomerStatisticOrder(int id) {
+        List<Map<String, Object>> customerStatisticOrder = new ArrayList<>();
+
+        int processingOrder = adminCustomerRepo.getCustomerProcessdingOrder(id);
+        int completeOrder = adminCustomerRepo.getCustomerCompleteOrder(id);
+        int cancelOrder = adminCustomerRepo.getCustomerCancelOrder(id);
+
+        customerStatisticOrder.add(Map.ofEntries(Map.entry("status", "Processing Order"), Map.entry("value", processingOrder)));
+        customerStatisticOrder.add(Map.ofEntries(Map.entry("status", "Completed Order"), Map.entry("value", completeOrder)));
+        customerStatisticOrder.add(Map.ofEntries(Map.entry("status", "Cancel Order"), Map.entry("value", cancelOrder)));
+
+        return customerStatisticOrder;
+    }
+
+    //Processing order table
+    public List<CustomerProcessingDTO> getCustomerProcessingOrder(int id) {
+        List<Object[]> resultSet = adminCustomerRepo.getProcessingTableOrder(id);
+        return mapToCustomerProcessingOrder(resultSet);
+    }
+
+    private List<CustomerProcessingDTO> mapToCustomerProcessingOrder(List<Object[]> resultSet) {
+        List<CustomerProcessingDTO> customerProcessingOrder = new ArrayList<>();
+        NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
+
+        for (Object[] row : resultSet) {
+            int orderId = (Integer) row[0];
+            String orderDate = (String) row[1];
+            String approvedDate = row[2] != null ? (String) row[2] : "Not update yet!";
+            String shippingDate = row[3] != null ? (String) row[3] : "Not update yet!";
+            Long orderTotal = ((Number) row[4]).longValue();
+            String formatterTotalPayment = currencyFormat.format(orderTotal) + " VND";
+
+            CustomerProcessingDTO customerProcessingDTO = new CustomerProcessingDTO(orderId, orderDate, approvedDate, shippingDate, formatterTotalPayment);
+            customerProcessingOrder.add(customerProcessingDTO);
+        }
+        return customerProcessingOrder;
+    }
+
+    //Completed order table
+    public List<CustomerCompleteDTO> getCustomerCompleteOrder(int id) {
+        List<Object[]> resultSet = adminCustomerRepo.getCompleteTableOrder(id);
+        return mapToCustomerCompleteOrder(resultSet);
+    }
+
+    private List<CustomerCompleteDTO> mapToCustomerCompleteOrder(List<Object[]> resultSet) {
+        List<CustomerCompleteDTO> customerCompleteOrder = new ArrayList<>();
+        NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
+
+        for (Object[] row : resultSet) {
+            int orderId = (Integer) row[0];
+            String orderDate = (String) row[1];
+            String approvedDate = (String) row[2];
+            String shippingDate = (String) row[3];
+            String arrivedDate = (String) row[4];
+            Long orderTotal = ((Number) row[5]).longValue();
+            String formatterTotalPayment = currencyFormat.format(orderTotal) + " VND";
+
+            CustomerCompleteDTO customerCompleteDTO = new CustomerCompleteDTO(orderId, orderDate, approvedDate, shippingDate, arrivedDate, formatterTotalPayment);
+            customerCompleteOrder.add(customerCompleteDTO);
+        }
+        return customerCompleteOrder;
+    }
+
+    //Cancel order table
+    public List<CustomerCancelDTO> getCustomerCancelOrder(int id) {
+        List<Object[]> resultSet = adminCustomerRepo.getCancelTableOrder(id);
+        return mapToCustomerCancelOrder(resultSet);
+    }
+
+    private List<CustomerCancelDTO> mapToCustomerCancelOrder(List<Object[]> resultSet) {
+        List<CustomerCancelDTO> customerCancelOrder = new ArrayList<>();
+        NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
+
+        for (Object[] row : resultSet) {
+            int orderId = (Integer) row[0];
+            String orderDate = (String) row[1];
+            String approvedDate = (String) row[2];
+            String cancelDate = (String) row[3];
+            String cancelReason = row[4] != null ? (String) row[4] : "No reason!";
+            Long orderTotal = ((Number) row[5]).longValue();
+            String formatterTotalPayment = currencyFormat.format(orderTotal) + " VND";
+
+            CustomerCancelDTO customerCancelDTO = new CustomerCancelDTO(orderId, orderDate, approvedDate, cancelDate, cancelReason, formatterTotalPayment);
+            customerCancelOrder.add(customerCancelDTO);
+        }
+        return customerCancelOrder;
     }
 }
 

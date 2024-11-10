@@ -1,6 +1,5 @@
 package com.cakkie.backend.controller;
 
-import com.cakkie.backend.api.ReportFilter;
 import com.cakkie.backend.dto.CCOPReportDTO;
 import com.cakkie.backend.dto.ProductReviewReportDTO;
 import com.cakkie.backend.dto.SOReportDTO;
@@ -14,7 +13,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
-@RequestMapping("/api")
+@RequestMapping("/api/admin")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AdminReportsController {
     private final ReportsService reportsService;
@@ -91,6 +90,4 @@ public class AdminReportsController {
     public List<SOReportDTO> getCouponsReportFilter(@RequestParam String startDate, @RequestParam String endDate) {
         return reportsService.getCouponsReportFilter(startDate, endDate);
     }
-
-
 }

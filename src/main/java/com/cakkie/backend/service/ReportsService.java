@@ -40,7 +40,7 @@ public class ReportsService {
             int customers = ((Number) row[2]).intValue();
             int orders = ((Number) row[3]).intValue();
             Long total = ((Number) row[4]).longValue();
-            String formattedTotalPayment = currencyFormat.format(total) + " đ";
+            String formattedTotalPayment = currencyFormat.format(total) + " VND";
 
             CCOPReportDTO customerOrderReportDTO = new CCOPReportDTO(startDate, endDate, customers, orders, formattedTotalPayment);
             customerOrderReportDTOList.add(customerOrderReportDTO);
@@ -64,7 +64,7 @@ public class ReportsService {
             int orders = ((Number) row[2]).intValue();
             int products = ((Number) row[3]).intValue();
             Long total = ((Number) row[4]).longValue();
-            String formattedTotalPayment = currencyFormat.format(total) + " đ";
+            String formattedTotalPayment = currencyFormat.format(total) + " VND";
 
             CCOPReportDTO cancelOrderReportDTO = new CCOPReportDTO(startDate, endDate, orders, products, formattedTotalPayment);
             cancelOrderReportDTOList.add(cancelOrderReportDTO);
@@ -87,7 +87,7 @@ public class ReportsService {
             int orders = ((Number) row[2]).intValue();
             int products = ((Number) row[3]).intValue();
             Long total = ((Number) row[4]).longValue();
-            String formattedTotalPayment = currencyFormat.format(total) + " đ";
+            String formattedTotalPayment = currencyFormat.format(total) + " VND";
 
             CCOPReportDTO orderReportDTO = new CCOPReportDTO(startDate, endDate, orders, products, formattedTotalPayment);
             orderReportDTOList.add(orderReportDTO);
@@ -111,7 +111,7 @@ public class ReportsService {
             int products = ((Number) row[2]).intValue();
             int quantity = ((Number) row[3]).intValue();
             Long total = ((Number) row[4]).longValue();
-            String formattedTotalPayment = currencyFormat.format(total) + " đ";
+            String formattedTotalPayment = currencyFormat.format(total) + " VND";
 
             CCOPReportDTO productSalesReportDTO = new CCOPReportDTO(startDate, endDate, products, quantity, formattedTotalPayment);
             productSalesReportDTOList.add(productSalesReportDTO);
@@ -133,7 +133,7 @@ public class ReportsService {
             String shippingMethod = (String) row[0];
             int orders = ((Number) row[1]).intValue();
             Long total = ((Number) row[2]).longValue();
-            String formattedTotalPayment = currencyFormat.format(total) + " đ";
+            String formattedTotalPayment = currencyFormat.format(total) + " VND";
 
             SOReportDTO shippingMethodReportDTO = new SOReportDTO(shippingMethod, orders, formattedTotalPayment);
             shippingMethodReportDTOList.add(shippingMethodReportDTO);
@@ -155,7 +155,7 @@ public class ReportsService {
             String coupons = (String) row[0];
             int orders = ((Number) row[1]).intValue();
             Long total = ((Number) row[2]).longValue();
-            String formattedTotalPayment = currencyFormat.format(total) + " đ";
+            String formattedTotalPayment = currencyFormat.format(total) + " VND";
 
             SOReportDTO couponsReportDTO = new SOReportDTO(coupons, orders, formattedTotalPayment);
             couponsReportDTOList.add(couponsReportDTO);
@@ -199,7 +199,7 @@ public class ReportsService {
             String dateStart = (String) row[0];
             String dateEnd = (String) row[1];
             Long total = ((Number) row[2]).longValue();
-            String formattedTotalPayment = currencyFormat.format(total) + " đ";
+            String formattedTotalPayment = currencyFormat.format(total) + " VND";
 
             SalesReportDTO salesReportDTO = new SalesReportDTO(dateStart, dateEnd, formattedTotalPayment);
             salesReportDTOList.add(salesReportDTO);
@@ -223,7 +223,7 @@ public class ReportsService {
             int customers = ((Number) row[2]).intValue();
             int orders = ((Number) row[3]).intValue();
             Long total = ((Number) row[4]).longValue();
-            String formattedTotalPayment = currencyFormat.format(total) + " đ";
+            String formattedTotalPayment = currencyFormat.format(total) + " VND";
 
             CCOPReportDTO customerOrderReportDTO = new CCOPReportDTO(startDate, endDate, customers, orders, formattedTotalPayment);
             customerOrderReportDTOList.add(customerOrderReportDTO);
@@ -251,7 +251,7 @@ public class ReportsService {
             String shippingMethod = (String) row[0];
             int orders = ((Number) row[1]).intValue();
             Long total = ((Number) row[2]).longValue();
-            String formattedTotalPayment = currencyFormat.format(total) + " đ";
+            String formattedTotalPayment = currencyFormat.format(total) + " VND";
 
             SOReportDTO shippingMethodReportDTO = new SOReportDTO(shippingMethod, orders, formattedTotalPayment);
             shippingMethodReportDTOList.add(shippingMethodReportDTO);
@@ -273,15 +273,11 @@ public class ReportsService {
             String coupons = (String) row[0];
             int orders = ((Number) row[1]).intValue();
             Long total = ((Number) row[2]).longValue();
-            String formattedTotalPayment = currencyFormat.format(total) + " đ";
+            String formattedTotalPayment = currencyFormat.format(total) + " VND";
 
             SOReportDTO couponsReportDTO = new SOReportDTO(coupons, orders, formattedTotalPayment);
             couponsReportDTOList.add(couponsReportDTO);
         }
         return couponsReportDTOList;
     }
-
-
-
-
 }

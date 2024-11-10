@@ -1,5 +1,8 @@
 package com.cakkie.backend.service;
 
+import com.cakkie.backend.dto.dashboard.DayDataDTO;
+import com.cakkie.backend.dto.dashboard.DaySetDTO;
+import com.cakkie.backend.dto.dashboard.YearDataDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.cakkie.backend.repository.DashboardTableRepo;
@@ -8,10 +11,7 @@ import com.cakkie.backend.dto.TableCustomerDTO;
 import com.cakkie.backend.dto.MinMaxYearDTO;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +33,7 @@ public class DashboardTableService {
             String payment = (String) row[3];
             String status = (String) row[4];
             Long orderTotal = ((Number) row[5]).longValue(); // Assuming the order total is numeric
-            String formattedTotalPayment = currencyFormat.format(orderTotal) + " đ";
+            String formattedTotalPayment = currencyFormat.format(orderTotal) + " VND";
 
             TableOrderDTO orderDTO = new TableOrderDTO(id, username, name, payment, status, formattedTotalPayment);
             orderTableDTOList.add(orderDTO);
@@ -56,7 +56,7 @@ public class DashboardTableService {
             int totalOrder = ((Number) row[3]).intValue();
             Long totalPayment = ((Number) row[4]).longValue();
 
-            String formattedTotalPayment = currencyFormat.format(totalPayment) + " đ";
+            String formattedTotalPayment = currencyFormat.format(totalPayment) + " VND";
 
             TableCustomerDTO customerDTO = new TableCustomerDTO(id, name, email, totalOrder, formattedTotalPayment);
             customerTableDTOList.add(customerDTO);
@@ -70,11 +70,11 @@ public class DashboardTableService {
         NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
 
         long revenue = dashboardTableRepo.getRevenue();
-        String formattedRevenue = currencyFormat.format(revenue) + " đ";
+        String formattedRevenue = currencyFormat.format(revenue) + " VND";
         long costs = dashboardTableRepo.getCosts();
-        String formattedCosts = currencyFormat.format(costs) + " đ";
+        String formattedCosts = currencyFormat.format(costs) + " VND";
         long sales = dashboardTableRepo.getSales();
-        String formattedSales = currencyFormat.format(sales) + " đ";
+        String formattedSales = currencyFormat.format(sales) + " VND";
         int totalOrder = dashboardTableRepo.getTotalOrder();
 
         cardsList.add(Map.of("title", "Revenue", "value", formattedRevenue));
@@ -85,6 +85,60 @@ public class DashboardTableService {
         return cardsList;
     }
 
+    //DAYS
+    public List<DayDataDTO> getChartOrderDay(int month, int year){
+        List<Object[]> orderDay = dashboardTableRepo.chartOrderDay(month, year);
+
+        Map<Integer, DayDataDTO> orderDayMap = new HashMap<>();
+
+        for (Object[] row : orderDay) {
+            Integer months = (Integer) row[0];
+            Integer day = (Integer) row[1];
+            Integer value = (Integer) row[2];
+
+            DaySetDTO daySetDTO = new DaySetDTO(day, value);
+
+            if(orderDayMap.containsKey(months)){
+                DayDataDTO existingMonth = orderDayMap.get(months);
+                existingMonth.getDayset().add(daySetDTO);
+            }else{
+             DayDataDTO dayDataDTO = new DayDataDTO(
+                     months,
+                     new ArrayList<>(Collections.singletonList(daySetDTO))
+             );
+             orderDayMap.put(months, dayDataDTO);
+            }
+        }
+        return new ArrayList<>(orderDayMap.values());
+    }
+
+    public List<DayDataDTO> getChartCustomerDay(int month, int year){
+        List<Object[]> orderDay = dashboardTableRepo.chartCustomerDay(month, year);
+
+        Map<Integer, DayDataDTO> orderDayMap = new HashMap<>();
+
+        for (Object[] row : orderDay) {
+            Integer months = (Integer) row[0];
+            Integer day = (Integer) row[1];
+            Integer value = (Integer) row[2];
+
+            DaySetDTO daySetDTO = new DaySetDTO(day, value);
+
+            if(orderDayMap.containsKey(months)){
+                DayDataDTO existingMonth = orderDayMap.get(months);
+                existingMonth.getDayset().add(daySetDTO);
+            }else{
+                DayDataDTO dayDataDTO = new DayDataDTO(
+                        months,
+                        new ArrayList<>(Collections.singletonList(daySetDTO))
+                );
+                orderDayMap.put(months, dayDataDTO);
+            }
+        }
+        return new ArrayList<>(orderDayMap.values());
+    }
+
+    //MONTHS
     public List<Integer> getChartOrderData(){
         List<Object[]> resultSet = dashboardTableRepo.chartOrder();
         List<Integer> orderCounts = new ArrayList<>();
@@ -142,6 +196,57 @@ public class DashboardTableService {
             customerCounts.add(totalCustomer);
         }
 
+        return customerCounts;
+    }
+
+    //QUARTERS
+    public List<Integer> chartOrderByQuarter(int quarter){
+        List<Object[]> resultSet = dashboardTableRepo.chartOrderByQuarter(quarter);
+        List<Integer> orderCounts = new ArrayList<>();
+
+        for (Object[] row : resultSet) {
+            Integer totalOrders = ((Number) row[1]).intValue();
+            orderCounts.add(totalOrders);
+        }
+        return orderCounts;
+    }
+
+    public List<Integer> chartCustomerByQuarter(int quarter){
+        List<Object[]> resultSet = dashboardTableRepo.chartCustomerByQuarter(quarter);
+        List<Integer> customerCounts = new ArrayList<>();
+        for (Object[] row : resultSet) {
+            Integer totalCustomer = ((Number) row[1]).intValue();
+            customerCounts.add(totalCustomer);
+        }
+        return customerCounts;
+    }
+
+    //YEAR
+    public List<YearDataDTO> getChartOrderYear(){
+        List<Object[]> resultSet = dashboardTableRepo.chartOrderYear();
+        List<YearDataDTO> orderCounts = new ArrayList<>();
+
+        for (Object[] row : resultSet) {
+            Integer year = ((Number) row[0]).intValue();
+            Integer value = ((Number) row[1]).intValue();
+
+            orderCounts.add(new YearDataDTO(year, value));
+
+        }
+
+        return orderCounts;
+    }
+
+    public List<YearDataDTO> getChartCustomerYear(){
+        List<Object[]> resultSet = dashboardTableRepo.chartCustomerYear();
+        List<YearDataDTO> customerCounts = new ArrayList<>();
+
+        for (Object[] row : resultSet) {
+            Integer year = ((Number) row[0]).intValue();
+            Integer value = ((Number) row[1]).intValue();
+
+            customerCounts.add(new YearDataDTO(year, value));
+        }
         return customerCounts;
     }
 }

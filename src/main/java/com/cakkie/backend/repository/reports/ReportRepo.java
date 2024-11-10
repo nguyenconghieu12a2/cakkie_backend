@@ -16,6 +16,7 @@ public interface ReportRepo extends JpaRepository<shopOrder, Integer> {
             "    SUM(DISTINCT so.order_total) AS [total]\n" +
             "FROM shop_order so\n" +
             "JOIN user_site us ON us.id = so.user_id\n" +
+            "WHERE so.arrived_date IS NOT NULL\n" +
             "GROUP BY \n" +
             "    DATEPART(YEAR, DATEADD(DAY, - DATEPART(WEEKDAY, so.arrived_date) + 1, so.arrived_date)),\n" +
             "    DATEPART(WEEK, DATEADD(DAY, - DATEPART(WEEKDAY, so.arrived_date) + 1, so.arrived_date)),\n" +
@@ -44,6 +45,7 @@ public interface ReportRepo extends JpaRepository<shopOrder, Integer> {
             "\tSUM(DISTINCT so.order_total) AS [total]\n" +
             "FROM shop_order so \n" +
             "JOIN order_line ol ON ol.order_id = so.id\n" +
+            "WHERE so.arrived_date IS NOT NULL\n" +
             "GROUP BY \n" +
             "\tDATEPART(YEAR, DATEADD(DAY, - DATEPART(WEEKDAY, so.arrived_date) + 1, so.arrived_date)),\n" +
             "\tDATEPART(WEEK, DATEADD(DAY, - DATEPART(WEEKDAY, so.arrived_date) + 1, so.arrived_date)),\n" +
@@ -70,7 +72,9 @@ public interface ReportRepo extends JpaRepository<shopOrder, Integer> {
             "    COUNT(so.id) * sm.price AS total\n" +
             "FROM shop_order so\n" +
             "RIGHT JOIN shipping_method sm ON sm.id = so.shipping_method_id\n" +
-            "GROUP BY sm.name, sm.price;", nativeQuery = true)
+            "WHERE so.canceled_date IS NULL\n" +
+            "GROUP BY sm.name, sm.price\n" +
+            "ORDER BY total DESC;", nativeQuery = true)
     List<Object[]> getShipping();
 
     @Query(value = "SELECT \n" +
@@ -79,16 +83,18 @@ public interface ReportRepo extends JpaRepository<shopOrder, Integer> {
             "    COUNT(so.id) * sm.price AS total\n" +
             "FROM shop_order so\n" +
             "RIGHT JOIN shipping_method sm ON sm.id = so.shipping_method_id\n" +
-            "AND so.arrived_date BETWEEN ?1 AND ?2  \n" +
-            "GROUP BY sm.name, sm.price;", nativeQuery = true)
+            "AND so.arrived_date BETWEEN ?1 AND ?2 \n" +
+            "WHERE so.canceled_date IS NULL\n" +
+            "GROUP BY sm.name, sm.price\n" +
+            "ORDER BY total DESC;", nativeQuery = true)
     List<Object[]> getShippingFilter(String startDate, String endDate);
 
     @Query(value = "SELECT \n" +
             "    FORMAT(MIN(DATEADD(DAY, - DATEPART(WEEKDAY, so.canceled_date) + 1, so.canceled_date)), 'yyyy-MM-dd') AS date_start,\n" +
             "    FORMAT(MAX(DATEADD(DAY, 7 - DATEPART(WEEKDAY, so.canceled_date), so.canceled_date)), 'yyyy-MM-dd') AS date_end,\n" +
             "    COUNT(DISTINCT so.id) AS [cancel_orders],\n" +
-            "\tCOUNT(*) AS [products],\n" +
-            "\tSUM(so.order_total) AS [total]\n" +
+            "\tCOUNT(ol.order_id) AS [products],\n" +
+            "\tSUM(DISTINCT so.order_total) AS [total]\n" +
             "FROM shop_order so \n" +
             "JOIN order_line ol ON ol.order_id = so.id\n" +
             "WHERE so.canceled_date IS NOT NULL\n" +
@@ -118,6 +124,7 @@ public interface ReportRepo extends JpaRepository<shopOrder, Integer> {
             "    FORMAT(MAX(DATEADD(DAY, 7 - DATEPART(WEEKDAY, so.arrived_date), so.arrived_date)), 'yyyy-MM-dd') AS date_end,\n" +
             "\tSUM(so.order_total) AS [revenue]\n" +
             "FROM shop_order so \n" +
+            "WHERE so.arrived_date IS NOT NULL\n" +
             "GROUP BY \n" +
             "\tDATEPART(YEAR, DATEADD(DAY, - DATEPART(WEEKDAY, so.arrived_date) + 1, so.arrived_date)),\n" +
             "\tDATEPART(WEEK, DATEADD(DAY, - DATEPART(WEEKDAY, so.arrived_date) + 1, so.arrived_date)),\n" +
@@ -142,7 +149,9 @@ public interface ReportRepo extends JpaRepository<shopOrder, Integer> {
             "    COUNT(so.id) * c.price_discount AS total\n" +
             "FROM shop_order so\n" +
             "RIGHT JOIN coupons c ON c.id = so.coupons\n" +
-            "GROUP BY c.name, c.price_discount;", nativeQuery = true)
+            "WHERE so.canceled_date IS NULL\n" +
+            "GROUP BY c.name, c.price_discount\n" +
+            "ORDER BY total DESC;", nativeQuery = true)
     List<Object[]> getCoupons();
 
     @Query(value = "SELECT \n" +
@@ -151,8 +160,10 @@ public interface ReportRepo extends JpaRepository<shopOrder, Integer> {
             "    COUNT(so.id) * c.price_discount AS total\n" +
             "FROM shop_order so\n" +
             "RIGHT JOIN coupons c ON c.id = so.coupons\n" +
-            "AND so.arrived_date BETWEEN ?1 AND ?2\n" +
-            "GROUP BY c.name, c.price_discount;", nativeQuery = true)
+            "AND so.arrived_date BETWEEN ?1 AND ?2  \n" +
+            "WHERE so.canceled_date IS NULL\n" +
+            "GROUP BY c.name, c.price_discount\n" +
+            "ORDER BY total DESC;", nativeQuery = true)
     List<Object[]> getCouponsFilter(String startDate, String endDate);
 
     @Query(value = "SELECT \n" +
@@ -163,6 +174,7 @@ public interface ReportRepo extends JpaRepository<shopOrder, Integer> {
             "\tSUM(DISTINCT so.order_total) AS [total]\n" +
             "FROM shop_order so \n" +
             "JOIN order_line ol ON ol.order_id = so.id\n" +
+            "WHERE so.arrived_date IS NOT NULL\n" +
             "GROUP BY \n" +
             "\tDATEPART(YEAR, DATEADD(DAY, - DATEPART(WEEKDAY, so.arrived_date) + 1, so.arrived_date)),\n" +
             "\tDATEPART(WEEK, DATEADD(DAY, - DATEPART(WEEKDAY, so.arrived_date) + 1, so.arrived_date)),\n" +

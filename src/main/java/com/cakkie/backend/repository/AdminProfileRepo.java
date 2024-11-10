@@ -22,8 +22,4 @@ public interface AdminProfileRepo extends JpaRepository<admin, Integer> {
     @Modifying
     @Query(value = "UPDATE admin SET password = :password WHERE email = :email", nativeQuery = true)
     int updatePassword(@Param("email") String email, @Param("password") String password);
-
-
-
-
 }

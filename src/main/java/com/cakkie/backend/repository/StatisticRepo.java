@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface StatisticRepo extends JpaRepository<shopOrder, Integer> {
-    @Query(value = "select sum(order_total) - (select sum(price/2)*3 as [cost] from product_item) as [order_sales] from shop_order", nativeQuery = true)
+    @Query(value = "select COALESCE(sum(order_total) - (select sum(price/2)*3 as [cost] from product_item), 0) as [order_sales] from shop_order", nativeQuery = true)
     long getOrderSaleValue();
 
     @Query(value = "select count(*) as [order_processing] from shop_order where canceled_date is null and arrived_date is null", nativeQuery = true)
