@@ -23,5 +23,9 @@ public interface ProductDesInfoRepository extends JpaRepository<productDesInfo, 
                               @Param("desTitleId") int desTitleId,
                               @Param("desInfo") String desInfo);
 
-
+    @Modifying
+    @Transactional
+    @Query("DELETE productDesInfo pdi WHERE pdi.desTitleId.desTitleID = :desTitleId AND pdi.proID.id = :productId")
+    void deleteDesInfo(@Param("productId") int productId,
+                       @Param("desTitleId") int desTitleId);
 }

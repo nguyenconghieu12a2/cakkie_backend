@@ -105,30 +105,8 @@ public class ProductController {
         return ResponseEntity.ok(titles);
     }
 
-
-//    @PostMapping("/product/{productId}/add-description")
-//    public ResponseEntity<productDesInfo> addDescriptionToProduct(
-//            @PathVariable int productId,
-//            @RequestBody ProductInfoDTO productInfo
-//    ) {
-//        // Validate the Title ID
-//        if (productInfo.getDesTitleID() <= 0) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//                    .body(null); // Return 400 Bad Request if Title ID is invalid
-//        }
-//
-//        try {
-//            productDesInfo addedDescription = productServices.addDescriptionToProduct(
-//                    productId, productInfo.getDesTitleID(), productInfo.getDesInfo(), 1
-//            );
-//            return new ResponseEntity<>(addedDescription, HttpStatus.CREATED);
-//        } catch (ProductNotFound e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-//        } catch (IllegalArgumentException e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-//        }
-//    }
-
+    //Description Information
+    //Create Information
     @PostMapping("/product/{productId}/add-desinfo")
     public ResponseEntity<String> addNewDesInfo(
             @PathVariable int productId,
@@ -172,6 +150,25 @@ public class ProductController {
         }
     }
 
+    //Delete Des Info
+    @DeleteMapping("/product/{productId}/delete-desinfo")
+    public ResponseEntity<String> deleteProductDesInfo(
+            @PathVariable int productId,
+            @RequestBody Map<String, Object> requestBody
+    ) {
+        try {
+            int desTitleId = (int) requestBody.get("desTitleId");
+            productServices.deleteProductDesInfo(productId, desTitleId);
+            return ResponseEntity.status(HttpStatus.OK).body("Product description deleted successfully");
+        } catch (ProductNotFound e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
 
     @DeleteMapping("/product/delete/{id}")
     public ResponseEntity<product> deleteProduct(@PathVariable int id) {
@@ -195,7 +192,7 @@ public class ProductController {
         return ResponseEntity.ok(sizes);
     }
 
-    //Deleted Product
+    //View All Deleted Product
     @GetMapping("/admin-product/deleted")
     public ResponseEntity<List<ProductDTO>> getAllDeletedProduct() {
         List<ProductDTO> products = productServices.getAllDeletedProduct();

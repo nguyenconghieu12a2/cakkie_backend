@@ -412,5 +412,13 @@ public class ProductService {
         productDesInfoRepo.updateProductDesInfo(productId, desTitleId, desInfo);
     }
 
+    public void deleteProductDesInfo(int productId, int desTitleId) {
+        product product = productRepo.findById(productId)
+                .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
 
+        productDesTitle desTitle = productDesTitleRepo.findById(desTitleId)
+                .orElseThrow(() -> new IllegalArgumentException("Title with ID " + desTitleId + " not found"));
+
+        productDesInfoRepo.deleteDesInfo(productId, desTitleId);
+    }
 }
