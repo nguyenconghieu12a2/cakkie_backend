@@ -3,6 +3,7 @@ package com.cakkie.backend.service;
 import com.cakkie.backend.dto.ProductDTO;
 import com.cakkie.backend.dto.ProductInfoDTO;
 import com.cakkie.backend.dto.ProductItemDTO;
+import com.cakkie.backend.dto.ProductTitleDTO;
 import com.cakkie.backend.exception.CategoryNotFound;
 import com.cakkie.backend.exception.ProductNotFound;
 import com.cakkie.backend.model.*;
@@ -89,7 +90,7 @@ public class ProductService {
 
             ProductDTO productDTO = productsMap.getOrDefault(productId, new ProductDTO(
                     productId, productName, categoryId, categoryName, description, productImage,
-                    productRating, new ArrayList<>(), new ArrayList<>()
+                    productRating, new ArrayList<>(), new ArrayList<>(), new ArrayList<>()
             ));
 
             ProductItemDTO productItemDTO = new ProductItemDTO(productItemId, productSize, quantity, price);
@@ -108,38 +109,56 @@ public class ProductService {
 
 
     public ProductDTO getProductById(int id) {
+        // Fetch the product data from the repository using your custom query
         List<Object[]> productData = productRepo.getProductsById(id);
 
+        // If no product data is found, throw a ProductNotFound exception
         if (productData.isEmpty()) {
             throw new ProductNotFound("Product with ID " + id + " not found");
         }
 
-        Object[] row = productData.get(0);
-        ProductDTO product = new ProductDTO(
-                (Integer) row[0],
-                "",
-                0,
-                "",
-                (String) row[1],
-                "",
-                0,
-                new ArrayList<>(),
-                new ArrayList<>()
+        // Initialize a new ProductDTO using the first row of productData
+        Object[] firstRow = productData.get(0);
+        ProductDTO productDTO = new ProductDTO(
+                (Integer) firstRow[0],  // Product ID
+                "",                     // Product Name (Assuming it needs to be retrieved elsewhere)
+                0,                      // Category ID (Assuming it needs to be retrieved elsewhere)
+                "",                     // Category Name (Assuming it needs to be retrieved elsewhere)
+                (String) firstRow[1],   // Product Description
+                "",                     // Product Image (Assuming it needs to be retrieved elsewhere)
+                0,                      // Product Rating (Assuming it needs to be retrieved elsewhere)
+                new ArrayList<>(),      // Product Items list
+                new ArrayList<>(),      // Product Titles list
+                new ArrayList<>()       // Product Info list
         );
 
-        Set<String> titlesSet = new HashSet<>();
+        // Use sets to track added items to avoid duplicates
+        Set<Integer> titleIdsSet = new HashSet<>();
+        Set<Integer> infoIdsSet = new HashSet<>();
 
-        for (Object[] rows : productData) {
-            int desTitleId = ((Number) rows[2]).intValue();
-            String productInfo = (String) rows[4];
-            if (titlesSet.add(productInfo)) {
-                ProductInfoDTO productInfoDTO = new ProductInfoDTO(desTitleId, productInfo, 1);
-                product.getProductInfo().add(productInfoDTO);
+        // Iterate through all the rows and populate product items, titles, and info
+        for (Object[] row : productData) {
+            // Assuming `row` contains: product ID, description, title ID, title name, des_info
+            Integer desTitleID = (Integer) row[2];
+            String desTitleName = (String) row[3];
+            String desInfo = (String) row[4];
+
+            // If title ID is new, add to the ProductTitle list
+            if (desTitleID != null && titleIdsSet.add(desTitleID)) {
+                ProductTitleDTO titleDTO = new ProductTitleDTO(desTitleID, desTitleName, 1); // Assuming isDelete = 1
+                productDTO.getProductTitle().add(titleDTO);
+            }
+
+            // If description information is new, add to ProductInfo list
+            if (desTitleID != null && desInfo != null && infoIdsSet.add(desTitleID)) {
+                ProductInfoDTO infoDTO = new ProductInfoDTO(desTitleID, desInfo, 1); // Assuming isDelete = 1
+                productDTO.getProductInfo().add(infoDTO);
             }
         }
 
-        return product;
+        return productDTO;
     }
+
 
     public product addProduct(
             int categoryId,
@@ -185,34 +204,33 @@ public class ProductService {
     }
 
 
-    public productDesInfo addDescriptionToProduct(int productId, int desTitleID, String desInfo, int isDeleted) {
-        // Debug: Log productId and desTitleID
-        System.out.println("Adding description to product. Product ID: " + productId + ", Title ID: " + desTitleID);
+//    public productDesInfo addDescriptionToProduct(int productId, int desTitleID, String desInfo, int isDeleted) {
+//        System.out.println("Adding description to product. Product ID: " + productId + ", Title ID: " + desTitleID);
+//
+//        product product = productRepo.findById(productId)
+//                .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
+//
+//        System.out.println("Product found: " + product);
+//
+//        // Validate Title ID before proceeding
+//        if (desTitleID <= 0) {
+//            throw new IllegalArgumentException("Invalid Title ID: " + desTitleID);
+//        }
+//
+//        productDesTitle desTitle = productDesTitleRepo.findById(desTitleID)
+//                .orElseThrow(() -> new IllegalArgumentException("Title with ID " + desTitleID + " not found"));
+//
+//        System.out.println("Title found: " + desTitle);
+//
+//        productDesInfo newDescriptionInfo = new productDesInfo();
+//        newDescriptionInfo.setProID(product);  // Associate with product
+//        newDescriptionInfo.setDesTitleId(desTitle);  // Associate with title
+//        newDescriptionInfo.setDesInfo(desInfo);  // Set the description info
+//        newDescriptionInfo.setIsDeleted(isDeleted);  // Set delete status
+//
+//        return productDesInfoRepo.save(newDescriptionInfo);
+//    }
 
-        // Find the product by its ID
-        product product = productRepo.findById(productId)
-                .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
-
-        // Debug: Log if product is found
-        System.out.println("Product found: " + product);
-
-        // Find the description title by its ID
-        productDesTitle desTitle = productDesTitleRepo.findById(desTitleID)
-                .orElseThrow(() -> new IllegalArgumentException("Title with ID " + desTitleID + " not found"));
-
-        // Debug: Log if title is found
-        System.out.println("Title found: " + desTitle);
-
-        // Create a new productDesInfo and set its properties
-        productDesInfo newDescriptionInfo = new productDesInfo();
-        newDescriptionInfo.setProID(product);  // Associate with product
-        newDescriptionInfo.setDesTitleId(desTitle);  // Associate with title
-        newDescriptionInfo.setDesInfo(desInfo);  // Set the description info
-        newDescriptionInfo.setIsDeleted(isDeleted);  // Set delete status
-
-        // Save and return the new description info
-        return productDesInfoRepo.save(newDescriptionInfo);
-    }
 
 
     //Update Product
@@ -272,41 +290,62 @@ public class ProductService {
         List<Object[]> results = productRepo.getAllDeletedProducts();
         Map<Integer, ProductDTO> productsMap = new HashMap<>();
 
+        System.out.println("Number of rows returned: " + results.size());
+
         for (Object[] row : results) {
-            int productId = (Integer) row[0];
+            if (row.length < 15) {
+                System.out.println("Skipping row with insufficient columns: " + Arrays.toString(row)); // Debug
+                continue;
+            }
+
+            // Extracting values with null checks
+            Integer productId = (Integer) row[0];
             String productName = (String) row[1];
-            int categoryId = ((Number) row[2]).intValue();
+            Integer categoryId = (row[2] != null) ? ((Number) row[2]).intValue() : null;
             String categoryName = (String) row[3];
             String description = (String) row[4];
             String productImage = (String) row[5];
-            int productRating = ((Number) row[6]).intValue();
-            int productItemId = ((Number) row[7]).intValue();
+            Integer productRating = (row[6] != null) ? ((Number) row[6]).intValue() : null;
+            Integer productItemId = (row[7] != null) ? ((Number) row[7]).intValue() : null;
             String productSize = (String) row[8];
-            int quantity = ((Number) row[9]).intValue();
-            long price = ((Number) row[10]).longValue();
+            Integer quantity = (row[9] != null) ? ((Number) row[9]).intValue() : null;
+            Long price = (row[10] != null) ? ((Number) row[10]).longValue() : null;
 
             ProductDTO productDTO = productsMap.computeIfAbsent(productId, k -> new ProductDTO(
-                    productId, productName, categoryId, categoryName, description, productImage,
-                    productRating, new ArrayList<>(), new ArrayList<>()
+                    productId, productName, categoryId != null ? categoryId : 0,
+                    categoryName, description, productImage, productRating != null ? productRating : 0,
+                    new ArrayList<>(), new ArrayList<>(), new ArrayList<>()
             ));
 
-            ProductItemDTO productItemDTO = new ProductItemDTO(productItemId, productSize, quantity, price);
-            if (productDTO.getProductItem().stream().noneMatch(item -> item.getId() == productItemId)) {
-                productDTO.getProductItem().add(productItemDTO);
+            if (productItemId != null) {
+                ProductItemDTO productItemDTO = new ProductItemDTO(productItemId, productSize, quantity != null ? quantity : 0, price != null ? price : 0L);
+                if (productDTO.getProductItem().stream().noneMatch(item -> item.getId() == productItemId)) {
+                    productDTO.getProductItem().add(productItemDTO);
+                }
             }
 
-            int desTitleId = ((Number) row[11]).intValue();
-            String desTitle = (String) row[12];
+            Integer desTitleID = (row[11] != null) ? ((Number) row[11]).intValue() : null;
+            String desTitleName = (String) row[12];
             String info = (String) row[13];
-            int isDelete = ((Number) row[14]).intValue();
-            if (productDTO.getProductInfo().stream().noneMatch(infoDTO -> infoDTO.getDesTitleID() == desTitleId)) {
-                productDTO.getProductInfo().add(new ProductInfoDTO(desTitleId,desTitle, info, isDelete));
+            Integer isDeleted = (row[14] != null) ? ((Number) row[14]).intValue() : null;
+
+            if (desTitleID != null && desTitleName != null) {
+                if (productDTO.getProductTitle().stream().noneMatch(title -> title.getDesTitleID() == desTitleID)) {
+                    productDTO.getProductTitle().add(new ProductTitleDTO(desTitleID, desTitleName, isDeleted != null ? isDeleted : 0));
+                }
+            }
+
+            if (desTitleID != null && info != null) {
+                if (productDTO.getProductInfo().stream().noneMatch(infoDTO -> infoDTO.getDesTitleID() == desTitleID)) {
+                    productDTO.getProductInfo().add(new ProductInfoDTO(desTitleID, info, isDeleted != null ? isDeleted : 0));
+                }
             }
         }
 
+        System.out.println("Total products in map: " + productsMap.size());
+
         return new ArrayList<>(productsMap.values());
     }
-
 
     public product deleteProduct(int productId) {
         product existingProduct = productRepo.findById(productId)
@@ -314,5 +353,64 @@ public class ProductService {
         existingProduct.setIsDeleted(0);
         return productRepo.save(existingProduct);
     }
+
+
+//    public void addDescriptionToProduct(int productId, int desTitleId, String desInfo, int isDeleted) {
+//        // Validate Product ID
+//        product product = productRepo.findById(productId)
+//                .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
+//
+//        System.out.println("Adding description to product. Product ID: " + productId + ", Title ID: " + desTitleId);
+//
+//        // Validate Title ID
+//        productDesTitle desTitle = productDesTitleRepo.findById(desTitleId)
+//                .orElseThrow(() -> new IllegalArgumentException("Title with ID " + desTitleId + " not found"));
+//
+//        System.out.println("Title found: " + desTitle);
+//
+//        // Add description using custom repository method
+//        int rowsAffected = productDesInfoRepo.addProductDescription(productId, desTitleId, desInfo, isDeleted);
+//        if (rowsAffected <= 0) {
+//            throw new RuntimeException("Failed to add product description.");
+//        }
+//    }
+
+//    public void addDescriptionToProduct(int productId, int desTitleId, String desInfo, int isDeleted) {
+//        // Validate Product ID
+//        product product = productRepo.findById(productId)
+//                .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
+//
+//        // Validate Title ID
+//        productDesTitle desTitle = productDesTitleRepo.findById(desTitleId)
+//                .orElseThrow(() -> new IllegalArgumentException("Title with ID " + desTitleId + " not found"));
+//
+//        // Add product description using the custom repository method
+//        productDesInfoRepo.addProductDescription(productId, desTitleId, desInfo, isDeleted);
+//    }
+
+    public void addNewDesInfoUsingInsertQuery(int productId, int desTitleId, String desInfo, int isDeleted) {
+        product product = productRepo.findById(productId)
+                .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
+
+        productDesTitle desTitle = productDesTitleRepo.findById(desTitleId)
+                .orElseThrow(() -> new IllegalArgumentException("Title with ID " + desTitleId + " not found"));
+
+        productDesInfoRepo.insertProductDesInfo(product.getId(), desTitle.getDesTitleID(), desInfo, isDeleted);
+    }
+
+    public List<String> getAllDesTitles() {
+        return productDesTitleRepo.getAllDesTitle();
+    }
+
+    public void updateProductDesInfo(int productId, int desTitleId, String desInfo) {
+        product product = productRepo.findById(productId)
+                .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
+
+        productDesTitle desTitle = productDesTitleRepo.findById(desTitleId)
+                .orElseThrow(() -> new IllegalArgumentException("Title with ID " + desTitleId + " not found"));
+
+        productDesInfoRepo.updateProductDesInfo(productId, desTitleId, desInfo);
+    }
+
 
 }

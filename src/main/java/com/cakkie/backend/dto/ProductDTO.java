@@ -18,5 +18,6 @@ public class ProductDTO {
     private String productImage;
     private int productRating;
     private List<ProductItemDTO> productItem;
+    private List<ProductTitleDTO> productTitle;
     private List<ProductInfoDTO> productInfo;
 }

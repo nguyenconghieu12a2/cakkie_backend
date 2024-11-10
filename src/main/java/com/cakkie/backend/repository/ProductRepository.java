@@ -18,11 +18,11 @@
                 "order by p.id, c.id, [pi].id", nativeQuery = true)
         List<Object[]> getAllProducts();
 
-        @Query(value = "select p.id, p.description, pdt.desTitleID ,pdt.desTitleName, pdi.des_info\n" +
+        @Query(value = "select p.id, p.description, pdt.des_title_id ,pdt.des_title_name, pdi.des_info\n" +
                 "from product_item [pi]\n" +
                 "join product p on p.id = [pi].pro_id\n" +
-                "join productDesInfo pdi on pdi.proID = p.id\n" +
-                "join productDesTitle pdt on pdt.desTitleID = pdi.desTitleID\n" +
+                "join product_des_info pdi on pdi.product_id = p.id\n" +
+                "join product_des_title pdt on pdt.des_title_id = pdi.des_title_id\n" +
                 "where p.id = ?1 AND p.is_deleted = 1\n" +
                 "order by p.id, [pi].id", nativeQuery = true)
         List<Object[]> getProductsById(int id);
@@ -34,15 +34,34 @@
 
         List<product> findByCategoryID(category categoryID);
 
-        @Query(value = "SELECT p.id, p.name, c.id, c.cate_name, p.description, p.product_image, p.product_rating, [pi].id, [pi].size,[pi].qty_in_stock, [pi].price,pdt.desTitleID, pdt.desTitleName, pdi.des_info\n" +
-                "from product_item [pi]\n" +
-                "join product p on p.id = [pi].pro_id\n" +
-                "join productDesInfo pdi on pdi.proID = p.id\n" +
-                "join productDesTitle pdt on pdt.desTitleID = pdi.desTitleID\n" +
-                "join category c on c.id = p.categoryID\n" +
-                "full join discount_category dc on dc.category_id = c.id\n" +
-                "full join discount d on d.id = dc.discount_id\n" +
-                "where p.id is not null AND p.is_deleted = 0 \n" +
-                "order by p.id, c.id, [pi].id", nativeQuery = true)
+//        @Query(value = "SELECT p.id, p.name, c.id, c.cate_name, p.description, p.product_image, p.product_rating, [pi].id, [pi].size,[pi].qty_in_stock, [pi].price,pdt.desTitleID, pdt.desTitleName, pdi.des_info\n" +
+//                "from product_item [pi]\n" +
+//                "join product p on p.id = [pi].pro_id\n" +
+//                "join productDesInfo pdi on pdi.proID = p.id\n" +
+//                "join productDesTitle pdt on pdt.desTitleID = pdi.desTitleID\n" +
+//                "join category c on c.id = p.categoryID\n" +
+//                "full join discount_category dc on dc.category_id = c.id\n" +
+//                "full join discount d on d.id = dc.discount_id\n" +
+//                "where p.id is not null AND p.is_deleted = 0 \n" +
+//                "order by p.id, c.id, [pi].id", nativeQuery = true)
+//        List<Object[]> getAllDeletedProducts();
+
+        @Query(value = """
+        SELECT
+        p.id, p.name, c.id, c.cate_name, p.description, p.product_image,
+        p.product_rating, pi.id, pi.size, pi.qty_in_stock, pi.price,
+        pdt.des_title_id, pdt.des_title_name, pdi.des_info, pdi.is_deleted
+        FROM
+            product_item pi
+                JOIN product p ON p.id = pi.pro_id
+                LEFT JOIN product_des_info pdi ON pdi.product_id = p.id
+                LEFT JOIN product_des_title pdt ON pdt.des_title_id = pdi.des_title_id
+                JOIN category c ON c.id = p.categoryID
+                LEFT JOIN discount_category dc ON dc.category_id = c.id
+                LEFT JOIN discount d ON d.id = dc.discount_id 
+        WHERE p.id IS NOT NULL AND p.is_deleted = 0
+        ORDER BY p.id, c.id, pi.id
+    """, nativeQuery = true)
         List<Object[]> getAllDeletedProducts();
+
     }
