@@ -11,12 +11,12 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "productDesTitle")
+@Table(name = "product_des_title")
 public class productDesTitle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int desTitleID;
-    @Column(name = "desTitleName", nullable = false)
+    @Column(name = "des_title_name", nullable = false)
     private String desTitlename;
     @Column(name = "is_deleted", nullable = false)
     private int isDeleted;
