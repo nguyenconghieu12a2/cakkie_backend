@@ -93,7 +93,7 @@ public class ProductService {
                     productRating, new ArrayList<>(), new ArrayList<>(), new ArrayList<>()
             ));
 
-            ProductItemDTO productItemDTO = new ProductItemDTO(productItemId, productSize, quantity, price);
+            ProductItemDTO productItemDTO = new ProductItemDTO(productItemId, productSize, quantity, price, 1);
             if (!productDTO.getProductItem().stream().anyMatch(item -> item.getId() == productItemId)) {
                 productDTO.getProductItem().add(productItemDTO);
             }
@@ -109,15 +109,12 @@ public class ProductService {
 
 
     public ProductDTO getProductById(int id) {
-        // Fetch the product data from the repository using your custom query
         List<Object[]> productData = productRepo.getProductsById(id);
 
-        // If no product data is found, throw a ProductNotFound exception
         if (productData.isEmpty()) {
             throw new ProductNotFound("Product with ID " + id + " not found");
         }
 
-        // Initialize a new ProductDTO using the first row of productData
         Object[] firstRow = productData.get(0);
         ProductDTO productDTO = new ProductDTO(
                 (Integer) firstRow[0],  // Product ID
@@ -132,24 +129,19 @@ public class ProductService {
                 new ArrayList<>()       // Product Info list
         );
 
-        // Use sets to track added items to avoid duplicates
         Set<Integer> titleIdsSet = new HashSet<>();
         Set<Integer> infoIdsSet = new HashSet<>();
 
-        // Iterate through all the rows and populate product items, titles, and info
         for (Object[] row : productData) {
-            // Assuming `row` contains: product ID, description, title ID, title name, des_info
             Integer desTitleID = (Integer) row[2];
             String desTitleName = (String) row[3];
             String desInfo = (String) row[4];
 
-            // If title ID is new, add to the ProductTitle list
             if (desTitleID != null && titleIdsSet.add(desTitleID)) {
                 ProductTitleDTO titleDTO = new ProductTitleDTO(desTitleID, desTitleName, 1); // Assuming isDelete = 1
                 productDTO.getProductTitle().add(titleDTO);
             }
 
-            // If description information is new, add to ProductInfo list
             if (desTitleID != null && desInfo != null && infoIdsSet.add(desTitleID)) {
                 ProductInfoDTO infoDTO = new ProductInfoDTO(desTitleID, desInfo, 1); // Assuming isDelete = 1
                 productDTO.getProductInfo().add(infoDTO);
@@ -158,7 +150,6 @@ public class ProductService {
 
         return productDTO;
     }
-
 
     public product addProduct(
             int categoryId,
@@ -188,7 +179,7 @@ public class ProductService {
         newProduct.setDescription(description);
         newProduct.setProductImage(imgPath);
         newProduct.setProductRating(productRating);
-        newProduct.setIsDeleted(isDelete);
+        newProduct.setIsDeleted(1);
 
         product savedProduct = productRepo.save(newProduct);
 
@@ -198,42 +189,13 @@ public class ProductService {
         newProductItem.setSize(size);
         newProductItem.setQtyInStock(qtyInStock);
         newProductItem.setPrice(price);
+        newProductItem.setIsDeleted(1);
         productItemRepo.save(newProductItem);
 
         return savedProduct;
     }
 
-
-//    public productDesInfo addDescriptionToProduct(int productId, int desTitleID, String desInfo, int isDeleted) {
-//        System.out.println("Adding description to product. Product ID: " + productId + ", Title ID: " + desTitleID);
-//
-//        product product = productRepo.findById(productId)
-//                .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
-//
-//        System.out.println("Product found: " + product);
-//
-//        // Validate Title ID before proceeding
-//        if (desTitleID <= 0) {
-//            throw new IllegalArgumentException("Invalid Title ID: " + desTitleID);
-//        }
-//
-//        productDesTitle desTitle = productDesTitleRepo.findById(desTitleID)
-//                .orElseThrow(() -> new IllegalArgumentException("Title with ID " + desTitleID + " not found"));
-//
-//        System.out.println("Title found: " + desTitle);
-//
-//        productDesInfo newDescriptionInfo = new productDesInfo();
-//        newDescriptionInfo.setProID(product);  // Associate with product
-//        newDescriptionInfo.setDesTitleId(desTitle);  // Associate with title
-//        newDescriptionInfo.setDesInfo(desInfo);  // Set the description info
-//        newDescriptionInfo.setIsDeleted(isDeleted);  // Set delete status
-//
-//        return productDesInfoRepo.save(newDescriptionInfo);
-//    }
-
-
-
-    //Update Product
+    // Update Product Method with Multiple Sizes Support
     public product updateProduct(
             int productId,
             int categoryId,
@@ -242,44 +204,58 @@ public class ProductService {
             MultipartFile productImage,
             int productRating,
             int isDelete,
-            String size,
-            long qtyInStock,
-            long price
+            List<Map<String, Object>> sizes // List of size, quantity, and price maps
     ) throws IOException {
+        // Fetch existing product
         product existingProduct = productRepo.findById(productId)
                 .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
 
+        // Fetch category by ID and assign it to product
         category category = categoryRepo.findById(categoryId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid category ID: " + categoryId));
         existingProduct.setCategoryID(category);
 
+        // Update general product information
         existingProduct.setName(name);
         existingProduct.setDescription(description);
         existingProduct.setProductRating(productRating);
         existingProduct.setIsDeleted(isDelete);
 
+        // Update product image if provided
         if (productImage != null && !productImage.isEmpty()) {
             String imgPath = saveImage(productImage);
             existingProduct.setProductImage(imgPath);
         }
 
-        Optional<productItem> existingProductItemOpt = productItemRepo.findByProIdAndSize(existingProduct, size);
-        if (existingProductItemOpt.isPresent()) {
-            productItem existingProductItem = existingProductItemOpt.get();
-            existingProductItem.setQtyInStock(qtyInStock);
-            existingProductItem.setPrice(price);
-            productItemRepo.save(existingProductItem);
-        } else {
-            productItem newProductItem = new productItem();
-            newProductItem.setProId(existingProduct);
-            newProductItem.setSize(size);
-            newProductItem.setQtyInStock(qtyInStock);
-            newProductItem.setPrice(price);
-            productItemRepo.save(newProductItem);
+        // Update sizes, quantities, and prices
+        for (Map<String, Object> sizeInfo : sizes) {
+            String size = (String) sizeInfo.get("size");
+            long qtyInStock = ((Number) sizeInfo.get("qtyInStock")).longValue();
+            long price = ((Number) sizeInfo.get("price")).longValue();
+
+            // Check if this product already has the specified size
+            Optional<productItem> existingProductItemOpt = productItemRepo.findByProIdAndSize(existingProduct, size);
+            if (existingProductItemOpt.isPresent()) {
+                // Update existing product item
+                productItem existingProductItem = existingProductItemOpt.get();
+                existingProductItem.setQtyInStock(qtyInStock);
+                existingProductItem.setPrice(price);
+                productItemRepo.save(existingProductItem);
+            } else {
+                // Create new product item if it doesn't exist
+                productItem newProductItem = new productItem();
+                newProductItem.setProId(existingProduct);
+                newProductItem.setSize(size);
+                newProductItem.setQtyInStock(qtyInStock);
+                newProductItem.setPrice(price);
+                newProductItem.setIsDeleted(1); // Assuming isDeleted should be 1 for active items
+                productItemRepo.save(newProductItem);
+            }
         }
 
         return productRepo.save(existingProduct);
     }
+
 
 
     public List<String> getAllSize() {
@@ -318,7 +294,7 @@ public class ProductService {
             ));
 
             if (productItemId != null) {
-                ProductItemDTO productItemDTO = new ProductItemDTO(productItemId, productSize, quantity != null ? quantity : 0, price != null ? price : 0L);
+                ProductItemDTO productItemDTO = new ProductItemDTO(productItemId, productSize, quantity != null ? quantity : 0, price != null ? price : 0L, 0);
                 if (productDTO.getProductItem().stream().noneMatch(item -> item.getId() == productItemId)) {
                     productDTO.getProductItem().add(productItemDTO);
                 }
@@ -350,43 +326,11 @@ public class ProductService {
     public product deleteProduct(int productId) {
         product existingProduct = productRepo.findById(productId)
                 .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
+
         existingProduct.setIsDeleted(0);
+
         return productRepo.save(existingProduct);
     }
-
-
-//    public void addDescriptionToProduct(int productId, int desTitleId, String desInfo, int isDeleted) {
-//        // Validate Product ID
-//        product product = productRepo.findById(productId)
-//                .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
-//
-//        System.out.println("Adding description to product. Product ID: " + productId + ", Title ID: " + desTitleId);
-//
-//        // Validate Title ID
-//        productDesTitle desTitle = productDesTitleRepo.findById(desTitleId)
-//                .orElseThrow(() -> new IllegalArgumentException("Title with ID " + desTitleId + " not found"));
-//
-//        System.out.println("Title found: " + desTitle);
-//
-//        // Add description using custom repository method
-//        int rowsAffected = productDesInfoRepo.addProductDescription(productId, desTitleId, desInfo, isDeleted);
-//        if (rowsAffected <= 0) {
-//            throw new RuntimeException("Failed to add product description.");
-//        }
-//    }
-
-//    public void addDescriptionToProduct(int productId, int desTitleId, String desInfo, int isDeleted) {
-//        // Validate Product ID
-//        product product = productRepo.findById(productId)
-//                .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
-//
-//        // Validate Title ID
-//        productDesTitle desTitle = productDesTitleRepo.findById(desTitleId)
-//                .orElseThrow(() -> new IllegalArgumentException("Title with ID " + desTitleId + " not found"));
-//
-//        // Add product description using the custom repository method
-//        productDesInfoRepo.addProductDescription(productId, desTitleId, desInfo, isDeleted);
-//    }
 
     public void addNewDesInfoUsingInsertQuery(int productId, int desTitleId, String desInfo, int isDeleted) {
         product product = productRepo.findById(productId)

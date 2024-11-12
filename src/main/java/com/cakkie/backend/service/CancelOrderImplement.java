@@ -1,14 +1,13 @@
 package com.cakkie.backend.service;
 
 import com.cakkie.backend.dto.CancelOrderDTO;
+import com.cakkie.backend.dto.ProductDTO;
+import com.cakkie.backend.dto.ProductItemDTO;
 import com.cakkie.backend.repository.CancelOrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -48,12 +47,52 @@ public class CancelOrderImplement implements CancelOrderService{
             detail.setTotalProduct(((Number) row[2]).intValue()); // Total Product
             detail.setOrderTotal(((Number) row[3]).longValue()); // Order Total
             detail.setDiscountTotal(((Number) row[4]).longValue()); // Total Discount Price
-            detail.setOrderStatus((String) row[5]); // Order Status
+            detail.setCancelDate((Date) row[5]); // Canceled Date
+            detail.setCancelReason((String) row[6]); // Canceled Reason
 
             detailedCancelOrders.add(detail);
         }
 
         return detailedCancelOrders;
+    }
+
+    @Override
+    public List<CancelOrderDTO> getDetailProductCancelByUserId(int userId) {
+        List<Object[]> productCancelData = cancelOrderRepository.getAllProductCancelByUserId(userId);
+        Map<Integer, CancelOrderDTO> orderMap = new LinkedHashMap<>();
+
+        for (Object[] row : productCancelData) {
+            Integer orderId = (Integer) row[0];
+            String customerName = (String) row[1];
+            String productName = (String) row[2];
+            String productSize = (String) row[3];
+            Integer quantity = ((Number) row[4]).intValue();
+            Long price = ((Number) row[5]).longValue();
+
+            // Get or create the CancelOrderDTO for this order ID
+            CancelOrderDTO cancelOrderDTO = orderMap.computeIfAbsent(orderId, id -> {
+                CancelOrderDTO dto = new CancelOrderDTO();
+                dto.setId(orderId);
+                dto.setFullName(customerName);
+                dto.setProduct(new ArrayList<>()); // Initialize product list
+                return dto;
+            });
+
+            // Create ProductDTO and ProductItemDTO
+            ProductDTO productDTO = new ProductDTO();
+            productDTO.setProductName(productName);
+
+            ProductItemDTO productItemDTO = new ProductItemDTO();
+            productItemDTO.setSize(productSize);
+            productItemDTO.setQuantity(quantity);
+            productItemDTO.setPrice(price);
+
+            // Add ProductItemDTO to the product's item list and add product to CancelOrderDTO
+            productDTO.setProductItem(List.of(productItemDTO));
+            cancelOrderDTO.getProduct().add(productDTO);
+        }
+
+        return new ArrayList<>(orderMap.values());
     }
 
 

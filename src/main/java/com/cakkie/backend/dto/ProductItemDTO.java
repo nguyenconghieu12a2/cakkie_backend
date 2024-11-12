@@ -12,4 +12,5 @@ public class ProductItemDTO {
     private String size;
     private int quantity;
     private long price;
+    private int isDelete;
 }

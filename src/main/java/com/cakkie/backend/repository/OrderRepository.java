@@ -60,5 +60,4 @@ public interface OrderRepository extends JpaRepository<orderLine, Integer> {
             "JOIN payment_method pm ON up.payment_type_id = pm.id\n" +
             "WHERE s.id = ?1", nativeQuery = true)
     List<Object[]> getOrdersById(int id);
-
 }

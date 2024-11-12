@@ -30,4 +30,11 @@ public class CancelOrderController {
         List<CancelOrderDTO> detailCancelOrders = cancelOrderService.getDetailCancelOrderByUserId(userId);
         return new ResponseEntity<>(detailCancelOrders, HttpStatus.OK);
     }
+
+    @GetMapping("/api/cancel-order/product-detail/{userId}")
+    public ResponseEntity<List<CancelOrderDTO>> getProductCancelDetailByUserId(@PathVariable int userId) {
+        List<CancelOrderDTO> productCancelDetails = cancelOrderService.getDetailProductCancelByUserId(userId);
+        return new ResponseEntity<>(productCancelDetails, HttpStatus.OK);
+    }
+
 }
