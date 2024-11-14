@@ -14,7 +14,7 @@ public interface OrderRepository extends JpaRepository<orderLine, Integer> {
             "s.id,\n" +
             "(u.firstname + ' ' + u.lastname) AS [Customer Name], \n" +
             "COUNT(o.product_item_id) AS total_product, \n" +
-            "SUM(o.price) AS total_price, \n" +
+            "s.order_total AS total_price, \n" +
             "SUM(CONVERT(int, ((o.price * d.discount_rate) / 100))) AS [total_discount_price], \n" +
             "os.[status] AS [Order Status], \n" +
             "CAST(MAX(CAST(o.note AS NVARCHAR(MAX))) AS NVARCHAR(MAX)) AS note\n" +
@@ -28,7 +28,7 @@ public interface OrderRepository extends JpaRepository<orderLine, Integer> {
             "JOIN category c ON c.id = p.categoryID\n" +
             "JOIN discount_category dc ON c.id = dc.category_id\n" +
             "JOIN discount d ON d.id = dc.discount_id\n" +
-            "GROUP BY u.firstname, u.lastname, os.[status], s.id\n" +
+            "GROUP BY u.firstname, u.lastname, os.[status], s.id, s.order_total\n" +
             "ORDER BY s.id ASC", nativeQuery = true)
     List<Object[]> getAllOrders();
 

@@ -62,8 +62,6 @@ public class OrderService {
         );
         for(Object[] rows: orderData) {
             String productName = (String) rows[2];
-//            String address = (String) rows[9];
-//            order.getAddress().add(address);
             order.getProductName().add(productName);
         }
         return order;
