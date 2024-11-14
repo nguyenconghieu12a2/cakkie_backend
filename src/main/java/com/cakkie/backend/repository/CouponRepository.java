@@ -1,7 +1,10 @@
 package com.cakkie.backend.repository;
 
 import com.cakkie.backend.model.coupons;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 
-public interface CouponRepository extends JpaRepository<coupons, Integer> {
+import java.util.List;
+
+public interface CouponRepository extends CrudRepository<coupons, Integer>{
+    List<coupons> findByIsDeleted(int isDeleted);
 }

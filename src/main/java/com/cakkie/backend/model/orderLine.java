@@ -27,7 +27,7 @@ public class orderLine {
     @Column(name = "price", nullable = false)
     private long price;
     @Column(name = "discount_price", nullable = true)
-    private long discountPrice;
+    private Long discountPrice;
     @Column(name = "note", nullable = true, columnDefinition = "TEXT")
     private String note;
 
