@@ -15,6 +15,7 @@ import java.util.List;
 public class productDesTitle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "des_title_id")
     private int desTitleID;
     @Column(name = "des_title_name", nullable = false)
     private String desTitlename;

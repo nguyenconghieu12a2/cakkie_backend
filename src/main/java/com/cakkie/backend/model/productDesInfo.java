@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class productDesInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "des_info_id")
     private int desInfoID;
     @ManyToOne
     @JoinColumn(name = "des_title_id", nullable = false)
