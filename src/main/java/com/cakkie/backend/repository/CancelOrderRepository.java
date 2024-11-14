@@ -1,11 +1,14 @@
 package com.cakkie.backend.repository;
 
 import com.cakkie.backend.model.orderLine;
+import com.cakkie.backend.model.userSite;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CancelOrderRepository extends JpaRepository<orderLine, Integer> {
     @Query(value = "SELECT \n" +
@@ -64,4 +67,14 @@ public interface CancelOrderRepository extends JpaRepository<orderLine, Integer>
             "WHERE os.status LIKE '%Cancel%' AND s.id = ?1\n" +
             "ORDER BY s.id ASC;\n", nativeQuery = true)
     List<Object[]> getAllProductCancelByUserId(@Param("userId") int userId);
+
+    @Modifying
+    @Query(value = "UPDATE user_site " +
+            "SET status = 2, banned_reason = :bannedReason " +
+            "WHERE id = :userId",
+            nativeQuery = true)
+    void banUser(@Param("userId") int userId, @Param("bannedReason") String bannedReason);
+
+    @Query("SELECT u FROM userSite u WHERE u.id = :userId")
+    Optional<userSite> findUserById(@Param("userId") int userId);
 }

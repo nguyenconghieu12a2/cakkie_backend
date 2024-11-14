@@ -195,7 +195,59 @@ public class ProductService {
         return savedProduct;
     }
 
-    // Update Product Method with Multiple Sizes Support
+    //Update Method
+//    public product updateProduct(
+//            int productId,
+//            int categoryId,
+//            String name,
+//            String description,
+//            MultipartFile productImage,
+//            int productRating,
+//            int isDelete,
+//            List<Map<String, Object>> sizes // List of size, quantity, and price maps
+//    ) throws IOException {
+//        product existingProduct = productRepo.findById(productId)
+//                .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
+//
+//        category category = categoryRepo.findById(categoryId)
+//                .orElseThrow(() -> new IllegalArgumentException("Invalid category ID: " + categoryId));
+//        existingProduct.setCategoryID(category);
+//
+//        existingProduct.setName(name);
+//        existingProduct.setDescription(description);
+//        existingProduct.setProductRating(productRating);
+//        existingProduct.setIsDeleted(isDelete);
+//
+//        if (productImage != null && !productImage.isEmpty()) {
+//            String imgPath = saveImage(productImage);
+//            existingProduct.setProductImage(imgPath);
+//        }
+//
+//        for (Map<String, Object> sizeInfo : sizes) {
+//            String size = sizeInfo.get("size").toString();
+//            long qtyInStock = Long.parseLong(sizeInfo.get("qtyInStock").toString());
+//            long price = Long.parseLong(sizeInfo.get("price").toString());
+//
+//            Optional<productItem> existingProductItemOpt = productItemRepo.findByProIdAndSize(existingProduct, size);
+//            if (existingProductItemOpt.isPresent()) {
+//                productItem existingProductItem = existingProductItemOpt.get();
+//                existingProductItem.setQtyInStock(qtyInStock);
+//                existingProductItem.setPrice(price);
+//                productItemRepo.save(existingProductItem);
+//            } else {
+//                productItem newProductItem = new productItem();
+//                newProductItem.setProId(existingProduct);
+//                newProductItem.setSize(size);
+//                newProductItem.setQtyInStock(qtyInStock);
+//                newProductItem.setPrice(price);
+//                newProductItem.setIsDeleted(1);
+//                productItemRepo.save(newProductItem);
+//            }
+//        }
+//
+//        return productRepo.save(existingProduct);
+//    }
+
     public product updateProduct(
             int productId,
             int categoryId,
@@ -206,55 +258,46 @@ public class ProductService {
             int isDelete,
             List<Map<String, Object>> sizes // List of size, quantity, and price maps
     ) throws IOException {
-        // Fetch existing product
         product existingProduct = productRepo.findById(productId)
                 .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
 
-        // Fetch category by ID and assign it to product
         category category = categoryRepo.findById(categoryId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid category ID: " + categoryId));
         existingProduct.setCategoryID(category);
 
-        // Update general product information
         existingProduct.setName(name);
         existingProduct.setDescription(description);
         existingProduct.setProductRating(productRating);
         existingProduct.setIsDeleted(isDelete);
 
-        // Update product image if provided
         if (productImage != null && !productImage.isEmpty()) {
             String imgPath = saveImage(productImage);
             existingProduct.setProductImage(imgPath);
         }
 
-        // Update sizes, quantities, and prices
+        // Update existing sizes, quantities, and prices
         for (Map<String, Object> sizeInfo : sizes) {
-            String size = (String) sizeInfo.get("size");
-            long qtyInStock = ((Number) sizeInfo.get("qtyInStock")).longValue();
-            long price = ((Number) sizeInfo.get("price")).longValue();
+            String oldSize = sizeInfo.get("oldSize").toString(); // This should represent the size name to be updated
+            String newSize = sizeInfo.get("size").toString(); // This is the new size name
+            long qtyInStock = Long.parseLong(sizeInfo.get("qtyInStock").toString());
+            long price = Long.parseLong(sizeInfo.get("price").toString());
 
-            // Check if this product already has the specified size
-            Optional<productItem> existingProductItemOpt = productItemRepo.findByProIdAndSize(existingProduct, size);
+            Optional<productItem> existingProductItemOpt = productItemRepo.findByProIdAndSize(existingProduct, oldSize);
             if (existingProductItemOpt.isPresent()) {
                 // Update existing product item
                 productItem existingProductItem = existingProductItemOpt.get();
+                existingProductItem.setSize(newSize); // Update the size name
                 existingProductItem.setQtyInStock(qtyInStock);
                 existingProductItem.setPrice(price);
                 productItemRepo.save(existingProductItem);
             } else {
-                // Create new product item if it doesn't exist
-                productItem newProductItem = new productItem();
-                newProductItem.setProId(existingProduct);
-                newProductItem.setSize(size);
-                newProductItem.setQtyInStock(qtyInStock);
-                newProductItem.setPrice(price);
-                newProductItem.setIsDeleted(1); // Assuming isDeleted should be 1 for active items
-                productItemRepo.save(newProductItem);
+                throw new IllegalArgumentException("Product item with size " + oldSize + " does not exist.");
             }
         }
 
         return productRepo.save(existingProduct);
     }
+
 
 
 
@@ -269,12 +312,11 @@ public class ProductService {
         System.out.println("Number of rows returned: " + results.size());
 
         for (Object[] row : results) {
-            if (row.length < 15) {
+            if (row.length < 11) {
                 System.out.println("Skipping row with insufficient columns: " + Arrays.toString(row)); // Debug
                 continue;
             }
 
-            // Extracting values with null checks
             Integer productId = (Integer) row[0];
             String productName = (String) row[1];
             Integer categoryId = (row[2] != null) ? ((Number) row[2]).intValue() : null;
@@ -299,21 +341,47 @@ public class ProductService {
                     productDTO.getProductItem().add(productItemDTO);
                 }
             }
+        }
 
-            Integer desTitleID = (row[11] != null) ? ((Number) row[11]).intValue() : null;
-            String desTitleName = (String) row[12];
-            String info = (String) row[13];
-            Integer isDeleted = (row[14] != null) ? ((Number) row[14]).intValue() : null;
+        System.out.println("Total products in map: " + productsMap.size());
 
-            if (desTitleID != null && desTitleName != null) {
-                if (productDTO.getProductTitle().stream().noneMatch(title -> title.getDesTitleID() == desTitleID)) {
-                    productDTO.getProductTitle().add(new ProductTitleDTO(desTitleID, desTitleName, isDeleted != null ? isDeleted : 0));
-                }
+        return new ArrayList<>(productsMap.values());
+    }
+
+    public List<ProductDTO> getCategryDeleteProduct() {
+        List<Object[]> results = productRepo.getDeletedCategoryProducts();
+        Map<Integer, ProductDTO> productsMap = new HashMap<>();
+
+        System.out.println("Number of rows returned: " + results.size());
+
+        for (Object[] row : results) {
+            if (row.length < 11) {
+                System.out.println("Skipping row with insufficient columns: " + Arrays.toString(row)); // Debug
+                continue;
             }
 
-            if (desTitleID != null && info != null) {
-                if (productDTO.getProductInfo().stream().noneMatch(infoDTO -> infoDTO.getDesTitleID() == desTitleID)) {
-                    productDTO.getProductInfo().add(new ProductInfoDTO(desTitleID, info, isDeleted != null ? isDeleted : 0));
+            Integer productId = (Integer) row[0];
+            String productName = (String) row[1];
+            Integer categoryId = (row[2] != null) ? ((Number) row[2]).intValue() : null;
+            String categoryName = (String) row[3];
+            String description = (String) row[4];
+            String productImage = (String) row[5];
+            Integer productRating = (row[6] != null) ? ((Number) row[6]).intValue() : null;
+            Integer productItemId = (row[7] != null) ? ((Number) row[7]).intValue() : null;
+            String productSize = (String) row[8];
+            Integer quantity = (row[9] != null) ? ((Number) row[9]).intValue() : null;
+            Long price = (row[10] != null) ? ((Number) row[10]).longValue() : null;
+
+            ProductDTO productDTO = productsMap.computeIfAbsent(productId, k -> new ProductDTO(
+                    productId, productName, categoryId != null ? categoryId : 0,
+                    categoryName, description, productImage, productRating != null ? productRating : 0,
+                    new ArrayList<>(), new ArrayList<>(), new ArrayList<>()
+            ));
+
+            if (productItemId != null) {
+                ProductItemDTO productItemDTO = new ProductItemDTO(productItemId, productSize, quantity != null ? quantity : 0, price != null ? price : 0L, 0);
+                if (productDTO.getProductItem().stream().noneMatch(item -> item.getId() == productItemId)) {
+                    productDTO.getProductItem().add(productItemDTO);
                 }
             }
         }
@@ -323,11 +391,21 @@ public class ProductService {
         return new ArrayList<>(productsMap.values());
     }
 
+
     public product deleteProduct(int productId) {
         product existingProduct = productRepo.findById(productId)
                 .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
 
         existingProduct.setIsDeleted(0);
+
+        return productRepo.save(existingProduct);
+    }
+
+    public product recoverProduct (int productId) {
+        product existingProduct = productRepo.findById(productId)
+                .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
+
+        existingProduct.setIsDeleted(1);
 
         return productRepo.save(existingProduct);
     }

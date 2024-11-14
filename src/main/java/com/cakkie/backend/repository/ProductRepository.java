@@ -37,19 +37,23 @@
         @Query(value = """
         SELECT
         p.id, p.name, c.id, c.cate_name, p.description, p.product_image,
-        p.product_rating, pi.id, pi.size, pi.qty_in_stock, pi.price,
-        pdt.des_title_id, pdt.des_title_name, pdi.des_info, pdi.is_deleted
+        p.product_rating, pi.id, pi.size, pi.qty_in_stock, pi.price
         FROM
             product_item pi
                 JOIN product p ON p.id = pi.pro_id
-                LEFT JOIN product_des_info pdi ON pdi.product_id = p.id
-                LEFT JOIN product_des_title pdt ON pdt.des_title_id = pdi.des_title_id
                 JOIN category c ON c.id = p.categoryID
-                LEFT JOIN discount_category dc ON dc.category_id = c.id
-                LEFT JOIN discount d ON d.id = dc.discount_id 
-        WHERE p.id IS NOT NULL AND p.is_deleted = 0 AND pi.is_deleted = 0
+        WHERE p.id IS NOT NULL AND p.is_deleted = 0 AND c.is_deleted = 0
         ORDER BY p.id, c.id, pi.id
     """, nativeQuery = true)
         List<Object[]> getAllDeletedProducts();
 
+        @Query(value = """
+        SELECT p.id, p.name, c.id, c.cate_name, p.description, p.product_image, p.product_rating, pi.id, pi.size, pi.qty_in_stock, pi.price
+        FROM product_item pi
+        JOIN product p ON p.id = pi.pro_id
+        JOIN category c ON c.id = p.categoryID
+        WHERE p.id IS NOT NULL AND p.is_deleted = 0 AND c.is_deleted = 1
+        ORDER BY p.id, c.id, pi.id
+        """, nativeQuery = true)
+        List<Object[]> getDeletedCategoryProducts();
     }

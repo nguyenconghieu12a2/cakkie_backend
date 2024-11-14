@@ -72,6 +72,48 @@ public class ProductController {
         }
     }
 
+//    @PutMapping("/product/{productId}/update")
+//    public ResponseEntity<product> updateProduct(
+//            @PathVariable int productId,
+//            @RequestParam(value = "categoryId", required = false) Integer categoryId, // Changed to Integer
+//            @RequestParam(value = "name", required = false) String name,
+//            @RequestParam(value = "description", required = false) String description,
+//            @RequestParam(value = "productImage", required = false) MultipartFile productImage,
+//            @RequestParam(value = "productRating", required = false) Integer productRating, // Changed to Integer
+//            @RequestParam(value = "isDelete", required = false) Integer isDelete, // Changed to Integer
+//            @RequestParam(value = "sizes", required = false) String sizesJson // Receive sizes as JSON string
+//    ) {
+//        try {
+//            if (categoryId == null) {
+//                throw new IllegalArgumentException("Category ID is required");
+//            }
+//            if (name == null || name.trim().isEmpty()) {
+//                throw new IllegalArgumentException("Name is required");
+//            }
+//
+//            List<Map<String, Object>> sizes = null;
+//            if (sizesJson != null && !sizesJson.trim().isEmpty()) {
+//                ObjectMapper objectMapper = new ObjectMapper();
+//                sizes = objectMapper.readValue(sizesJson, List.class);
+//            }
+//
+//            product updatedProduct = productServices.updateProduct(
+//                    productId, categoryId, name, description, productImage,
+//                    productRating != null ? productRating : 0, // Default value if null
+//                    isDelete != null ? isDelete : 1, // Default value if null
+//                    sizes
+//            );
+//
+//            return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
+//        } catch (ProductNotFound e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//        } catch (IllegalArgumentException e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+//        } catch (IOException e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+//        }
+//    }
+
     @PutMapping("/product/{productId}/update")
     public ResponseEntity<product> updateProduct(
             @PathVariable int productId,
@@ -84,7 +126,6 @@ public class ProductController {
             @RequestParam(value = "sizes", required = false) String sizesJson // Receive sizes as JSON string
     ) {
         try {
-            // Ensure mandatory fields are checked
             if (categoryId == null) {
                 throw new IllegalArgumentException("Category ID is required");
             }
@@ -92,14 +133,12 @@ public class ProductController {
                 throw new IllegalArgumentException("Name is required");
             }
 
-            // Convert sizes JSON string to a list of maps if provided
             List<Map<String, Object>> sizes = null;
             if (sizesJson != null && !sizesJson.trim().isEmpty()) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 sizes = objectMapper.readValue(sizesJson, List.class);
             }
 
-            // Update product using extracted parameters
             product updatedProduct = productServices.updateProduct(
                     productId, categoryId, name, description, productImage,
                     productRating != null ? productRating : 0, // Default value if null
@@ -198,6 +237,16 @@ public class ProductController {
         }
     }
 
+    @DeleteMapping("/product-recovery/{id}")
+    public ResponseEntity<product> recoveryProduct(@PathVariable int id) {
+        try {
+            product recoveryProduct = productServices.recoverProduct(id);
+            return new ResponseEntity<>(recoveryProduct, HttpStatus.OK);
+        } catch (ProductNotFound e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
     @GetMapping("/categories")
     public ResponseEntity<List<CategoryDTO>> getAllSubSubCategories() {
         List<CategoryDTO> categories = categoryService.getAllSubSubCategory();
@@ -217,4 +266,9 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
+    @GetMapping("/admin-product/category-not-deleted")
+    public ResponseEntity<List<ProductDTO>> getAllCategoryNotDeletedProduct() {
+        List<ProductDTO> products = productServices.getCategryDeleteProduct();
+        return ResponseEntity.ok(products);
+    }
 }

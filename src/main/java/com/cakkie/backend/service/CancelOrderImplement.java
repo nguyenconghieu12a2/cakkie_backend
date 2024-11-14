@@ -3,9 +3,12 @@ package com.cakkie.backend.service;
 import com.cakkie.backend.dto.CancelOrderDTO;
 import com.cakkie.backend.dto.ProductDTO;
 import com.cakkie.backend.dto.ProductItemDTO;
+import com.cakkie.backend.model.userSite;
 import com.cakkie.backend.repository.CancelOrderRepository;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -95,5 +98,15 @@ public class CancelOrderImplement implements CancelOrderService{
         return new ArrayList<>(orderMap.values());
     }
 
+    @Transactional
+    @Override
+    public void banUser(int userId, String bannedReason) {
+        cancelOrderRepository.banUser(userId, bannedReason);
+    }
+
+    @Override
+    public Optional<userSite> findUserById(int userId) {
+        return cancelOrderRepository.findUserById(userId);
+    }
 
 }
