@@ -9,17 +9,18 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "product_des_info")
 public class productDesInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int desInfoID;
     @ManyToOne
-    @JoinColumn(name = "desTitleID", nullable = false)
-    private productDesTitle desTitleID;
+    @JoinColumn(name = "des_title_id", nullable = false)
+    private productDesTitle desTitleId;
     @ManyToOne
-    @JoinColumn(name = "proID", nullable = false)
+    @JoinColumn(name = "product_id", nullable = false)
     private product proID;
-    @Column(name = "desInfo", nullable = false)
+    @Column(name = "des_info", nullable = false)
     private String desInfo;
     @Column(name = "is_deleted", nullable = false)
     private int isDeleted;

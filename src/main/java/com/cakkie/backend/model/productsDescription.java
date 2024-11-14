@@ -11,8 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@Entity
-@Table(name = "productDesTitle")
 public class productsDescription {
     @Id
     private int desId;

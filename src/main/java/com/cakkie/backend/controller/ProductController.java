@@ -133,7 +133,7 @@ public class ProductController{
     public List<productCartDTO> getCart(@PathVariable String userId) { return productService.getProductCart(Integer.parseInt(userId)); }
 
     @GetMapping("address/{userId}")
-    public List<AddressDTO> getAddressById(@PathVariable String userId) { return productService.getAddressById(Integer.parseInt(userId)); }
+    public List<AddressDTO> GetAddressByUserId(@PathVariable String userId) { return productService.getAddressById(Integer.parseInt(userId)); }
 
     @GetMapping("productItem/{productId}")
     public List<ProductDTO> getProductItemById(@PathVariable String productId) {return productService.getProductItemById(Integer.parseInt(productId));}
@@ -141,8 +141,7 @@ public class ProductController{
     @GetMapping("order/{userId}")
     public List<OrderDTO> getOrdersByUserId(@PathVariable String userId) {return productService.getOrdersByUserId(Integer.parseInt(userId));}
 
-    @GetMapping("orderItem/{productId}")
+    @GetMapping("orderItem/{orderId}")
     public List<OrderItemDTO> getOrderItemsByOrderId(@PathVariable String orderId) {return productService.getOrderItemsByOrderId(Integer.parseInt(orderId));}
-
 
 }

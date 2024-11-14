@@ -51,17 +51,17 @@ public interface ProductRepository  extends JpaRepository<product, Long>{
 //            "WHERE pi.isDeleted = 1 AND pi.id = :productId")
 //    List<ProductDTO> getProductsById(@Param("id") int id);
 
-    @Query(value = "SELECT p.id, pdt.desTitleID, pdi.desInfo, pdt.desTitleName " +
+    @Query(value = "SELECT p.id, pdt.des_title_id, pdi.des_info, pdt.des_title_name " +
             "FROM product p " +
-            "JOIN productDesInfo pdi ON p.id = pdi.proID " +
-            "JOIN productDesTitle pdt ON pdi.desTitleID = pdt.desTitleID " +
+            "JOIN product_des_info pdi ON p.id = pdi.product_id " +
+            "JOIN product_des_title pdt ON pdi.des_title_id = pdt.des_title_id " +
             "WHERE p.id = :id", nativeQuery = true)
     List<Object[]> getProductDescriptionById(@Param("id") int id);
 
-    @Query(value = "SELECT p.id, pdt.desTitleID, pdi.desInfo, pdt.desTitleName " +
+    @Query(value = "SELECT p.id, pdt.des_title_id, pdi.des_info, pdt.des_title_name " +
             "FROM product p " +
-            "JOIN productDesInfo pdi ON p.id = pdi.proID " +
-            "JOIN productDesTitle pdt ON pdi.desTitleID = pdt.desTitleID " +
+            "JOIN product_des_info pdi ON p.id = pdi.product_id " +
+            "JOIN product_des_title pdt ON pdi.des_title_id = pdt.des_title_id " +
             "WHERE p.id = :id", nativeQuery = true)
     List<DescriptionDTO> getProductDescriptionsById(@Param("id") int id);
 
@@ -113,7 +113,7 @@ public interface ProductRepository  extends JpaRepository<product, Long>{
     List<productItem> getAvailableProductItems();
 
     @Query(value = "SELECT new com.cakkie.backend.dto.AddressDTO(" +
-            "us.id, a.recievedName, us.phone, a.detailAddress, wc.name, dis.name, pc.name, ua.isDefault, ua.isDeleted )" +
+            "a.id, us.id, a.recievedName, us.phone, a.detailAddress, wc.name, dis.name, pc.name, ua.isDefault, ua.isDeleted )" +
             "FROM userAddress ua " +
             "JOIN ua.userId us " +
             "JOIN ua.addressId a " +
@@ -122,7 +122,7 @@ public interface ProductRepository  extends JpaRepository<product, Long>{
             "JOIN a.wardsCode wc " +
             "WHERE us.id = :userId AND ua.isDeleted = 1")
     List<AddressDTO> getAddressById(@Param("userId") int userId);
-    // Query to get product items with a specific price range
+
     @Query(value = "SELECT p FROM productItem p WHERE p.price BETWEEN :minPrice AND :maxPrice")
     List<productItem> getProductItemsByPriceRange(@Param("minPrice") long minPrice, @Param("maxPrice") long maxPrice);
 
@@ -139,10 +139,10 @@ public interface ProductRepository  extends JpaRepository<product, Long>{
     List<OrderDTO> getOrdersByUserId(@Param("id") int id);
 
     @Query(value = "SELECT new com.cakkie.backend.dto.OrderItemDTO(" +
-            "ol.id, pi.id, so.id, ol.qty, ol.price, ol.discountPrice, ol.note)" +
+            "ol.id, so.id, pi.id,  ol.qty, ol.price, COALESCE(ol.discountPrice,0), COALESCE(ol.note,''))" +
             "FROM orderLine ol " +
             "JOIN ol.productItemId pi " +
             "JOIN ol.orderId so " +
             "WHERE so.id = :orderId")
-    List<OrderItemDTO> getOrderItemsByOrderId(int orderId);
+    List<OrderItemDTO> getOrderItemsByOrderId(@Param("orderId") int orderId);
 }

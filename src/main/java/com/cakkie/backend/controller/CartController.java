@@ -8,10 +8,7 @@ import com.cakkie.backend.repository.CartRepository;
 import com.cakkie.backend.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,4 +35,12 @@ public class CartController {
     public void deleteCartItem(@RequestBody CartDTO productCartDTO) {
          cartService.deleteProductCart(productCartDTO.getCartId());
     }
+
+    @DeleteMapping("clear/{userId}")
+    public ResponseEntity<String> clearCart(@PathVariable int userId) {
+        cartService.deleteAllProductCart(userId);
+        return ResponseEntity.ok("Cart items for user " + userId + " have been cleared.");
+    }
+
+
 }

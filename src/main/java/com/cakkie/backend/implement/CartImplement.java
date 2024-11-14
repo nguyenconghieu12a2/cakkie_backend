@@ -59,7 +59,6 @@ public class CartImplement implements CartService {
         cartItem.setQty(productCart.getQuantity());
         cartItem.setNote(productCart.getNote());
 
-        // Save to the repository
         return cartRepository.save(cartItem);
     }
 
@@ -67,5 +66,11 @@ public class CartImplement implements CartService {
     public void deleteProductCart(int id) {
         shoppingCartItem cart = cartRepository.getProductCartById(id);
         cartRepository.delete(cart);
+    }
+
+    @Override
+    public void deleteAllProductCart(int id) {
+        List<shoppingCartItem> cart = cartRepository.getProductCartByCartId(id);
+        cartRepository.deleteAll(cart);
     }
 }

@@ -25,4 +25,9 @@ public interface CartRepository extends JpaRepository<shoppingCartItem, Integer>
 
     @Query("SELECT pc FROM shoppingCartItem pc WHERE pc.id = :id")
     shoppingCartItem getProductCartById(@Param("id") Integer id);
+
+    @Query("SELECT pc FROM shoppingCartItem pc " +
+            "JOIN pc.cartId c " +
+            "WHERE c.id = :id")
+    List<shoppingCartItem> getProductCartByCartId(@Param("id") Integer id);
 }

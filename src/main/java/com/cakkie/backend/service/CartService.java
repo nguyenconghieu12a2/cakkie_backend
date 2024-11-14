@@ -8,4 +8,5 @@ public interface CartService {
     shoppingCartItem findCartItem(int cartId, int productId);
     shoppingCartItem addProductCart(CartDTO productCart);
     void deleteProductCart(int id);
+    void deleteAllProductCart(int id);
 }
