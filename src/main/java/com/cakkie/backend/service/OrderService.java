@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface OrderService {
     shopOrder createOrder(OrderDTO order);
+    shopOrder getOrderById(Integer orderId);
+    void updateOrder(shopOrder order);
 }

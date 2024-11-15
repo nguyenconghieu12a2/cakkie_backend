@@ -2,6 +2,7 @@ package com.cakkie.backend.implement;
 
 import com.cakkie.backend.dto.*;
 import com.cakkie.backend.model.*;
+import com.cakkie.backend.repository.ProductItemRepository;
 import com.cakkie.backend.repository.ProductRepository;
 import com.cakkie.backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,9 @@ import java.util.List;
 public class ProductImplement implements ProductService {
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private ProductItemRepository productItemRepository;
 
     @Override
     public List<productItem> getAllProductItems() {
@@ -42,6 +46,12 @@ public class ProductImplement implements ProductService {
 //        return productRepository.getProductsById(id);
 //    }
 
+    public void restoreProductQuantity(productItem product, int quantity) {
+        // Assuming that Product has a field for stock (quantity)
+        long currentStock = product.getQtyInStock();
+        product.setQtyInStock(currentStock + quantity);
+        productItemRepository.save(product); // Save the updated product
+    }
     @Override
     public List<Object[]> getProductDescriptionById(int id) {
         return productRepository.getProductDescriptionById(id);

@@ -103,4 +103,12 @@ public class OrderImplement implements OrderService {
 
         return order;
     }
+
+    public shopOrder getOrderById(Integer orderId) {
+        return orderRepository.findById(orderId).orElse(null); // Returns null if not found
+    }
+
+    public void updateOrder(shopOrder order) {
+        orderRepository.save(order); // Save the updated order
+    }
 }

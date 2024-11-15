@@ -24,4 +24,5 @@ public interface ProductService {
       List<CouponDTO> getCoupons();
       List<ShippingMethodDTO> getShippingMethod();
       List<PaymentMethodDTO> getPaymentMethods();
+      void restoreProductQuantity(productItem product, int quantity);
 }
