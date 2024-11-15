@@ -256,4 +256,9 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
         }
     }
+
+    public int getUserIdByEmail(String email) {
+        Optional<userSite> user = userSiteRepository.findByEmailIgnoreCase(email);
+        return user != null ? user.get().getId() : null;
+    }
 }

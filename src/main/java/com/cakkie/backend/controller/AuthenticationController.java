@@ -43,8 +43,10 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         else {
+            int userId = userService.getUserIdByEmail(login.getEmail());
             LoginResponse response = new LoginResponse();
             response.setJwt(jwt);
+            response.setId(userId);
             return ResponseEntity.ok(response);
         }
     }

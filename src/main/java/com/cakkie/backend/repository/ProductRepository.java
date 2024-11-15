@@ -21,14 +21,31 @@ public interface ProductRepository  extends JpaRepository<product, Long>{
             "            JOIN product_item pi ON p.id = pi.pro_id ", nativeQuery = true)
     List<Object[]> getAllProducts();
 
-    @Query(value = "SELECT new com.cakkie.backend.dto.ProductDTO(" +
-            "p.id , pi.id, p.name, p.description, c.cateName, pi.price, p.productImage, COALESCE(p.productRating, 0), pi.size, pi.qtyInStock, COALESCE(d.discountRate,0))" +
+    @Query(value = "SELECT new com.cakkie.backend.dto.ProductDTO(\n" +
+            "            p.id, \n" +
+            "            pi.id, \n" +
+            "            p.name, \n" +
+            "            p.description, \n" +
+            "            c2.cateName, \n" +
+            "            pi.price, \n" +
+            "            p.productImage, \n" +
+            "            COALESCE(p.productRating, 0), \n" +
+            "            pi.size, \n" +
+            "            pi.qtyInStock, \n" +
+            "            COALESCE(d.discountRate, 0), " +
+            "            c1.cateName, \n" +
+            "            c.cateName " +
+            "        ) " +
             "FROM product p " +
             "JOIN p.productItemList pi " +
-            "LEFT JOIN p.categoryID c " +
+            "JOIN p.categoryID c " +
+            "LEFT JOIN c.parentId c1 " +
+            "LEFT JOIN c1.parentId c2 " +
             "LEFT JOIN c.discountCategoryList dc " +
             "LEFT JOIN dc.discountId d " +
-            "WHERE p.isDeleted = 1")
+            "WHERE p.isDeleted = 1  " +
+            "AND pi.isDeleted = 1 " +
+            "ORDER BY p.id, c.id, pi.id")
     List<ProductDTO> getAllProduct();
 
 

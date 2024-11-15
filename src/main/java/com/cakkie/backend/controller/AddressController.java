@@ -9,6 +9,7 @@ import com.cakkie.backend.model.provinces;
 import com.cakkie.backend.model.userAddress;
 import com.cakkie.backend.model.wards;
 import com.cakkie.backend.service.AddressService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,7 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class AddressController {
     private AddressService addressService;
 
