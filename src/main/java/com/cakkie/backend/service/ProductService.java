@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.NumberFormat;
 import java.util.*;
 
 @Service
@@ -64,8 +65,6 @@ public class ProductService {
     public List<ProductDTO> getAllProducts() {
         List<Object[]> results = productRepo.getAllProducts();
         Map<Integer, ProductDTO> productsMap = new HashMap<>();
-
-        // Debug: Print query result size
         System.out.println("Total result rows: " + results.size());
 
         for (Object[] row : results) {

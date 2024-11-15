@@ -16,7 +16,8 @@ public class OrderDTO {
     private int totalProduct;
     private long totalPrice;
     private long totalDiscount;
-    private long price;
+    private List<Long> price;
+    private List<Long> qty;
     private long discountPrice;
     private String status;
     private String note;
@@ -43,10 +44,12 @@ public class OrderDTO {
         this.note = note;
     }
 
-    public OrderDTO(int id, String fullName, List<String> productName, String shipMethod, Date approvedDate, Date orderDate, Date shippedDate, Date arrivalDate, String paymentMethod, String address) {
+    public OrderDTO(int id, String fullName, List<String> productName, List<Long> price, List<Long> qty, String shipMethod, Date approvedDate, Date orderDate, Date shippedDate, Date arrivalDate, String paymentMethod, String address) {
         this.id = id;
         this.fullName = fullName;
         this.productName = productName;
+        this.price = price;
+        this.qty = qty;
         this.shipMethod = shipMethod;
         this.approvedDate = approvedDate;
         this.orderDate = orderDate;

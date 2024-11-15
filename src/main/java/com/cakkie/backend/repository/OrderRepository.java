@@ -35,7 +35,9 @@ public interface OrderRepository extends JpaRepository<orderLine, Integer> {
     @Query(value = "SELECT \n" +
             "    o.id, \n" +
             "    (u.firstname + ' ' + u.lastname) AS fullName, \n" +
-            "    p.[name] AS product_name, \n" +
+            "    p.[name] AS product_name,\n" +
+            "    o.qty,\n" +
+            "    o.price,\n" +
             "    sp.[name] AS shipping_method,  \n" +
             "    FORMAT(s.order_date, 'dd-MM-yyyy') AS order_date,\n" +
             "    FORMAT(s.approved_date, 'dd-MM-yyyy') AS approved_date,  \n" +

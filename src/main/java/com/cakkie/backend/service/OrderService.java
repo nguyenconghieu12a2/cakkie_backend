@@ -36,34 +36,55 @@ public class OrderService {
     public OrderDTO getOrderById(int orderId) {
         List<Object[]> orderData = orderRepository.getOrdersById(orderId);
 
-        if(orderData.isEmpty()) {
+        if (orderData.isEmpty()) {
             throw new OrderNotFound("Sorry, order not found with id: " + orderId);
         }
 
-        Object[] o = orderData.get(0);
-
+        // Extract common data from the first row
+        Object[] firstRow = orderData.get(0);
+        int shopId = (Integer) firstRow[0];
+        String fullName = (String) firstRow[1];
+        String shipMethod = (String) firstRow[5];
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        Date orderDate = parseDate((String) o[4], dateFormat);
-        Date approvedDate = parseDate((String) o[5], dateFormat);
-        Date shippedDate = parseDate((String) o[6], dateFormat);
-        Date arrivalDate = parseDate((String) o[7], dateFormat);
+        Date orderDate = parseDate((String) firstRow[6], dateFormat);
+        Date approvedDate = parseDate((String) firstRow[7], dateFormat);
+        Date shippedDate = parseDate((String) firstRow[8], dateFormat);
+        Date arrivalDate = parseDate((String) firstRow[9], dateFormat);
+        String paymentMethod = (String) firstRow[10];
+        String address = (String) firstRow[11];
 
+        // Create empty lists to hold product names, prices, and quantities
+        List<String> productNames = new ArrayList<>();
+        List<Long> prices = new ArrayList<>();
+        List<Long> quantities = new ArrayList<>();
+
+        // Loop through all rows to get product details
+        for (Object[] row : orderData) {
+            String productName = (String) row[2];
+            long qty = ((Number) row[3]).longValue();
+            long price = ((Number) row[4]).longValue();
+
+            productNames.add(productName);
+            quantities.add(qty);
+            prices.add(price);
+        }
+
+        // Create the OrderDTO object
         OrderDTO order = new OrderDTO(
-                (Integer) o[0],
-                (String) o[1],
-                new ArrayList<>(),
-                (String) o[3],
-                orderDate,
+                shopId,
+                fullName,
+                productNames,
+                prices,
+                quantities,
+                shipMethod,
                 approvedDate,
+                orderDate,
                 shippedDate,
                 arrivalDate,
-                (String) o[8],
-                (String) o[9]
+                paymentMethod,
+                address
         );
-        for(Object[] rows: orderData) {
-            String productName = (String) rows[2];
-            order.getProductName().add(productName);
-        }
+
         return order;
     }
 
