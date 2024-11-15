@@ -28,4 +28,7 @@ public interface CategoryService {
     void deleteSubSubCategory(Integer id);
     List<CategoryDTO> getAllDeletedSubSubCategories();
     void recoverSubSubCategory(Integer id);
+
+    //Get Null SubCat
+    List<CategoryDTO> getNullSubSubCategory();
 }

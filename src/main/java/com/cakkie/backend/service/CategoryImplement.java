@@ -6,11 +6,15 @@ import com.cakkie.backend.model.category; // Ensure capitalization
 import com.cakkie.backend.model.product;
 import com.cakkie.backend.repository.CategoryRepository;
 import com.cakkie.backend.repository.ProductRepository;
+import jakarta.persistence.OneToMany;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -163,4 +167,18 @@ public class CategoryImplement implements CategoryService {
         return categoryRepository.save(subSubCategory);
     }
 
+    //Get Null Sub Cate
+    @Override
+    public List<CategoryDTO> getNullSubSubCategory() {
+        List<Object[]> cateNull = categoryRepository.getAllNullSubCategories();
+        Map<Integer, CategoryDTO> categoryDTOMap = new HashMap<Integer, CategoryDTO>();
+
+        for(Object[] row : cateNull) {
+            CategoryDTO categoryDTO = new CategoryDTO();
+            categoryDTO.setCateName((String) row[0]);
+            categoryDTO.setParentId((Integer) row[1]);
+            categoryDTOMap.put((Integer) row[1], categoryDTO);
+        }
+        return new ArrayList<CategoryDTO>(categoryDTOMap.values());
+    }
 }

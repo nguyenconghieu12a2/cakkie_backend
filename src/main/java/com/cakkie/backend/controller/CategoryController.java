@@ -157,4 +157,11 @@ public class CategoryController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while deleting the subcategory.");
         }
     }
+
+    //Get Null Sub
+    @GetMapping("/api/admin/null-sub-subCate")
+    public ResponseEntity<List<CategoryDTO>> getNullSubSubCategories() {
+        List<CategoryDTO> nullCate = categoryService.getNullSubSubCategory();
+        return new ResponseEntity<>(nullCate, HttpStatus.OK);
+    }
 }

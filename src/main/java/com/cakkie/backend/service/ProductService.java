@@ -194,59 +194,6 @@ public class ProductService {
         return savedProduct;
     }
 
-    //Update Method
-//    public product updateProduct(
-//            int productId,
-//            int categoryId,
-//            String name,
-//            String description,
-//            MultipartFile productImage,
-//            int productRating,
-//            int isDelete,
-//            List<Map<String, Object>> sizes // List of size, quantity, and price maps
-//    ) throws IOException {
-//        product existingProduct = productRepo.findById(productId)
-//                .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
-//
-//        category category = categoryRepo.findById(categoryId)
-//                .orElseThrow(() -> new IllegalArgumentException("Invalid category ID: " + categoryId));
-//        existingProduct.setCategoryID(category);
-//
-//        existingProduct.setName(name);
-//        existingProduct.setDescription(description);
-//        existingProduct.setProductRating(productRating);
-//        existingProduct.setIsDeleted(isDelete);
-//
-//        if (productImage != null && !productImage.isEmpty()) {
-//            String imgPath = saveImage(productImage);
-//            existingProduct.setProductImage(imgPath);
-//        }
-//
-//        for (Map<String, Object> sizeInfo : sizes) {
-//            String size = sizeInfo.get("size").toString();
-//            long qtyInStock = Long.parseLong(sizeInfo.get("qtyInStock").toString());
-//            long price = Long.parseLong(sizeInfo.get("price").toString());
-//
-//            Optional<productItem> existingProductItemOpt = productItemRepo.findByProIdAndSize(existingProduct, size);
-//            if (existingProductItemOpt.isPresent()) {
-//                productItem existingProductItem = existingProductItemOpt.get();
-//                existingProductItem.setQtyInStock(qtyInStock);
-//                existingProductItem.setPrice(price);
-//                productItemRepo.save(existingProductItem);
-//            } else {
-//                productItem newProductItem = new productItem();
-//                newProductItem.setProId(existingProduct);
-//                newProductItem.setSize(size);
-//                newProductItem.setQtyInStock(qtyInStock);
-//                newProductItem.setPrice(price);
-//                newProductItem.setIsDeleted(1);
-//                productItemRepo.save(newProductItem);
-//            }
-//        }
-//
-//        return productRepo.save(existingProduct);
-//    }
-
     public product updateProduct(
             int productId,
             int categoryId,
@@ -255,7 +202,7 @@ public class ProductService {
             MultipartFile productImage,
             int productRating,
             int isDelete,
-            List<Map<String, Object>> sizes // List of size, quantity, and price maps
+            List<Map<String, Object>> sizes
     ) throws IOException {
         product existingProduct = productRepo.findById(productId)
                 .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
