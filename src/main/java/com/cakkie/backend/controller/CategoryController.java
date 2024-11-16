@@ -18,7 +18,7 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-    private CategoryDTO convertToDTO(category category) { // Ensure capitalization
+    private CategoryDTO convertToDTO(category category) {
         CategoryDTO dto = new CategoryDTO();
         dto.setId(category.getId());
         dto.setCateName(category.getCateName());

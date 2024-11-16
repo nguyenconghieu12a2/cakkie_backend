@@ -389,4 +389,9 @@ public class ProductService {
 
         productDesInfoRepo.deleteDesInfo(productId, desTitleId);
     }
+
+    public product getProductByIds(int productId) {
+        return productRepo.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found with ID: " + productId));
+    }
 }

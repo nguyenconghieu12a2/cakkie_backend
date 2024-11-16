@@ -36,7 +36,7 @@ public class CancelOrderController {
         return new ResponseEntity<>(productCancelDetails, HttpStatus.OK);
     }
 
-        @PostMapping("/api/ban-user/{userId}")
+    @PostMapping("/api/ban-user/{userId}")
     public ResponseEntity<String> banUser(
             @PathVariable int userId,
             @RequestBody String bannedReason) {
