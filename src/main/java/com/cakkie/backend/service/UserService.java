@@ -4,8 +4,10 @@ import com.cakkie.backend.dto.EditBody;
 import com.cakkie.backend.dto.LoginBody;
 import com.cakkie.backend.dto.RegistrationBody;
 import com.cakkie.backend.exception.UserAlreadyExistException;
+import com.cakkie.backend.model.shoppingCart;
 import com.cakkie.backend.model.userSite;
 import com.cakkie.backend.model.userStatus;
+import com.cakkie.backend.repository.ShoppingCartRepository;
 import com.cakkie.backend.repository.UserSiteRepository;
 import com.cakkie.backend.repository.UserStatusRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +28,7 @@ public class UserService {
     private final JwtService jwtService;
     private UserSiteRepository userSiteRepository;
     private UserStatusRepository userStatusRepository;
+    private ShoppingCartRepository shoppingCartRepository;
     private final JavaMailSender emailSender;
 
     private final Map<String, String> otpCache = new ConcurrentHashMap<>();
@@ -33,10 +36,11 @@ public class UserService {
     @Value("${frontend.base-url}")
     private String frontendBaseUrl;
 
-    public UserService(UserSiteRepository userSiteRepository, JwtService jwtService, UserStatusRepository userStatusRepository, JavaMailSender emailSender) {
+    public UserService(UserSiteRepository userSiteRepository, JwtService jwtService, UserStatusRepository userStatusRepository, ShoppingCartRepository shoppingCartRepository, JavaMailSender emailSender) {
         this.userSiteRepository = userSiteRepository;
         this.jwtService = jwtService;
         this.userStatusRepository = userStatusRepository;
+        this.shoppingCartRepository = shoppingCartRepository;
         this.emailSender = emailSender;
     }
 
@@ -69,7 +73,6 @@ public class UserService {
     }
 
     public userSite registerUser(RegistrationBody registrationBody) throws UserAlreadyExistException {
-
         if (userSiteRepository.findByUsernameIgnoreCase(registrationBody.getUsername()).isPresent()
                 || userSiteRepository.findByEmailIgnoreCase(registrationBody.getEmail()).isPresent()) {
             throw new UserAlreadyExistException();
@@ -79,12 +82,13 @@ public class UserService {
         userStatus activeStatus = userStatusRepository.findById(1)
                 .orElseThrow(() -> new IllegalStateException("Active user status not found"));
 
+        // Create new user
         userSite userSite = new userSite();
         userSite.setFirstname(registrationBody.getFirstname());
         userSite.setLastname(registrationBody.getLastname());
         userSite.setUsername(registrationBody.getUsername());
         userSite.setGender(registrationBody.getGender());
-        if(registrationBody.getGender().equals("male")) {
+        if (registrationBody.getGender().equals("male")) {
             userSite.setImage("male.jpg");
         } else if (registrationBody.getGender().equals("female")) {
             userSite.setImage("female.jpg");
@@ -98,7 +102,15 @@ public class UserService {
         // Set the "Active" status
         userSite.setStatusId(activeStatus);
 
-        return userSiteRepository.save(userSite);
+        // Save user to database
+        userSite savedUser = userSiteRepository.save(userSite);
+
+        // Create a new shopping cart for the user
+        shoppingCart cart = new shoppingCart();
+        cart.setUserId(savedUser);
+        shoppingCartRepository.save(cart);
+
+        return savedUser;
     }
 
     public String loginUser(LoginBody loginBody) {
