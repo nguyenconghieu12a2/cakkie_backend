@@ -32,4 +32,5 @@ public class products {
     private String desInfo;
     private String desTitleName;
     private int isDeleted;
+    private double averageRating;
 }

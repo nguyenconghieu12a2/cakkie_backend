@@ -19,7 +19,28 @@ public class ProductDTO {
     private String subCategoryName;
     private String subsubCategoryName;
     private int isDeleted;
+    private double averageRating;
     public ProductDTO() {
+    }
+
+    public ProductDTO(int productID, int productItemId, String name, String description,
+                      String categoryName, long price, String productImage, int productRating,
+                      String size, long quantityStock, double discount, String subCategoryName,
+                      String subsubCategoryName, double averageRating) {
+        this.productID = productID;
+        this.productItemId = productItemId;
+        this.name = name;
+        this.description = description;
+        this.categoryName = categoryName;
+        this.price = price;
+        this.productImage = productImage;
+        this.productRating = productRating;
+        this.size = size;
+        this.quantityStock = quantityStock;
+        this.discount = discount;
+        this.subCategoryName = subCategoryName;
+        this.subsubCategoryName = subsubCategoryName;
+        this.averageRating = averageRating;
     }
 
     public ProductDTO(int productID, int productItemId, String name, String description, String categoryName, long price, String productImage, int productRating, String size, long quantityStock, double discount, String subCategoryName, String subsubCategoryName) {
@@ -50,6 +71,7 @@ public class ProductDTO {
         this.size = size;
         this.quantityStock = quantityStock;
         this.discount = discount;
+
     }
 
     public double getDiscount() {

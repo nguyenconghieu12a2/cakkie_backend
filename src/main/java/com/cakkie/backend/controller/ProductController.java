@@ -4,6 +4,7 @@ import com.cakkie.backend.api.TodoAPI;
 import com.cakkie.backend.dto.*;
 import com.cakkie.backend.model.*;
 import com.cakkie.backend.service.ProductService;
+import com.cakkie.backend.service.UserReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +16,8 @@ import java.util.List;
 public class ProductController{
     @Autowired
     private ProductService productService;
+    @Autowired
+    private UserReviewService userReviewService;
 
     @GetMapping("/Product")
     public TodoAPI homeController(){
@@ -26,7 +29,15 @@ public class ProductController{
 
     @GetMapping("/Product/getAll")
     public  List<ProductDTO> getAllProduct(){
-        return productService.getAllProduct();
+        List<ProductDTO> products = productService.getAllProduct();
+
+        // Add average rating for each product
+        for (ProductDTO product : products) {
+            double averageRating = userReviewService.getAverageRatingForProduct(product.getProductID());
+            product.setAverageRating(averageRating);
+        }
+
+        return products;
     }
 //    @GetMapping("/Product/All")
 //    public List<productItem> getAllProductItems() {
@@ -81,6 +92,8 @@ public class ProductController{
                 product.setDiscount((double) result[9]);
                 product.setProductItemId((int) result[10]);
                 product.setDescriptions(new ArrayList<>());
+                double averageRating = userReviewService.getAverageRatingForProduct(product.getProductID());
+                product.setAverageRating(averageRating);
                 productList.add(product);
         }
 
@@ -107,6 +120,11 @@ public class ProductController{
 
         // Return the response containing both the list of products and descriptions
         return response;
+    }
+
+    @GetMapping("/Product/{id}/reviews")
+    public List<UserReviewDTO> getReviewsForProduct(@PathVariable int id) {
+        return userReviewService.getReviewsForProduct(id);
     }
 
     @GetMapping("coupon/{id}")
