@@ -11,7 +11,7 @@ public class AdminAddProductSizeDTO {
     private int productItemId;
     private int productId;
     private String size;
-    private long qty;
+    private long qtyInStock;
     private long price;
     private int isDeleted;
 }

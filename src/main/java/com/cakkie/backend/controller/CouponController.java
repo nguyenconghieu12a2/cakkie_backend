@@ -13,6 +13,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("/api/admin")
 public class CouponController {
 
     private final CouponService couponService;
@@ -43,32 +44,32 @@ public class CouponController {
         return coupon;
     }
 
-    @GetMapping("/api/coupons")
+    @GetMapping("/coupons")
     public ResponseEntity<List<CouponDTO>> getAllCoupons() {
         List<CouponDTO> coupons = couponService.getAllCoupons();
         return new ResponseEntity<>(coupons, HttpStatus.OK);
     }
 
-    @GetMapping("/api/coupons/{id}")
+    @GetMapping("/coupons/{id}")
     public ResponseEntity<CouponDTO> getCouponById(@PathVariable int id) {
         coupons coupon = couponService.getCouponById(id);
         return new ResponseEntity<>(convertToDTO(coupon), HttpStatus.OK);
     }
 
-    @PostMapping("/api/coupons")
+    @PostMapping("/add-coupons")
     public ResponseEntity<CouponDTO> addCoupon(@RequestBody coupons coupon) {
         coupons savedCoupon = couponService.addCoupon(coupon);
         return new ResponseEntity<>(convertToDTO(savedCoupon), HttpStatus.CREATED);
     }
 
-    @PutMapping("/api/coupons/update/{id}")
+    @PutMapping("/update-coupons/{id}")
     public ResponseEntity<CouponDTO> updateCoupon(@PathVariable int id, @RequestBody CouponDTO couponDTO) {
         coupons updateCouponEntity = convertToEntity(couponDTO);
         coupons updatedCoupon = couponService.updateCoupon(id, updateCouponEntity);
         return new ResponseEntity<>(convertToDTO(updatedCoupon), HttpStatus.OK);
     }
 
-    @DeleteMapping("/api/coupons/delete/{id}")
+    @DeleteMapping("/delete-coupons/{id}")
     public ResponseEntity<Void> deleteCouponById(@PathVariable int id) {
         couponService.deleteCoupon(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);  // No need to check again

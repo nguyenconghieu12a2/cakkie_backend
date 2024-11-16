@@ -2,7 +2,7 @@ package com.cakkie.backend.controller;
 
 import com.cakkie.backend.dto.CategoryDTO;
 import com.cakkie.backend.exception.CategoryNotFound;
-import com.cakkie.backend.model.category; // Ensure capitalization
+import com.cakkie.backend.model.category;
 import com.cakkie.backend.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,6 +14,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("/api/admin")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -40,19 +41,19 @@ public class CategoryController {
     }
 
     //Level1
-    @GetMapping("/api/category")
+    @GetMapping("/category")
     public ResponseEntity<List<CategoryDTO>> getAllCategories() {
         List<CategoryDTO> categories = categoryService.getAllCategories();
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
-    @PostMapping("/api/category")
+    @PostMapping("/add-category")
     public ResponseEntity<CategoryDTO> createCategory(@RequestBody category category) {
         category saveCategory = categoryService.addCategory(category);
         return new ResponseEntity<>(convertToDTO(saveCategory), HttpStatus.CREATED);
     }
 
-    @PutMapping("/api/category/{id}")
+    @PutMapping("/update-category/{id}")
     public ResponseEntity<CategoryDTO> updateCategory(@PathVariable int id, @RequestBody CategoryDTO categoryDTO) {
         category updatedCategoryEntity = convertToEntity(categoryDTO);
         category updatedCategory = categoryService.updateCategory(id, updatedCategoryEntity);
@@ -60,13 +61,13 @@ public class CategoryController {
     }
 
     //Level2
-    @GetMapping("/api/category/{parentId}/sub-category")
+    @GetMapping("/category/sub-category/{parentId}")
     public ResponseEntity<List<CategoryDTO>> getSubCategories(@PathVariable Integer parentId) {
         List<CategoryDTO> subCategories = categoryService.getSubCategoriesByParentId(parentId);
         return new ResponseEntity<>(subCategories, HttpStatus.OK);
     }
 
-    @PostMapping("/api/category/{parentId}/sub-category")
+    @PostMapping("/category/add-sub-category/{parentId}")
     public ResponseEntity<CategoryDTO> createSubCategory(@PathVariable Integer parentId, @RequestBody CategoryDTO subCategoryDTO) {
         category parentCategory = categoryService.findCategoryById(parentId); // Find the parent category
 
@@ -101,13 +102,13 @@ public class CategoryController {
     }
 
     //Level 3
-    @GetMapping("/api/category/sub-category/{parentId}/sub-sub-category")
+    @GetMapping("/category/sub-category/sub-sub-category/{parentId}")
     public ResponseEntity<List<CategoryDTO>> getSubCategoriesByParentId(@PathVariable Integer parentId) {
         List<CategoryDTO> subSubCategories = categoryService.getSubSubCategoriesByParentId(parentId);
         return new ResponseEntity<>(subSubCategories, HttpStatus.OK);
     }
     
-    @PostMapping("/api/category/sub-category/{parentId}/sub-sub-category")
+    @PostMapping("/category/sub-category/add-sub-sub-category/{parentId}")
     public ResponseEntity<CategoryDTO> createSubSubCategory(@PathVariable Integer parentId, @RequestBody CategoryDTO subSubCategoryDTO) {
         category parentSubCategory = categoryService.findCategoryById(parentId);
 
@@ -140,13 +141,13 @@ public class CategoryController {
 
     //View Deleted
     //Level 3
-    @GetMapping("/api/view-deleted/sub-sub-category")
+    @GetMapping("/view-deleted/sub-sub-category")
     public ResponseEntity<List<CategoryDTO>> getDeletedSubSubCategories() {
         List<CategoryDTO> deletedSubSubCate = categoryService.getAllDeletedSubSubCategories();
         return new ResponseEntity<>(deletedSubSubCate, HttpStatus.OK);
     }
 
-    @DeleteMapping("/api/recover/sub-sub-category/{id}")
+    @DeleteMapping("/recover/sub-sub-category/{id}")
     public ResponseEntity<String> recoverSubSubCategory(@PathVariable Integer id) {
         try {
             categoryService.recoverSubSubCategory(id);
@@ -159,7 +160,7 @@ public class CategoryController {
     }
 
     //Get Null Sub
-    @GetMapping("/api/admin/null-sub-subCate")
+    @GetMapping("/null-sub-subCate")
     public ResponseEntity<List<CategoryDTO>> getNullSubSubCategories() {
         List<CategoryDTO> nullCate = categoryService.getNullSubSubCategory();
         return new ResponseEntity<>(nullCate, HttpStatus.OK);

@@ -6,8 +6,6 @@ import com.cakkie.backend.dto.ProductDTO;
 import com.cakkie.backend.dto.ProductInfoDTO;
 import com.cakkie.backend.exception.ProductNotFound;
 import com.cakkie.backend.model.product;
-import com.cakkie.backend.model.productDesInfo;
-import com.cakkie.backend.model.productDesTitle;
 import com.cakkie.backend.repository.ProductDesTitleRepository;
 import com.cakkie.backend.service.CategoryService;
 import com.cakkie.backend.service.ProductService;
@@ -27,7 +25,7 @@ import java.util.logging.Logger;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
-@RequestMapping("/api")
+@RequestMapping("/api/admin")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ProductController {
     private final ProductService productServices;
@@ -72,7 +70,7 @@ public class ProductController {
         }
     }
 
-    @PutMapping("/product/{productId}/update")
+    @PutMapping("/product/update/{productId}")
     public ResponseEntity<product> updateProduct(
             @PathVariable int productId,
             @RequestParam(value = "categoryId", required = false) Integer categoryId, // Changed to Integer
@@ -123,7 +121,7 @@ public class ProductController {
 
     //Description Information
     //Create Information
-    @PostMapping("/product/{productId}/add-desinfo")
+    @PostMapping("/product/add-desinfo/{productId}")
     public ResponseEntity<String> addNewDesInfo(
             @PathVariable int productId,
             @RequestBody ProductInfoDTO productInfo) {
@@ -147,7 +145,7 @@ public class ProductController {
     }
 
     //Update Des Info
-    @PutMapping("/product/{productId}/update-desinfo")
+    @PutMapping("/product/update-desinfo/{productId}")
     public ResponseEntity<String> updateProductDesInfo(
             @PathVariable int productId,
             @RequestBody Map<String, Object> requestBody) {
@@ -167,7 +165,7 @@ public class ProductController {
     }
 
     //Delete Des Info
-    @DeleteMapping("/product/{productId}/delete-desinfo")
+    @DeleteMapping("/product/delete-desinfo/{productId}")
     public ResponseEntity<String> deleteProductDesInfo(
             @PathVariable int productId,
             @RequestBody Map<String, Object> requestBody

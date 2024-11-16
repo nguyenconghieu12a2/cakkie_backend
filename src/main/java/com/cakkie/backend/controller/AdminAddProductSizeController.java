@@ -27,40 +27,11 @@ public class AdminAddProductSizeController {
         dto.setProductId(productItem.getProId().getId());
         dto.setSize(productItem.getSize());
         dto.setPrice(productItem.getPrice());
-        dto.setQty(productItem.getQtyInStock());
+        dto.setQtyInStock(productItem.getQtyInStock());
         dto.setIsDeleted(productItem.getIsDeleted());
         return dto;
     }
-
-    // Endpoint to create a new product size
-//    @PostMapping("/add-size/{productId}")
-//    public ResponseEntity<AdminAddProductSizeDTO> addProductSize(@PathVariable("productId") int productId,
-//                                                                 @RequestBody AdminAddProductSizeDTO adminAddProductSizeDTO) {
-//        // Create a new productItem using the provided DTO
-//        productItem newProductItem = new productItem();
-//
-//        // Ensure the product exists by ID before associating
-//        product existingProduct = productRepo.findById(productId)
-//                .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
-//
-//        boolean sizeExists = existingProduct.getProductItemList().stream()
-//                .anyMatch(item -> item.getSize().equals(adminAddProductSizeDTO.getSize()));
-//
-//        // Set the product details into productItem
-//        newProductItem.setProId(existingProduct);
-//        newProductItem.setSize(adminAddProductSizeDTO.getSize());
-//        newProductItem.setPrice(adminAddProductSizeDTO.getPrice());
-//        newProductItem.setQtyInStock(adminAddProductSizeDTO.getQty());
-//        newProductItem.setIsDeleted(1); // Assuming isDeleted defaults to 1 for newly created items
-//
-//        // Save the new product size in the database via the service
-//        productItem savedProductItem = adminAddProductSizeService.addProductSize(newProductItem);
-//
-//        // Return the saved item as a DTO
-//        AdminAddProductSizeDTO responseDTO = convertToDTO(savedProductItem);
-//
-//        return ResponseEntity.ok(responseDTO);
-//    }
+    
     @PostMapping("/add-size/{productId}")
     public ResponseEntity<?> addProductSize(@PathVariable("productId") int productId,
                                             @RequestBody AdminAddProductSizeDTO adminAddProductSizeDTO) {
@@ -81,7 +52,7 @@ public class AdminAddProductSizeController {
         newProductItem.setProId(existingProduct);
         newProductItem.setSize(adminAddProductSizeDTO.getSize());
         newProductItem.setPrice(adminAddProductSizeDTO.getPrice());
-        newProductItem.setQtyInStock(adminAddProductSizeDTO.getQty());
+        newProductItem.setQtyInStock(adminAddProductSizeDTO.getQtyInStock());
         newProductItem.setIsDeleted(1); // Default to active
 
         productItem savedProductItem = adminAddProductSizeService.addProductSize(newProductItem);

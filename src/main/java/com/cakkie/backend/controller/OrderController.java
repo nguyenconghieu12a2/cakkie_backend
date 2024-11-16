@@ -12,16 +12,17 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("/api/admin")
 public class OrderController {
     private final OrderService orderService;
 
-    @GetMapping("/api/order")
+    @GetMapping("/order")
     public ResponseEntity<List<OrderDTO>> getAllOrders() {
         List<OrderDTO> orders = orderService.getAllOrders();
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
-    @GetMapping("/api/order/{id}")
+    @GetMapping("/detail-order/{id}")
     public ResponseEntity<OrderDTO> getOrderById(@PathVariable int id) {
         OrderDTO order = orderService.getOrderById(id);
         return new ResponseEntity<>(order, HttpStatus.OK);
