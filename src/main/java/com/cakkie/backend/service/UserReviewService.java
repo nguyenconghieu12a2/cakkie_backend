@@ -22,7 +22,9 @@ public class UserReviewService {
                 review.getRating(),
                 review.getFeedback(),
                 review.getCommentDate(),
-                review.getOrderProductId().getProductItemId().getSize()
+                review.getOrderProductId().getProductItemId().getSize(),
+                review.getUserId().getUsername(), 
+                review.getUserId().getImage()
         )).collect(Collectors.toList());
     }
 

@@ -12,4 +12,6 @@ public class UserReviewDTO {
     private String feedback;
     private Date commentDate;
     private String size;
+    private String username;
+    private String profilePicture;
 }
