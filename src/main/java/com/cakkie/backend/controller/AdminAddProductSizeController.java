@@ -1,6 +1,7 @@
 package com.cakkie.backend.controller;
 
 import com.cakkie.backend.dto.AdminAddProductSizeDTO;
+import com.cakkie.backend.dto.ProductItemSizeDTO;
 import com.cakkie.backend.exception.ProductNotFound;
 import com.cakkie.backend.model.product;
 import com.cakkie.backend.model.productItem;
@@ -10,6 +11,8 @@ import com.cakkie.backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -31,7 +34,7 @@ public class AdminAddProductSizeController {
         dto.setIsDeleted(productItem.getIsDeleted());
         return dto;
     }
-    
+
     @PostMapping("/add-size/{productId}")
     public ResponseEntity<?> addProductSize(@PathVariable("productId") int productId,
                                             @RequestBody AdminAddProductSizeDTO adminAddProductSizeDTO) {
@@ -59,6 +62,22 @@ public class AdminAddProductSizeController {
         AdminAddProductSizeDTO responseDTO = convertToDTO(savedProductItem);
 
         return ResponseEntity.ok(responseDTO);
+    }
+
+    @GetMapping("/detail-size/{proId}")
+    public ResponseEntity<List<ProductItemSizeDTO>> getProIdProItemIdSizeByProId(@PathVariable int proId) {
+        List<ProductItemSizeDTO> productItemSizes = adminAddProductSizeService.getProIdProItemIdSizeByProId(proId);
+        return ResponseEntity.ok(productItemSizes);
+    }
+
+    @PutMapping("/delete-size/{productItemId}")
+    public ResponseEntity<?> deleteProductSize(@PathVariable int productItemId) {
+        try {
+            adminAddProductSizeService.deleteProductSize(productItemId);
+            return ResponseEntity.ok("Product size deleted successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error deleting product size: " + e.getMessage());
+        }
     }
 
 }
