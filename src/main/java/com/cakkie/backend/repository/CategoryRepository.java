@@ -68,4 +68,20 @@ public interface CategoryRepository extends JpaRepository<category, Integer> {
             "JOIN category c2 ON c1.parent_id = c2.id\n" +
             "WHERE c.is_deleted = 0", nativeQuery = true)
     List<Object[]> getAllNullSubCategories();
+
+    //Get Full Cate Deleted
+    @Query (value = "SELECT c2.id, c2.cate_name, c1.parent_id, c1.cate_name, c.parent_id, c.cate_name, c.is_deleted\n" +
+            "FROM category c\n" +
+            "JOIN category c1 ON c.parent_id = c1.id\n" +
+            "JOIN category c2 ON c1.parent_id = c2.id\n" +
+            "WHERE c1.is_deleted = 0", nativeQuery = true)
+    List<Object[]> getFullDeleteCategories();
+
+    //Get SubCate and SubSubCate
+    @Query(value = "SELECT c1.id, c1.cate_name, c.id, c.cate_name, c1.is_deleted\n" +
+            "FROM category c\n" +
+            "JOIN category c1 ON c.parent_id = c1.id\n" +
+            "JOIN category c2 ON c1.parent_id = c2.id\n" +
+            "WHERE c1.is_deleted = 0 ", nativeQuery = true)
+    List<Object[]> getFullDeleteSubCategories();
 }

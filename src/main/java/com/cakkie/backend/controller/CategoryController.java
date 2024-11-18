@@ -80,6 +80,20 @@ public class CategoryController {
         return new ResponseEntity<>(convertToDTO(savedCategory), HttpStatus.CREATED);
     }
 
+    @DeleteMapping("/delete/category/{id}")
+    public ResponseEntity<String> deleteCategory(@PathVariable int id) {
+        try {
+            categoryService.deleteCategory(id);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Cannot delete category because it has associated products.");
+        } catch (CategoryNotFound e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subcategory not found with ID: " + id);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while deleting the subcategory.");
+        }
+    }
+
     //Delete Level2
     @GetMapping("/api/view-deleted/sub-category")
     public ResponseEntity<List<CategoryDTO>> getDeletedSubCategories() {
@@ -87,7 +101,7 @@ public class CategoryController {
         return new ResponseEntity<>(deletedSubCate, HttpStatus.OK);
     }
 
-    @DeleteMapping("/api/category/{id}/sub-category")
+    @DeleteMapping("/delete/sub-category/{id}")
     public ResponseEntity<String> deleteSubCategory(@PathVariable Integer id) {
         try {
             categoryService.deleteSubCategory(id);
@@ -165,4 +179,19 @@ public class CategoryController {
         List<CategoryDTO> nullCate = categoryService.getNullSubSubCategory();
         return new ResponseEntity<>(nullCate, HttpStatus.OK);
     }
+
+    //Get Full Deleted Cate
+    @GetMapping("/full-deleted-categories")
+    public ResponseEntity<List<CategoryDTO>> getFullDeletedCategories() {
+        List<CategoryDTO> fullDeletedCategories = categoryService.getFullDeletedCategories();
+        return new ResponseEntity<>(fullDeletedCategories, HttpStatus.OK);
+    }
+
+    //Get Full Deleted SubCate
+    @GetMapping("/full-sub-deleted")
+    public ResponseEntity<List<CategoryDTO>> getFullSubDeletedCategories() {
+        List<CategoryDTO> fullSubDeletedCategories = categoryService.getFullSubDeletedCategories();
+        return new ResponseEntity<>(fullSubDeletedCategories, HttpStatus.OK);
+    }
+
 }

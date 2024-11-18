@@ -11,6 +11,7 @@ public interface CategoryService {
     category addCategory(category category);// Ensure capitalization
     category updateCategory(int id, category category);
     List<CategoryDTO> getAllDeletedCategories();
+    void deleteCategory(int id);
 
     // Level2
     List<CategoryDTO> getSubCategoriesByParentId(Integer parentId);
@@ -31,4 +32,10 @@ public interface CategoryService {
 
     //Get Null SubCat
     List<CategoryDTO> getNullSubSubCategory();
+
+    //Get Full Deleted
+    List<CategoryDTO> getFullDeletedCategories();
+
+    //Get Full SubDeleted
+    List<CategoryDTO> getFullSubDeletedCategories();
 }
