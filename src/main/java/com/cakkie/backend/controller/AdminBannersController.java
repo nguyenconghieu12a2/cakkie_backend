@@ -21,7 +21,7 @@ public class AdminBannersController {
 
     @GetMapping("/banners")
     public ResponseEntity<List<banners>> getAllBanners() {
-        return new  ResponseEntity<>(adminBannersService.getAllBanners(), HttpStatus.OK);
+        return new ResponseEntity<>(adminBannersService.getAllBanners(), HttpStatus.OK);
     }
 
 
@@ -45,7 +45,7 @@ public class AdminBannersController {
                                                  @RequestParam("link") String link,
                                                  @PathVariable int id) {
         try {
-            banners updatedBanner = adminBannersService.updateBanners( title, image, link, id);
+            banners updatedBanner = adminBannersService.updateBanners(title, image, link, id);
             return ResponseEntity.ok(updatedBanner);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();

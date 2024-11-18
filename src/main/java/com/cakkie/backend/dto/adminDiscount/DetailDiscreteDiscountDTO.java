@@ -1,17 +1,18 @@
 package com.cakkie.backend.dto.adminDiscount;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class DetailCateDiscountDTO {
-    private int discountCateId;
-    private int discountId;
-    private int categoryId;
-    private String discountName;
+@AllArgsConstructor
+public class DetailDiscreteDiscountDTO {
+    private int id;
+    private String name;
     private String description;
     private String discountRate;
     private String startDate;

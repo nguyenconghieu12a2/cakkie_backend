@@ -23,7 +23,7 @@ import java.util.Optional;
 public class AdminProfileService {
 
     private final AdminProfileRepo adminProfileRepo;
-    private static final String IMG_URLL = "D:/Cakkie-Project/Project_Frontend/cakkie_frontend/public/images/";
+    private static final String IMG_URLL = "D:/Cakkie-Project/Project_Frontend/cakkie_frontend/public/images/admin-avt/";
 
     public Optional<admin> findById(int id) {
         return adminProfileRepo.findById(id);
