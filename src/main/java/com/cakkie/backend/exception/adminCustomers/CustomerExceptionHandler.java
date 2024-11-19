@@ -1,5 +1,6 @@
-package com.cakkie.backend.exception.adminException;
+package com.cakkie.backend.exception.adminCustomers;
 
+import com.cakkie.backend.exception.adminBanners.BannerNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;

@@ -1,7 +1,7 @@
 package com.cakkie.backend.service.adminDiscount;
 
 import com.cakkie.backend.dto.adminDiscount.*;
-import com.cakkie.backend.exception.adminException.DiscountNotFoundException;
+import com.cakkie.backend.exception.adminDiscount.DiscountNotFoundException;
 import com.cakkie.backend.model.category;
 import com.cakkie.backend.model.discount;
 import com.cakkie.backend.model.discountCategory;

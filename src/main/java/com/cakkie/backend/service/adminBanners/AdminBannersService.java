@@ -1,6 +1,6 @@
 package com.cakkie.backend.service.adminBanners;
 
-import com.cakkie.backend.exception.adminException.BannerNotFoundException;
+import com.cakkie.backend.exception.adminBanners.BannerNotFoundException;
 import com.cakkie.backend.model.banners;
 import com.cakkie.backend.repository.adminBanners.AdminBannerRepo;
 import com.cakkie.backend.utils.SaveIMGBanner;

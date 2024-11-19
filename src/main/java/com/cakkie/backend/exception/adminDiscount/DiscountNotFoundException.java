@@ -1,4 +1,4 @@
-package com.cakkie.backend.exception.adminException;
+package com.cakkie.backend.exception.adminDiscount;
 
 public class DiscountNotFoundException extends RuntimeException {
     public DiscountNotFoundException(String message) {

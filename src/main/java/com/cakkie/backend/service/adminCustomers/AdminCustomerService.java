@@ -6,7 +6,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.cakkie.backend.repository.adminCustomers.AdminCustomerRepo;
-import com.cakkie.backend.exception.adminException.CustomerNotFoundException;
+import com.cakkie.backend.exception.adminCustomers.CustomerNotFoundException;
 
 import java.text.NumberFormat;
 import java.util.*;

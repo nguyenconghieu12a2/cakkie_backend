@@ -1,7 +1,7 @@
 package com.cakkie.backend.service.adminOthers;
 
 import com.cakkie.backend.dto.adminOthers.CustomerReviewDTO;
-import com.cakkie.backend.exception.adminException.ProductReviewNotFoundException;
+import com.cakkie.backend.exception.adminOthers.ProductReviewNotFoundException;
 import com.cakkie.backend.model.orderLine;
 import com.cakkie.backend.model.userReview;
 import com.cakkie.backend.model.userReviewStatus;

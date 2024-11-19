@@ -1,7 +1,7 @@
 package com.cakkie.backend.controller.adminForgotPassword;
 
 import com.cakkie.backend.dto.adminLogin.AdminMailBody;
-import com.cakkie.backend.exception.adminException.AdminNotFoundException;
+import com.cakkie.backend.exception.adminLogin.AdminNotFoundException;
 import com.cakkie.backend.model.ForgotPassword;
 import com.cakkie.backend.model.admin;
 import com.cakkie.backend.repository.adminProfile.AdminProfileRepo;
