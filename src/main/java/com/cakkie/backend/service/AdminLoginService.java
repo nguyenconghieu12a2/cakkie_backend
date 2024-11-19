@@ -1,5 +1,6 @@
 package com.cakkie.backend.service;
-import com.cakkie.backend.api.AdminLoginAPI;
+
+import com.cakkie.backend.dto.AdminLoginAPI;
 import com.cakkie.backend.model.admin;
 import com.cakkie.backend.repository.AdminLoginRepo;
 import org.springframework.stereotype.Service;
@@ -11,11 +12,12 @@ import java.util.Optional;
 
 @Service
 public class AdminLoginService {
-    private final JwtService jwtService;
+
+    private final AdminJwtService adminJwtService;
     private AdminLoginRepo adminLoginRepo;
 
-    public AdminLoginService(JwtService jwtService, AdminLoginRepo adminLoginRepo) {
-        this.jwtService = jwtService;
+    public AdminLoginService(AdminJwtService adminJwtService, AdminLoginRepo adminLoginRepo) {
+        this.adminJwtService = adminJwtService;
         this.adminLoginRepo = adminLoginRepo;
     }
 
@@ -52,11 +54,20 @@ public class AdminLoginService {
         if(opAdmin.isPresent()) {
             admin admin = opAdmin.get();
             if(admin.getPassword().equals(getMd5(adminLogin.getPassword()))) {
-                return jwtService.generateJwt(admin);
+                return adminJwtService.generateJwt(admin);
             }
         }
         return null;
     }
+
+    public Optional<admin> findByUsernameIgnoreCase(String username) {
+        return adminLoginRepo.findByUsernameIgnoreCase(username);
+    }
+
+//    public Optional<admin> findByImageIgnoreCase(String image) {
+//        return adminLoginRepo.findByImageIgnoreCase(image);
+//    }
+
 
     public admin saveAdmin(admin user) {
         return adminLoginRepo.save(user);

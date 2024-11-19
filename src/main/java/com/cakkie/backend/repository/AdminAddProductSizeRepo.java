@@ -11,8 +11,9 @@ import java.util.List;
 public interface AdminAddProductSizeRepo extends JpaRepository<productItem, Integer> {
     @Modifying
     @Transactional
-    @Query(value = "UPDATE product_item SET is_deleted = 0 WHERE id = ?1", nativeQuery = true)
-    void updateIsDeleted(Integer id);
+    @Query(value = "UPDATE product_item SET is_deleted = 0 WHERE id = ?1 AND qty_in_stock = 0", nativeQuery = true)
+    int updateIsDeletedIfQtyZero(Integer id);
+
 
     @Query(value = "SELECT pr.id, p.id, p.size, p.price, p.qty_in_stock\n" +
             "FROM product_item p\n" +

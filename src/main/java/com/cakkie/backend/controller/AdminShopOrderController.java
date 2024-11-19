@@ -1,8 +1,7 @@
 package com.cakkie.backend.controller;
 
-import com.cakkie.backend.dto.OrderStatusDTO;
+import com.cakkie.backend.dto.AdminOrderStatusDTO;
 import com.cakkie.backend.service.AdminShopOrderService;
-import jakarta.validation.constraints.Past;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,14 +26,14 @@ public class AdminShopOrderController {
     }
 
     @GetMapping("/order/statuses")
-    public ResponseEntity<List<OrderStatusDTO>> getAllOrderStatuses() {
-        List<OrderStatusDTO> statuses = adminShopOrderService.getAllOrderStatuses();
+    public ResponseEntity<List<AdminOrderStatusDTO>> getAllOrderStatuses() {
+        List<AdminOrderStatusDTO> statuses = adminShopOrderService.getAllOrderStatuses();
         return ResponseEntity.ok(statuses);
     }
 
     @GetMapping("/order/status/{orderId}")
-    public ResponseEntity<OrderStatusDTO> getOrderStatusById(@PathVariable int orderId) {
-        OrderStatusDTO orderStatus = adminShopOrderService.getOrderStatusById(orderId);
+    public ResponseEntity<AdminOrderStatusDTO> getOrderStatusById(@PathVariable int orderId) {
+        AdminOrderStatusDTO orderStatus = adminShopOrderService.getOrderStatusById(orderId);
         return ResponseEntity.ok(orderStatus);
     }
 }

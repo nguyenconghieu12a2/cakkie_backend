@@ -1,6 +1,6 @@
 package com.cakkie.backend.service;
 
-import com.cakkie.backend.dto.OrderStatusDTO;
+import com.cakkie.backend.dto.AdminOrderStatusDTO;
 import com.cakkie.backend.model.orderStatus;
 import com.cakkie.backend.model.shopOrder;
 import com.cakkie.backend.repository.AdminOrderStatusRepo;
@@ -111,17 +111,17 @@ public class AdminShopOrderService {
         }
     }
 
-    public List<OrderStatusDTO> getAllOrderStatuses() {
+    public List<AdminOrderStatusDTO> getAllOrderStatuses() {
         return adminOrderStatusRepo.findAll().stream()
-                .map(status -> new OrderStatusDTO(status.getId(), status.getStatus(), status.getIsDeleted()))
+                .map(status -> new AdminOrderStatusDTO(status.getId(), status.getStatus(), status.getIsDeleted()))
                 .collect(Collectors.toList());
     }
 
-    public OrderStatusDTO getOrderStatusById(int orderId) {
+    public AdminOrderStatusDTO getOrderStatusById(int orderId) {
         shopOrder order = adminShopOrderRepo.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found with ID: " + orderId));
 
         orderStatus currentStatus = order.getOrderStatusId();
-        return new OrderStatusDTO(currentStatus.getId(), currentStatus.getStatus(), currentStatus.getIsDeleted());
+        return new AdminOrderStatusDTO(currentStatus.getId(), currentStatus.getStatus(), currentStatus.getIsDeleted());
     }
 }

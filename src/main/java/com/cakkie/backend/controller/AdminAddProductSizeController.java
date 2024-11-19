@@ -1,13 +1,12 @@
 package com.cakkie.backend.controller;
 
 import com.cakkie.backend.dto.AdminAddProductSizeDTO;
-import com.cakkie.backend.dto.ProductItemSizeDTO;
-import com.cakkie.backend.exception.ProductNotFound;
+import com.cakkie.backend.dto.AdminProductItemSizeDTO;
+import com.cakkie.backend.exception.AdminProductNotFound;
 import com.cakkie.backend.model.product;
 import com.cakkie.backend.model.productItem;
-import com.cakkie.backend.repository.ProductRepository;
+import com.cakkie.backend.repository.AdminProductRepository;
 import com.cakkie.backend.service.AdminAddProductSizeService;
-import com.cakkie.backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +22,7 @@ public class AdminAddProductSizeController {
     private AdminAddProductSizeService adminAddProductSizeService;
 
     @Autowired
-    private ProductRepository productRepo;  // Ensure this is injected
+    private AdminProductRepository productRepo;  // Ensure this is injected
 
     private AdminAddProductSizeDTO convertToDTO(productItem productItem) {
         AdminAddProductSizeDTO dto = new AdminAddProductSizeDTO();
@@ -40,7 +39,7 @@ public class AdminAddProductSizeController {
                                             @RequestBody AdminAddProductSizeDTO adminAddProductSizeDTO) {
         // Ensure the product exists
         product existingProduct = productRepo.findById(productId)
-                .orElseThrow(() -> new ProductNotFound("Product with ID " + productId + " not found"));
+                .orElseThrow(() -> new AdminProductNotFound("Product with ID " + productId + " not found"));
 
         // Check if the size already exists
         boolean sizeExists = existingProduct.getProductItemList().stream()
@@ -65,8 +64,8 @@ public class AdminAddProductSizeController {
     }
 
     @GetMapping("/detail-size/{proId}")
-    public ResponseEntity<List<ProductItemSizeDTO>> getProIdProItemIdSizeByProId(@PathVariable int proId) {
-        List<ProductItemSizeDTO> productItemSizes = adminAddProductSizeService.getProIdProItemIdSizeByProId(proId);
+    public ResponseEntity<List<AdminProductItemSizeDTO>> getProIdProItemIdSizeByProId(@PathVariable int proId) {
+        List<AdminProductItemSizeDTO> productItemSizes = adminAddProductSizeService.getProIdProItemIdSizeByProId(proId);
         return ResponseEntity.ok(productItemSizes);
     }
 
@@ -75,9 +74,10 @@ public class AdminAddProductSizeController {
         try {
             adminAddProductSizeService.deleteProductSize(productItemId);
             return ResponseEntity.ok("Product size deleted successfully.");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error deleting product size: " + e.getMessage());
         }
     }
-
 }
