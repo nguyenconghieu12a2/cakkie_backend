@@ -34,6 +34,8 @@ public class userReview {
     private Date commentDate;
     @Column(name = "approved_date", nullable = true)
     private Date approvedDate;
+    @Column(name = "reject_date", nullable = true)
+    private Date rejectedDate;
     @Column(name = "valid_date", nullable = true)
     private Date validDate;
     @Column(name = "is_hide", nullable = true)
