@@ -26,7 +26,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class AdminProductService {
 
-    private static final String IMG_URLL = "D:/CAKKE_PROJECT/cakkie_frontend/public/images/";
+    private static final String IMG_URLL = "D:/Cakkie-Project/Project_Frontend/cakkie_frontend/public/images/";
 
     private final AdminProductRepository productRepo;
     private final AdminCategoryRepository categoryRepo;
