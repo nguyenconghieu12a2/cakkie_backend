@@ -2,8 +2,8 @@ package com.cakkie.backend.security;
 
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.cakkie.backend.model.admin;
-import com.cakkie.backend.repository.AdminLoginRepo;
-import com.cakkie.backend.service.AdminJwtService;
+import com.cakkie.backend.repository.adminLogin.AdminLoginRepo;
+import com.cakkie.backend.service.adminLogin.AdminJwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

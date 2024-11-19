@@ -9,8 +9,8 @@ import java.util.List;
 
 public interface AdminCommonDiscountRepo extends JpaRepository<discount, Integer> {
     @Query(value = "select id, name, discount_rate, \n" +
-            "\tFORMAT(start_date, 'dd-MM-yyyy HH:mm:ss') as [start_date], \n" +
-            "\tFORMAT(end_date, 'dd-MM-yyyy HH:mm:ss') as [end_date] from discount\n" +
+            "\tFORMAT(start_date, 'yyyy-MM-dd HH:mm:ss') as [start_date], \n" +
+            "\tFORMAT(end_date, 'yyyy-MM-dd HH:mm:ss') as [end_date] from discount\n" +
             "where id in (select discount_id from discount_category\n" +
             "group by discount_id\n" +
             "having count(*) > 1)", nativeQuery = true)

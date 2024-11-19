@@ -1,7 +1,7 @@
 package com.cakkie.backend.service.adminDiscount;
 
 import com.cakkie.backend.dto.adminDiscount.*;
-import com.cakkie.backend.exception.DiscountNotFoundException;
+import com.cakkie.backend.exception.adminException.DiscountNotFoundException;
 import com.cakkie.backend.model.category;
 import com.cakkie.backend.model.discount;
 import com.cakkie.backend.model.discountCategory;
@@ -355,16 +355,16 @@ public class AdminDiscountService {
         discount existingDiscount = existsDiscountOpt.get();
 
         // Log existing start and end dates for debugging purposes
-        SimpleDateFormat myFormatObj = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        System.out.println("Current startDate in database: " + myFormatObj.format(existingDiscount.getStartDate()));
-        System.out.println("Current endDate in database: " + myFormatObj.format(existingDiscount.getEndDate()));
+//        SimpleDateFormat myFormatObj = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        System.out.println("Current startDate in database: " + myFormatObj.format(existingDiscount.getStartDate()));
+//        System.out.println("Current endDate in database: " + myFormatObj.format(existingDiscount.getEndDate()));
 
         // If new startDate or endDate is not provided, retain the existing ones
         Date finalStartDate = (startDate != null) ? startDate : existingDiscount.getStartDate();
         Date finalEndDate = (endDate != null) ? endDate : existingDiscount.getEndDate();
 
-        System.out.println("Final startDate to be set: " + myFormatObj.format(finalStartDate));
-        System.out.println("Final endDate to be set: " + myFormatObj.format(finalEndDate));
+//        System.out.println("Final startDate to be set: " + myFormatObj.format(finalStartDate));
+//        System.out.println("Final endDate to be set: " + myFormatObj.format(finalEndDate));
 
         // Update other fields
         existingDiscount.setName(name);

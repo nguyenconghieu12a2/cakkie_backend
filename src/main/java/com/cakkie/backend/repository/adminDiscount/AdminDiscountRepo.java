@@ -67,7 +67,7 @@ public interface AdminDiscountRepo extends JpaRepository<discountCategory, Integ
     //discount by cate activate (wherether it's common or discrete)
     @Query(value = "select dc.id, dc.discount_id, dc.category_id, \n" +
             "\td.name, d.description, d.discount_rate, \n" +
-            "\tFORMAT(d.start_date, 'dd-MM-yyyy HH:mm:ss') as [start_date], FORMAT(d.end_date, 'dd-MM-yyyy HH:mm:ss') as [end_date] \n" +
+            "\tFORMAT(d.start_date, 'yyyy-MM-dd HH:mm:ss') as [start_date], FORMAT(d.end_date, 'yyyy-MM-dd HH:mm:ss') as [end_date] \n" +
             "from discount_category dc\n" +
             "join discount d on d.id = dc.discount_id\n" +
             "right join category c on c.id = dc.category_id\n" +
@@ -77,7 +77,7 @@ public interface AdminDiscountRepo extends JpaRepository<discountCategory, Integ
     //discrete discount by cate inactivate
     @Query(value = "select dc.id, dc.discount_id, dc.category_id, \n" +
             "\td.name, d.description, d.discount_rate, \n" +
-            "\tFORMAT(d.start_date, 'dd-MM-yyyy HH:mm:ss') as [start_date], FORMAT(d.end_date, 'dd-MM-yyyy HH:mm:ss') as [end_date] \n" +
+            "\tFORMAT(d.start_date, 'yyyy-MM-dd HH:mm:ss') as [start_date], FORMAT(d.end_date, 'yyyy-MM-dd HH:mm:ss') as [end_date] \n" +
             "from discount_category dc\n" +
             "join discount d on d.id = dc.discount_id\n" +
             "right join category c on c.id = dc.category_id\n" +
@@ -91,7 +91,7 @@ public interface AdminDiscountRepo extends JpaRepository<discountCategory, Integ
     //common discount by cate inactivate
     @Query(value = "select dc.id, dc.discount_id, dc.category_id, \n" +
             "\td.name, d.description, d.discount_rate, \n" +
-            "\tFORMAT(d.start_date, 'dd-MM-yyyy HH:mm:ss') as [start_date], FORMAT(d.end_date, 'dd-MM-yyyy HH:mm:ss') as [end_date]  \n" +
+            "\tFORMAT(d.start_date, 'yyyy-MM-dd HH:mm:ss') as [start_date], FORMAT(d.end_date, 'yyyy-MM-dd HH:mm:ss') as [end_date]  \n" +
             "from discount_category dc\n" +
             "join discount d on d.id = dc.discount_id\n" +
             "right join category c on c.id = dc.category_id\n" +
