@@ -14,4 +14,6 @@ public class UserReviewDTO {
     private String size;
     private String username;
     private String profilePicture;
+    private String reviewImage;
+    private int isHide;
 }

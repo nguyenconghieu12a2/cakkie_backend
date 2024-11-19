@@ -1,6 +1,7 @@
 package com.cakkie.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -33,11 +34,14 @@ public class product {
     private int isDeleted;
 
     @OneToMany(mappedBy = "proID")
+    @JsonIgnore
     private List<productDesInfo> productDesInfoList;
 
     @OneToMany(mappedBy = "proId")
+    @JsonIgnore
     private List<productItem> productItemList;
 
     @OneToMany(mappedBy = "productId")
+    @JsonIgnore
     private List<productCart> productCartList;
 }

@@ -1,6 +1,7 @@
 package com.cakkie.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ public class productItem {
     private int id;
     @ManyToOne
     @JoinColumn(name = "pro_id", nullable = true)
+    @JsonBackReference
     private product proId;
     @Column(name = "size", nullable = true, length = 10)
     private String size;
@@ -33,8 +35,10 @@ public class productItem {
     private int isDeleted;
 
     @OneToMany(mappedBy = "productItemId")
+    @JsonIgnore
     private List<shoppingCartItem> shoppingCartItemsList;
 
     @OneToMany(mappedBy = "productItemId")
+    @JsonIgnore
     private List<orderLine> orderLineList;
 }

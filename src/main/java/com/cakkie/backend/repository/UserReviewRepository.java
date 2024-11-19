@@ -12,7 +12,6 @@ public interface UserReviewRepository extends CrudRepository<userReview, Integer
             "JOIN ol.productItemId pi " +
             "WHERE pi.proId.id = :productId " +
             "AND ur.isDeleted = 1 " +
-            "AND ur.statusId.id = 1 " +
-            "AND ur.isHide = -1")
+            "AND ur.statusId.id = 1 ")
     List<userReview> findReviewsByProductId(int productId);
 }
