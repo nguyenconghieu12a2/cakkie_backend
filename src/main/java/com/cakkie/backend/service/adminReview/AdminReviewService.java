@@ -11,6 +11,8 @@ import com.cakkie.backend.repository.adminReview.ReviewUserRepository;
 import com.cakkie.backend.repository.adminReview.ReviewUserStatusRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -128,11 +130,12 @@ public class AdminReviewService {
         // Update the review's status
         review.setStatusId(optionalStatus.get());
 
-        Date currentDate = new Date();
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        Date currentDate = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
         if (status == 1) {
             review.setApprovedDate(currentDate); // Set the approved date
         } else if (status == 3) {
-            review.setValidDate(currentDate); // Set the rejected date
+            review.setRejectedDate(currentDate); // Set the rejected date
         }
 
         adminReviewRepository.save(review);

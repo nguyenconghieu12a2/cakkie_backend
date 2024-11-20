@@ -100,6 +100,16 @@ public class AdminCancelOrderImplement implements AdminCancelOrderService {
     @Transactional
     @Override
     public void banUser(int userId, String bannedReason) {
+        Optional<userSite> userOptional = adminCancelOrderRepository.findUserById(userId);
+        if (userOptional.isEmpty()) {
+            throw new IllegalArgumentException("User with ID " + userId + " does not exist.");
+        }
+
+        userSite user = userOptional.get();
+        if (user.getStatusId().getId() == 2) {
+            throw new IllegalArgumentException("User is already banned. Reason: " + user.getBannedReason());
+        }
+
         adminCancelOrderRepository.banUser(userId, bannedReason);
     }
 

@@ -49,13 +49,13 @@ public interface ProductRepository  extends JpaRepository<product, Long>{
     List<ProductDTO> getAllProduct();
 
 
-    @Query(value = "SELECT  p.id, p.name, p.description, c.cate_name, pi.price, p.product_image, COALESCE(p.product_rating, 0), pi.size, pi.qty_in_stock,COALESCE(d.discount_rate,0),  pi.id " +
-            "                       FROM product p " +
-            "                       JOIN product_item pi ON p.id = pi.pro_id " +
-            "                       LEFT JOIN category c ON p.categoryID = c.id " +
-            "                        LEFT JOIN discount_category dc ON c.id = dc.category_id " +
-            "                        LEFT JOIN dbo.discount d on d.id = dc.discount_id " +
-            "            WHERE p.id = :id", nativeQuery = true)
+    @Query(value = "SELECT  p.id, p.name, p.description, c.cate_name, pi.price, p.product_image, COALESCE(p.product_rating, 0), pi.size, pi.qty_in_stock,COALESCE(d.discount_rate,0),  pi.id, COALESCE(dc.is_deleted, 0)\n" +
+            "                                   FROM product p \n" +
+            "                                   JOIN product_item pi ON p.id = pi.pro_id \n" +
+            "                                   LEFT JOIN category c ON p.categoryID = c.id \n" +
+            "                                    LEFT JOIN discount_category dc ON c.id = dc.category_id \n" +
+            "                                    LEFT JOIN dbo.discount d on d.id = dc.discount_id \n" +
+            "                        WHERE p.id = :id", nativeQuery = true)
     List<Object[]> getProductById(@Param("id") int id);
 
 //    @Query(value = "SELECT new com.cakkie.backend.dto.ProductDTO(" +

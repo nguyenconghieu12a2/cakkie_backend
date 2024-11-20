@@ -54,16 +54,17 @@ public class AdminCancelOrderController {
     public ResponseEntity<String> banUser(
             @PathVariable int userId,
             @RequestBody String bannedReason) {
-
-        if (adminCancelOrderService.isUserBanned(userId)) {
-            userSite user = adminCancelOrderService.findUserById(userId).get();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("User has already been banned. Reason: " + user.getBannedReason());
+        try {
+            adminCancelOrderService.banUser(userId, bannedReason);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("User banned successfully with reason: " + bannedReason);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An unexpected error occurred: " + e.getMessage());
         }
-
-        adminCancelOrderService.banUser(userId, bannedReason);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body("User banned successfully with reason: " + bannedReason);
     }
 
 }

@@ -82,6 +82,7 @@ public class ProductController{
                 product.setQuantityStock((long) result[8]);
                 product.setDiscount((double) result[9]);
                 product.setProductItemId((int) result[10]);
+                product.setIsDeleted((int) result[11]);
                 product.setDescriptions(new ArrayList<>());
                 double averageRating = userReviewService.getAverageRatingForProduct(product.getProductID());
                 product.setAverageRating(averageRating);

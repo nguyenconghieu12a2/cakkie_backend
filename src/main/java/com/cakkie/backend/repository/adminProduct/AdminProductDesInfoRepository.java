@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 public interface AdminProductDesInfoRepository extends JpaRepository<productDesInfo, Integer> {
     @Modifying
     @Transactional
@@ -28,4 +30,7 @@ public interface AdminProductDesInfoRepository extends JpaRepository<productDesI
     @Query("DELETE productDesInfo pdi WHERE pdi.desTitleId.desTitleID = :desTitleId AND pdi.proID.id = :productId")
     void deleteDesInfo(@Param("productId") int productId,
                        @Param("desTitleId") int desTitleId);
+
+    @Query("SELECT pdi FROM productDesInfo pdi WHERE pdi.proID.id = :productId AND pdi.desTitleId.desTitleID = :desTitleId")
+    List<Object[]> findDesInfoByProductAndTitle(@Param("productId") int productId, @Param("desTitleId") int desTitleId);
 }

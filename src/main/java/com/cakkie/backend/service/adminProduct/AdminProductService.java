@@ -247,8 +247,6 @@ public class AdminProductService {
     }
 
 
-
-
     public List<String> getAllSize() {
         return adminProductRepository.getProductsSize();
     }
@@ -349,7 +347,7 @@ public class AdminProductService {
         return productRepo.save(existingProduct);
     }
 
-    public product recoverProduct (int productId) {
+    public product recoverProduct(int productId) {
         product existingProduct = productRepo.findById(productId)
                 .orElseThrow(() -> new AdminProductNotFound("Product with ID " + productId + " not found"));
 
@@ -359,6 +357,11 @@ public class AdminProductService {
     }
 
     public void addNewDesInfoUsingInsertQuery(int productId, int desTitleId, String desInfo, int isDeleted) {
+        List<Object[]> existedInfo = productDesInfoRepo.findDesInfoByProductAndTitle(productId, desTitleId);
+        if(!existedInfo.isEmpty()) {
+            throw new IllegalArgumentException("Description information already exists for this product.");
+        }
+
         product product = productRepo.findById(productId)
                 .orElseThrow(() -> new AdminProductNotFound("Product with ID " + productId + " not found"));
 
