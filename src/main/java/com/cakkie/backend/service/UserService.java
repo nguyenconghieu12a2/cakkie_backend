@@ -171,19 +171,18 @@ public class UserService {
                 }
             }
             if (updatedInfo.getBirthday() != null) {
-                user.setBirthday(updatedInfo.getBirthday());
+                // Convert LocalDate to java.util.Date before setting (if userSite uses Date)
+                user.setBirthday(java.sql.Date.valueOf(updatedInfo.getBirthday()));
             }
-
-            if(updatedInfo.getPhone() != null) {
+            if (updatedInfo.getPhone() != null) {
                 user.setPhone(updatedInfo.getPhone());
             }
 
             // Save the updated user and return the saved entity
             return userSiteRepository.save(user);
+        } else {
+            throw new IllegalArgumentException("User with email " + updatedInfo.getEmail() + " not found.");
         }
-
-        // Return null or handle the case where the user was not found
-        return null;
     }
 
     public boolean changePassword(String email, String currentPassword, String newPassword) {
