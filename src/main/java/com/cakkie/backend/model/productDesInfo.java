@@ -1,5 +1,7 @@
 package com.cakkie.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +19,7 @@ public class productDesInfo {
     private int desInfoID;
     @ManyToOne
     @JoinColumn(name = "des_title_id", nullable = false)
+    @JsonBackReference
     private productDesTitle desTitleId;
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)

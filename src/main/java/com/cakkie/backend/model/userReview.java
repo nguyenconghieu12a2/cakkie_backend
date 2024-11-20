@@ -1,5 +1,6 @@
 package com.cakkie.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,9 +18,11 @@ public class userReview {
     private int id;
     @ManyToOne
     @JoinColumn(name = "order_product_id", nullable = false)
+    @JsonBackReference
     private orderLine orderProductId;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
     private userSite userId;
     @Column(name = "rating", nullable = true)
     private int rating;

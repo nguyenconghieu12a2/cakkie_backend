@@ -1,5 +1,6 @@
 package com.cakkie.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,5 +21,6 @@ public class userReviewStatus {
     private String status;
 
     @OneToMany(mappedBy = "statusId")
+    @JsonIgnore
     private List<userReview> userReviewsList;
 }
