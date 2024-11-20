@@ -33,7 +33,7 @@ public class OrderController {
                 return ResponseEntity.status(404).body("Order not found.");
             }
 
-            orderStatus orderStatusId = orderStatusRepository.findById(5).orElseThrow(() -> new RuntimeException("Cannot find orderStatus = 2"));
+            orderStatus orderStatusId = orderStatusRepository.findById(5).orElseThrow(() -> new RuntimeException("Cannot find orderStatus = 5"));
             order.setOrderStatusId(orderStatusId);
             Date currentDate = new Date();
             order.setCanceledDate(currentDate);

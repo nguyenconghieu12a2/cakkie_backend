@@ -1,6 +1,5 @@
 package com.cakkie.backend.controller;
 
-import com.cakkie.backend.api.TodoAPI;
 import com.cakkie.backend.dto.*;
 import com.cakkie.backend.model.*;
 import com.cakkie.backend.service.ProductService;
@@ -18,14 +17,6 @@ public class ProductController{
     private ProductService productService;
     @Autowired
     private UserReviewService userReviewService;
-
-    @GetMapping("/Product")
-    public TodoAPI homeController(){
-        TodoAPI todoApi = new TodoAPI();
-        todoApi.setMessage("welcome to Product");
-        todoApi.setStatus(true);
-        return todoApi;
-    }
 
     @GetMapping("/Product/getAll")
     public  List<ProductDTO> getAllProduct(){
