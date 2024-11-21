@@ -17,6 +17,7 @@ public class AdminOrderDTO {
     private long totalDiscount;
     private List<Long> price;
     private List<Long> qty;
+    private List<String> size;
     private long discountPrice;
     private String status;
     private String note;
@@ -43,7 +44,7 @@ public class AdminOrderDTO {
         this.note = note;
     }
 
-    public AdminOrderDTO(int id, String fullName, List<String> productName, List<Long> price, List<Long> qty, String shipMethod, Date approvedDate, Date orderDate, Date shippedDate, Date arrivalDate, String paymentMethod, String address) {
+    public AdminOrderDTO(int id, String fullName, List<String> productName, List<Long> price, List<Long> qty, String shipMethod, Date approvedDate, Date orderDate, Date shippedDate, Date arrivalDate, String paymentMethod, String address, List<String> size) {
         this.id = id;
         this.fullName = fullName;
         this.productName = productName;
@@ -56,5 +57,6 @@ public class AdminOrderDTO {
         this.arrivalDate = arrivalDate;
         this.paymentMethod = paymentMethod;
         this.address = address;
+        this.size = size;
     }
 }

@@ -3,6 +3,7 @@ package com.cakkie.backend.dto.adminCoupon;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Getter
@@ -15,6 +16,8 @@ public class AdminCouponDTO {
     private long priceDiscount;
     private Date startDate;
     private Date endDate;
+    private String startDateFormatted; // New field for formatted start date
+    private String endDateFormatted;  // New field for formatted end date
     private int isDeleted;
 
     public AdminCouponDTO() {}
@@ -28,5 +31,11 @@ public class AdminCouponDTO {
         this.startDate = startDate;
         this.endDate = endDate;
         this.isDeleted = isDeleted;
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        this.startDateFormatted = formatter.format(startDate);
+        this.endDateFormatted = formatter.format(endDate);
     }
 }
+
+

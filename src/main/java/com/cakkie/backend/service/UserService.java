@@ -20,6 +20,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -73,6 +75,7 @@ public class UserService {
     }
 
     public userSite registerUser(RegistrationBody registrationBody) throws UserAlreadyExistException {
+        // Check if the user already exists by username or email
         if (userSiteRepository.findByUsernameIgnoreCase(registrationBody.getUsername()).isPresent()
                 || userSiteRepository.findByEmailIgnoreCase(registrationBody.getEmail()).isPresent()) {
             throw new UserAlreadyExistException();
@@ -82,27 +85,34 @@ public class UserService {
         userStatus activeStatus = userStatusRepository.findById(1)
                 .orElseThrow(() -> new IllegalStateException("Active user status not found"));
 
-        // Create new user
+        // Create a new user
         userSite userSite = new userSite();
         userSite.setFirstname(registrationBody.getFirstname());
         userSite.setLastname(registrationBody.getLastname());
         userSite.setUsername(registrationBody.getUsername());
         userSite.setGender(registrationBody.getGender());
-        if (registrationBody.getGender().equals("male")) {
+        if ("male".equalsIgnoreCase(registrationBody.getGender())) {
             userSite.setImage("male.jpg");
-        } else if (registrationBody.getGender().equals("female")) {
+        } else if ("female".equalsIgnoreCase(registrationBody.getGender())) {
             userSite.setImage("female.jpg");
         }
-        userSite.setBirthday(registrationBody.getBirthday());
+
+        // Convert LocalDate (from RegistrationBody) to java.util.Date for userSite
+        LocalDate birthdayLocalDate = registrationBody.getBirthday();
+        Date birthdayDate = Date.from(birthdayLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        userSite.setBirthday(birthdayDate);
+
         userSite.setEmail(registrationBody.getEmail());
         userSite.setPhone(registrationBody.getPhone());
         userSite.setPassword(getMd5(registrationBody.getPassword()));
-        userSite.setAccountCreateDate(new Date(new java.util.Date().getTime()));
+
+        // Set the account creation date
+        userSite.setAccountCreateDate(new Date()); // Current date-time in java.util.Date
 
         // Set the "Active" status
         userSite.setStatusId(activeStatus);
 
-        // Save user to database
+        // Save user to the database
         userSite savedUser = userSiteRepository.save(userSite);
 
         // Create a new shopping cart for the user
@@ -123,12 +133,14 @@ public class UserService {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Incorrect password.");
             }
 
-            // Check if user status is active (status == 1)
+            // Check if user status is banned (status == 2)
             if (user.getStatusId().getId() == 2) {
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Your account has been banned from this shop!");
+                String reason = user.getBannedReason() != null ? user.getBannedReason() : "No reason provided.";
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Your account has been banned from this shop! Reason: " + reason);
             }
 
-            if (user.getStatusId().getId() == 2) {
+            // Check if user status is removed (status == 3)
+            if (user.getStatusId().getId() == 3) {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Your account has been removed from this shop!");
             }
 
@@ -171,19 +183,18 @@ public class UserService {
                 }
             }
             if (updatedInfo.getBirthday() != null) {
-                user.setBirthday(updatedInfo.getBirthday());
+                // Convert LocalDate to java.util.Date before setting (if userSite uses Date)
+                user.setBirthday(java.sql.Date.valueOf(updatedInfo.getBirthday()));
             }
-
-            if(updatedInfo.getPhone() != null) {
+            if (updatedInfo.getPhone() != null) {
                 user.setPhone(updatedInfo.getPhone());
             }
 
             // Save the updated user and return the saved entity
             return userSiteRepository.save(user);
+        } else {
+            throw new IllegalArgumentException("User with email " + updatedInfo.getEmail() + " not found.");
         }
-
-        // Return null or handle the case where the user was not found
-        return null;
     }
 
     public boolean changePassword(String email, String currentPassword, String newPassword) {
@@ -194,15 +205,22 @@ public class UserService {
             userSite user = opUser.get();
 
             // Verify the current password
-            if (user.getPassword().equals(getMd5(currentPassword))) {
-                // Update the password with the new hashed password
-                user.setPassword(getMd5(newPassword));
-                userSiteRepository.save(user);
-                return true; // Password change successful
+            if (!user.getPassword().equals(getMd5(currentPassword))) {
+                return false; // Current password is incorrect
             }
+
+            // Check if the new password is the same as the current password
+            if (user.getPassword().equals(getMd5(newPassword))) {
+                throw new IllegalArgumentException("New password cannot be the same as the current password");
+            }
+
+            // Update the password with the new hashed password
+            user.setPassword(getMd5(newPassword));
+            userSiteRepository.save(user);
+            return true; // Password change successful
         }
 
-        return false; // Password change unsuccessful
+        return false; // User not found or other failure
     }
 
     private String generateOtp() {
@@ -273,4 +291,6 @@ public class UserService {
         Optional<userSite> user = userSiteRepository.findByEmailIgnoreCase(email);
         return user != null ? user.get().getId() : null;
     }
+
+
 }

@@ -49,13 +49,13 @@ public interface ProductRepository  extends JpaRepository<product, Long>{
     List<ProductDTO> getAllProduct();
 
 
-    @Query(value = "SELECT  p.id, p.name, p.description, c.cate_name, pi.price, p.product_image, COALESCE(p.product_rating, 0), pi.size, pi.qty_in_stock,COALESCE(d.discount_rate,0),  pi.id, COALESCE(dc.is_deleted, 0)\n" +
+    @Query(value = "SELECT  p.id, p.name, p.description, c.cate_name, pi.price, p.product_image, COALESCE(p.product_rating, 0), pi.size, pi.qty_in_stock,COALESCE(d.discount_rate,0),  pi.id, COALESCE(dc.is_deleted, 1)\n" +
             "                                   FROM product p \n" +
             "                                   JOIN product_item pi ON p.id = pi.pro_id \n" +
             "                                   LEFT JOIN category c ON p.categoryID = c.id \n" +
             "                                    LEFT JOIN discount_category dc ON c.id = dc.category_id \n" +
             "                                    LEFT JOIN dbo.discount d on d.id = dc.discount_id \n" +
-            "                        WHERE p.id = :id", nativeQuery = true)
+            "                        WHERE p.id = :id AND (dc.is_deleted = 1 OR dc.is_deleted IS NULL)", nativeQuery = true)
     List<Object[]> getProductById(@Param("id") int id);
 
 //    @Query(value = "SELECT new com.cakkie.backend.dto.ProductDTO(" +
@@ -122,7 +122,7 @@ public interface ProductRepository  extends JpaRepository<product, Long>{
             "LEFT JOIN p.categoryID pc " +
             "LEFT JOIN pc.discountCategoryList dcl " +
             "LEFT JOIN dcl.discountId d " +
-            "WHERE pi.isDeleted = 1 AND pi.id = :productId")
+            "WHERE pi.isDeleted = 1 AND pi.id = :productId AND dcl.isDeleted = 1")
     List<ProductDTO> getProductItemById(@Param("productId") int productId);
 
     // Query to get product items that are not deleted
@@ -144,7 +144,7 @@ public interface ProductRepository  extends JpaRepository<product, Long>{
     List<productItem> getProductItemsByPriceRange(@Param("minPrice") long minPrice, @Param("maxPrice") long maxPrice);
 
     @Query(value = "SELECT new com.cakkie.backend.dto.OrderDTO(" +
-            "so.id, us.id, sm.name, adr.id, pmt.name, os.id, so.orderDate, so.arrivedDate, so.canceledDate)" +
+            "so.id, us.id, sm.name, adr.id, pmt.name, os.id, so.orderDate, so.arrivedDate, so.canceledDate, so.shippingDate)" +
             "FROM shopOrder so " +
             "JOIN so.shippingAddressId adr " +
             "JOIN so.userId us " +
@@ -155,11 +155,12 @@ public interface ProductRepository  extends JpaRepository<product, Long>{
             "WHERE us.id = :id")
     List<OrderDTO> getOrdersByUserId(@Param("id") int id);
 
-    @Query(value = "SELECT new com.cakkie.backend.dto.OrderItemDTO(" +
-            "ol.id, so.id, pi.id,  ol.qty, ol.price, COALESCE(ol.discountPrice,0), COALESCE(ol.note,''))" +
-            "FROM orderLine ol " +
-            "JOIN ol.productItemId pi " +
-            "JOIN ol.orderId so " +
-            "WHERE so.id = :orderId")
-    List<OrderItemDTO> getOrderItemsByOrderId(@Param("orderId") int orderId);
+    @Query(value = "SELECT p.id, so.id, pi.id,  ol.qty, ol.price, COALESCE(ol.discount_price,0), COALESCE(ol.note,''), COALESCE(ur.id, 0), ol.id  " +
+            " FROM order_line ol " +
+            " JOIN product_item pi ON ol.product_item_id = pi.id " +
+            "JOIN product p ON p.id = pi.pro_id " +
+            " JOIN shop_order so ON  ol.order_id = so.id " +
+            " LEFT JOIN user_review ur ON ol.id = ur.order_product_id " +
+            "WHERE so.id = :orderId", nativeQuery = true)
+    List<Object[]> getOrderItemsByOrderId(@Param("orderId") int orderId);
 }

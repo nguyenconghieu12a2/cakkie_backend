@@ -12,7 +12,7 @@ public interface AdminOrderRepository extends JpaRepository<orderLine, Integer> 
     @Query(value = "SELECT\n" +
             "s.id,\n" +
             "(u.firstname + ' ' + u.lastname) AS [Customer Name], \n" +
-            "COUNT(o.product_item_id) AS total_product, \n" +
+            "COUNT(DISTINCT p.id) AS total_product, \n" +
             "s.order_total AS total_price, \n" +
             "SUM(CONVERT(int, ((o.price * d.discount_rate) / 100))) AS [total_discount_price], \n" +
             "os.[status] AS [Order Status], \n" +
@@ -37,6 +37,7 @@ public interface AdminOrderRepository extends JpaRepository<orderLine, Integer> 
             "    p.[name] AS product_name,\n" +
             "    o.qty,\n" +
             "    o.price,\n" +
+            "    i.size, \n" +
             "    sp.[name] AS shipping_method,  \n" +
             "    FORMAT(s.order_date, 'dd-MM-yyyy') AS order_date,\n" +
             "    FORMAT(s.approved_date, 'dd-MM-yyyy') AS approved_date,  \n" +

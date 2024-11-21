@@ -70,11 +70,22 @@ public interface AdminCategoryRepository extends JpaRepository<category, Integer
     List<Object[]> getAllNullSubCategories();
 
     //Get Full Cate Deleted
-    @Query (value = "SELECT c2.id, c2.cate_name, c1.parent_id, c1.cate_name, c.parent_id, c.cate_name, c.is_deleted\n" +
-            "FROM category c\n" +
-            "JOIN category c1 ON c.parent_id = c1.id\n" +
-            "JOIN category c2 ON c1.parent_id = c2.id\n" +
-            "WHERE c1.is_deleted = 0", nativeQuery = true)
+    @Query (value = "SELECT \n" +
+            "    c2.id AS c2_id, \n" +
+            "    c2.cate_name AS c2_cate_name, \n" +
+            "    c1.parent_id AS c1_parent_id, \n" +
+            "    c1.cate_name AS c1_cate_name, \n" +
+            "    c.parent_id AS c_parent_id, \n" +
+            "    c.cate_name AS c_cate_name, \n" +
+            "    c.is_deleted\n" +
+            "FROM \n" +
+            "    category c\n" +
+            "JOIN \n" +
+            "    category c1 ON c.parent_id = c1.id\n" +
+            "JOIN \n" +
+            "    category c2 ON c1.parent_id = c2.id\n" +
+            "WHERE \n" +
+            "    c1.is_deleted = 0 AND c.is_deleted = 0 AND c2.is_deleted = 0 ", nativeQuery = true)
     List<Object[]> getFullDeleteCategories();
 
     //Get SubCate and SubSubCate

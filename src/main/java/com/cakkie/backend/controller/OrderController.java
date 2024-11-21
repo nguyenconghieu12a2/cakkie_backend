@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,8 +27,11 @@ public class OrderController {
     private final ProductService productService; // A service to manage products
 
     @PostMapping(path = "/order/cancel/{orderId}")
-    public ResponseEntity<String> cancelOrder(@PathVariable Integer orderId) {
+    public ResponseEntity<String> cancelOrder(@PathVariable Integer orderId,
+                                              @RequestBody Map<String, String> requestBody) {
         try {
+            String cancelReason = requestBody.get("cancelReason");
+
             shopOrder order = orderService.getOrderById(orderId);
             if (order == null) {
                 return ResponseEntity.status(404).body("Order not found.");
@@ -36,6 +40,7 @@ public class OrderController {
             orderStatus orderStatusId = orderStatusRepository.findById(5).orElseThrow(() -> new RuntimeException("Cannot find orderStatus = 5"));
             order.setOrderStatusId(orderStatusId);
             Date currentDate = new Date();
+            order.setCanceledReason(cancelReason);
             order.setCanceledDate(currentDate);
             orderService.updateOrder(order);
 

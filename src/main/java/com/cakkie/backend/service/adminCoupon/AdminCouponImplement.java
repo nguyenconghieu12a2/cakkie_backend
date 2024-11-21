@@ -24,8 +24,16 @@ public class AdminCouponImplement implements AdminCouponService {
 
     @Override
     public coupons addCoupon(coupons coupon) {
+        if (coupon.getStartDate() != null && coupon.getEndDate() != null) {
+//            System.out.println("check start date: " +  coupon.getStartDate());
+//            System.out.println("check end date: " + coupon.getStartDate());
+            if (coupon.getEndDate().before(coupon.getStartDate())) {
+                throw new IllegalArgumentException("End date must be after start date.");
+            }
+        }
         return couponRepository.save(coupon);
     }
+
 
     @Override
     public coupons getCouponById(int id) {
@@ -35,16 +43,25 @@ public class AdminCouponImplement implements AdminCouponService {
 
     @Override
     public coupons updateCoupon(int id, coupons coupon) {
-        coupons existCoupons = couponRepository.findById(id)
-                .orElseThrow(() -> new AdminCouponNotFound("Sorry, no coupons found with id: " + id));
-        existCoupons.setCode(coupon.getCode());
-        existCoupons.setName(coupon.getName());
-        existCoupons.setQuantity(coupon.getQuantity());
-        existCoupons.setPriceDiscount(coupon.getPriceDiscount());
-        existCoupons.setStartDate(coupon.getStartDate());
-        existCoupons.setEndDate(coupon.getEndDate());
-        return couponRepository.save(existCoupons);
+        coupons existingCoupon = couponRepository.findById(id)
+                .orElseThrow(() -> new AdminCouponNotFound("No coupon found with id: " + id));
+
+        existingCoupon.setCode(coupon.getCode());
+        existingCoupon.setName(coupon.getName());
+        existingCoupon.setQuantity(coupon.getQuantity());
+        existingCoupon.setPriceDiscount(coupon.getPriceDiscount());
+        existingCoupon.setStartDate(coupon.getStartDate());
+        existingCoupon.setEndDate(coupon.getEndDate());
+
+        if (existingCoupon.getStartDate() != null && existingCoupon.getEndDate() != null) {
+            if (existingCoupon.getEndDate().before(existingCoupon.getStartDate())) {
+                throw new IllegalArgumentException("End date must be after start date.");
+            }
+        }
+
+        return couponRepository.save(existingCoupon);
     }
+
 
     @Override
     public void deleteCoupon(int id) {

@@ -43,30 +43,33 @@ public class AdminOrderService {
         // Extract common data from the first row
         Object[] firstRow = orderData.get(0);
         int shopId = (Integer) firstRow[0];
-        String fullName = (String) firstRow[1];
-        String shipMethod = (String) firstRow[5];
+        String fullName = Optional.ofNullable((String) firstRow[1]).orElse("N/A");
+        String shipMethod = Optional.ofNullable((String) firstRow[6]).orElse("N/A");
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        Date orderDate = parseDate((String) firstRow[6], dateFormat);
-        Date approvedDate = parseDate((String) firstRow[7], dateFormat);
-        Date shippedDate = parseDate((String) firstRow[8], dateFormat);
-        Date arrivalDate = parseDate((String) firstRow[9], dateFormat);
-        String paymentMethod = (String) firstRow[10];
-        String address = (String) firstRow[11];
+        String orderDate = Optional.ofNullable((String) firstRow[7]).orElse("N/A");
+        String approvedDate = Optional.ofNullable((String) firstRow[8]).orElse("N/A");
+        String shippedDate = Optional.ofNullable((String) firstRow[9]).orElse("N/A");
+        String arrivalDate = Optional.ofNullable((String) firstRow[10]).orElse("N/A");
+        String paymentMethod = Optional.ofNullable((String) firstRow[11]).orElse("N/A");
+        String address = Optional.ofNullable((String) firstRow[12]).orElse("N/A");
 
         // Create empty lists to hold product names, prices, and quantities
         List<String> productNames = new ArrayList<>();
         List<Long> prices = new ArrayList<>();
         List<Long> quantities = new ArrayList<>();
+        List<String> sizes = new ArrayList<>();
 
         // Loop through all rows to get product details
         for (Object[] row : orderData) {
-            String productName = (String) row[2];
-            long qty = ((Number) row[3]).longValue();
-            long price = ((Number) row[4]).longValue();
+            String productName = Optional.ofNullable((String) row[2]).orElse("N/A");
+            long qty = row[3] != null ? ((Number) row[3]).longValue() : 0;
+            long price = row[4] != null ? ((Number) row[4]).longValue() : 0;
+            String size = Optional.ofNullable((String) row[5]).orElse("N/A");
 
             productNames.add(productName);
             quantities.add(qty);
             prices.add(price);
+            sizes.add(size);
         }
 
         // Create the OrderDTO object
@@ -77,16 +80,18 @@ public class AdminOrderService {
                 prices,
                 quantities,
                 shipMethod,
-                approvedDate,
-                orderDate,
-                shippedDate,
-                arrivalDate,
+                parseDate(orderDate, dateFormat),
+                parseDate(approvedDate, dateFormat),
+                parseDate(shippedDate, dateFormat),
+                parseDate(arrivalDate, dateFormat),
                 paymentMethod,
-                address
+                address,
+                sizes
         );
 
         return order;
     }
+
 
     private Date parseDate(String dateStr, SimpleDateFormat dateFormat) {
         try {

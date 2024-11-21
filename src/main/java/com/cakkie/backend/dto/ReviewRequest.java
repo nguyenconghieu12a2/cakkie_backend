@@ -11,4 +11,5 @@ public class ReviewRequest {
     private String feedback;
     private MultipartFile imageFile;
     private int isHide;
+    private int orderLineId;
 }

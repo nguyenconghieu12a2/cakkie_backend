@@ -4,28 +4,36 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class RegistrationBody {
     @NotNull
     private String firstname;
+
     @NotNull
     private String lastname;
+
     @NotNull
     @NotBlank
     private String username;
+
     @NotNull
     private String gender;
+
     @NotNull
-    private Date birthday;
+    private LocalDate birthday; // Changed from Date to LocalDate
+
     @NotNull
     @Email
     private String email;
+
     @NotNull
     private String phone;
+
     @NotNull
     private String password;
 
+    // Getters and setters
     public String getFirstname() {
         return firstname;
     }
@@ -58,11 +66,11 @@ public class RegistrationBody {
         this.gender = gender;
     }
 
-    public Date getBirthday() {
+    public LocalDate getBirthday() { // Updated return type
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(LocalDate birthday) { // Updated parameter type
         this.birthday = birthday;
     }
 

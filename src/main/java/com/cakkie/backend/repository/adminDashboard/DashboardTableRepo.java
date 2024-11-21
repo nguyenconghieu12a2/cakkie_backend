@@ -21,7 +21,7 @@ public interface DashboardTableRepo extends JpaRepository<shopOrder, Integer> {
             "from shop_order so\n" +
             "join user_site us on us.id = so.user_id\n" +
             "group by us.id, us.username, us.email\n" +
-            "order by total_order desc, total_payment desc", nativeQuery = true)
+            "order by total_payment desc, total_order desc", nativeQuery = true)
     List<Object[]> tableCustomer();
 
     @Query(value = "select COALESCE(sum(order_total), 0) as [revenue] from shop_order", nativeQuery = true)

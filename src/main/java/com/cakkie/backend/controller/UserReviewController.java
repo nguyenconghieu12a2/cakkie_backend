@@ -27,7 +27,8 @@ public class UserReviewController {
                 reviewRequest.getRating(),
                 reviewRequest.getFeedback(),
                 reviewRequest.getImageFile(),
-                reviewRequest.getIsHide()
+                reviewRequest.getIsHide(),
+                reviewRequest.getOrderLineId()
         );
         return ResponseEntity.ok(review);
     }

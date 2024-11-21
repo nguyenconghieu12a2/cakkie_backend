@@ -3,22 +3,28 @@ package com.cakkie.backend.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class EditBody {
     @NotNull
     private String firstname;
+
     @NotNull
     private String lastname;
+
     @NotNull
     @NotBlank
     private String username;
+
     @NotNull
     private String gender;
+
     @NotNull
-    private Date birthday;
+    private LocalDate birthday; // Use LocalDate instead of Date
+
     @NotNull
     private String phone;
+
     @NotNull
     private String email;
 
@@ -62,11 +68,11 @@ public class EditBody {
         this.gender = gender;
     }
 
-    public @NotNull Date getBirthday() {
+    public @NotNull LocalDate getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(@NotNull Date birthday) {
+    public void setBirthday(@NotNull LocalDate birthday) {
         this.birthday = birthday;
     }
 

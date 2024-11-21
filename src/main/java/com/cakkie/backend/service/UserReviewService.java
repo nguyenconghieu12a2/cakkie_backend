@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserReviewService {
-    private static final String IMG_URLL = "D:/Study/GitProject/FE_SWP/cakkie_frontend/public/images/";
+    private static final String IMG_URLL = "D:/Cakkie-Project/Project_Frontend/cakkie_frontend/public/images/";
     private UserReviewRepository userReviewRepository;
     private orderLineRepository OrderLineRepository;
     private UserSiteRepository userSiteRepository;
@@ -106,29 +106,50 @@ public class UserReviewService {
         return path.getFileName().toString();
     }
 
-    public userReview addReview(int userId, int orderProductId, int rating, String feedback, MultipartFile imageFile, int isHide) throws IOException {
-        Optional<orderLine> orderLineOptional = OrderLineRepository.findById(orderProductId);
-        Optional<userSite> userSiteOptional = userSiteRepository.findById(userId);
-        Optional<userReviewStatus> defaultStatusOptional = userReviewStatusRepository.findById(2);
+    public userReview addReview(int userId, int productItemId, int rating, String feedback, MultipartFile imageFile, int isHide, int orderLineId) throws IOException {
+        // Fetch the first orderLine for the given productItemId
+        Optional<orderLine> orderLineOptional = OrderLineRepository.findFirstByProductItemId(productItemId, orderLineId);
 
-        if (orderLineOptional.isEmpty() || userSiteOptional.isEmpty() || defaultStatusOptional.isEmpty()) {
-            throw new IllegalArgumentException("Invalid user, order product ID, or review status");
+        if (orderLineOptional.isEmpty()) {
+            throw new IllegalArgumentException("No order line found for the given product item ID");
         }
 
+        orderLine orderLine = orderLineOptional.get();
+
+        // Fetch the user
+        Optional<userSite> userSiteOptional = userSiteRepository.findById(userId);
+        if (userSiteOptional.isEmpty()) {
+            throw new IllegalArgumentException("Invalid user ID");
+        }
+
+        userSite user = userSiteOptional.get();
+
+        // Fetch the default review status
+        Optional<userReviewStatus> defaultStatusOptional = userReviewStatusRepository.findById(2);
+        if (defaultStatusOptional.isEmpty()) {
+            throw new IllegalArgumentException("Invalid review status");
+        }
+
+        userReviewStatus defaultStatus = defaultStatusOptional.get();
+
+        // Create the review
         userReview review = new userReview();
-        review.setOrderProductId(orderLineOptional.get());
-        review.setUserId(userSiteOptional.get());
+        review.setOrderProductId(orderLine); // Associate with the selected orderLine
+        review.setUserId(user);
         review.setRating(rating);
         review.setFeedback(feedback);
-        review.setStatusId(defaultStatusOptional.get()); // Set default status
+        review.setStatusId(defaultStatus);
         review.setCommentDate(new Date());
-        review.setIsHide(isHide); // Accept dynamic value for isHide
+        review.setIsHide(isHide);
         review.setIsDeleted(1);
 
         // Handle the image file
-        String imageFilename = saveImage(imageFile);
-        review.setReviewImage(imageFilename);
+        if (imageFile != null && !imageFile.isEmpty()) {
+            String imageFilename = saveImage(imageFile);
+            review.setReviewImage(imageFilename);
+        }
 
+        // Save the review
         return userReviewRepository.save(review);
     }
 }

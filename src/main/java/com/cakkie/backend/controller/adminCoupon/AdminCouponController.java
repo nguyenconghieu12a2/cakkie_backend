@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @RestController
@@ -22,14 +23,22 @@ public class AdminCouponController {
         AdminCouponDTO dto = new AdminCouponDTO();
         dto.setId(coupon.getId());
         dto.setCode(coupon.getCode());
-        dto.setName(coupon.getName());  // Corrected to use the proper field
+        dto.setName(coupon.getName());
         dto.setQuantity(coupon.getQuantity());
         dto.setPriceDiscount(coupon.getPriceDiscount());
-        dto.setStartDate(coupon.getStartDate());
-        dto.setEndDate(coupon.getEndDate());
         dto.setIsDeleted(coupon.getIsDeleted());
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (coupon.getStartDate() != null) {
+            dto.setStartDateFormatted(formatter.format(coupon.getStartDate()));
+        }
+        if (coupon.getEndDate() != null) {
+            dto.setEndDateFormatted(formatter.format(coupon.getEndDate()));
+        }
+
         return dto;
     }
+
 
     private coupons convertToEntity(AdminCouponDTO dto) {
         coupons coupon = new coupons();

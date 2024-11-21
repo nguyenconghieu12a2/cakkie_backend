@@ -33,12 +33,16 @@ public class ProfileController {
 
     @PutMapping("/change-password")
     public ResponseEntity<String> changePassword(@RequestBody ChangePasswordBody request) {
-        boolean success = userService.changePassword(request.getEmail(), request.getCurrentPassword(), request.getNewPassword());
+        try {
+            boolean success = userService.changePassword(request.getEmail(), request.getCurrentPassword(), request.getNewPassword());
 
-        if (success) {
-            return ResponseEntity.ok("Password changed successfully");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Current password is incorrect");
+            if (success) {
+                return ResponseEntity.ok("Password changed successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Current password is incorrect");
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 }

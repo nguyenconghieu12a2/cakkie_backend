@@ -17,6 +17,7 @@ public class OrderItemDTO {
     private long price;
     private long discountPrice;
     private String note;
-
+    private int reviewId;
+    private int orderLineId;
 
 }

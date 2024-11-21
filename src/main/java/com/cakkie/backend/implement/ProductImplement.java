@@ -8,6 +8,7 @@ import com.cakkie.backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -84,7 +85,22 @@ public class ProductImplement implements ProductService {
 
     @Override
     public List<OrderItemDTO> getOrderItemsByOrderId(int orderId) {
-        return productRepository.getOrderItemsByOrderId(orderId);
+        List<Object[]> results = productRepository.getOrderItemsByOrderId(orderId);
+        List<OrderItemDTO> orderItemList = new ArrayList<OrderItemDTO>();
+        for (Object[] result : results) {
+            OrderItemDTO orderItem = new OrderItemDTO();
+            orderItem.setId((Integer) result[0]);
+            orderItem.setOrderId((Integer) result[1]);
+            orderItem.setProductItemId((Integer) result[2]);
+            orderItem.setQuantity((Integer) result[3]);
+            orderItem.setPrice((long) result[4]);
+            orderItem.setDiscountPrice((long) result[5]);
+            orderItem.setNote((String) result[6]);
+            orderItem.setReviewId((Integer) result[7]);
+            orderItem.setOrderLineId((Integer) result[8]);
+            orderItemList.add(orderItem);
+        }
+        return orderItemList;
     }
 
     @Override

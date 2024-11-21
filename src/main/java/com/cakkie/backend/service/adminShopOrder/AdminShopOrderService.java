@@ -109,6 +109,14 @@ public class AdminShopOrderService {
     }
 
     private boolean isValidStatusTransition(String currentStatus, String newStatus) {
+        if (currentStatus.equals("Arrived") && newStatus.equals("Cancel")) {
+            return false;
+        }
+
+        if (newStatus.equals("Cancel")) {
+            return true;
+        }
+
         switch (currentStatus) {
             case "Ordered":
                 return newStatus.equals("Confirm");
@@ -116,10 +124,6 @@ public class AdminShopOrderService {
                 return newStatus.equals("Shipping");
             case "Shipping":
                 return newStatus.equals("Arrived");
-            case "Arrived":
-                return newStatus.equals("Cancel");
-            case "Cancel":
-                return false;
             default:
                 return false;
         }

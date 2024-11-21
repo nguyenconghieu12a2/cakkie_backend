@@ -42,8 +42,8 @@ public class OrderImplement implements OrderService {
     private ProductItemRepository productItemRepository;
 
     public shopOrder createOrder(OrderDTO orderDTO) {
-        orderStatus status = orderStatusRepository.findById(2)
-                .orElseThrow(() -> new RuntimeException("Order Status not found with ID: " + 2));
+        orderStatus status = orderStatusRepository.findById(1)
+                .orElseThrow(() -> new RuntimeException("Order Status not found with ID: " + 1));
         userSite user = userRepository.findById(orderDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + orderDTO.getUserId()));
         address address = addressRepository.findById(orderDTO.getShippingAddress())
