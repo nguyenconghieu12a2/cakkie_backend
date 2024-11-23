@@ -30,7 +30,7 @@ public interface AdminCancelOrderRepository extends JpaRepository<orderLine, Int
     @Query(value = "SELECT\n" +
             "    s.id,\n" +
             "    (u.firstname + ' ' + u.lastname) AS CustomerName, \n" +
-            "    COUNT(o.product_item_id) AS total_product,\n" +
+            "    COUNT(DISTINCT p.id) AS total_product,\n" +
             "    s.order_total, \n" +
             "    SUM(CONVERT(int, ((o.price * d.discount_rate) / 100))) AS total_discount_price, \n" +
             "    s.canceled_date,\n" +
