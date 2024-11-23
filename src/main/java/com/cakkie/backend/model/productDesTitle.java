@@ -1,5 +1,6 @@
 package com.cakkie.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,16 +12,18 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "productDesTitle")
+@Table(name = "product_des_title")
 public class productDesTitle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "des_title_id")
     private int desTitleID;
-    @Column(name = "desTitleName", nullable = false)
-    private String desTitleName;
+    @Column(name = "des_title_name", nullable = false)
+    private String desTitlename;
     @Column(name = "is_deleted", nullable = false)
     private int isDeleted;
 
-    @OneToMany(mappedBy = "desTitleID")
+    @OneToMany(mappedBy = "desTitleId")
+    @JsonIgnore
     private List<productDesInfo> productDesInfoList;
 }

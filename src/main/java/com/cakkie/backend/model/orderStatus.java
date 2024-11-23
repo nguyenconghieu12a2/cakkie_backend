@@ -1,5 +1,6 @@
 package com.cakkie.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,5 +23,6 @@ public class orderStatus {
     private int isDeleted;
 
     @OneToMany(mappedBy = "orderStatusId")
+    @JsonIgnore
     private List<shopOrder> shopOrdersList;
 }

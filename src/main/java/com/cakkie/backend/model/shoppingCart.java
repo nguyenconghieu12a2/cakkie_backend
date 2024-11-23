@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "shopping_cart")
 public class shoppingCart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
